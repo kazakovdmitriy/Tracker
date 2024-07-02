@@ -7,14 +7,14 @@
 
 import UIKit
 
-final class TrackersTableViewDelegate: NSObject, UITableViewDelegate {
+final class TrackersTableViewDelegate: NSObject {
     
     weak var view: CreateBaseController?
-    
-    init(view: CreateBaseController? = nil) {
-        self.view = view
-    }
-    
+    var data: [String] = []
+}
+
+// MARK: - TrackersTableViewDelegate
+extension TrackersTableViewDelegate: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 74
@@ -52,5 +52,23 @@ final class TrackersTableViewDelegate: NSObject, UITableViewDelegate {
         }
         
         cell.setNeedsLayout()
+    }
+}
+
+// MARK: - TrackersTableViewDataSource
+extension TrackersTableViewDelegate: UITableViewDataSource {
+        
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = TrackersTableViewCell()
+        
+        cell.configure(with: data[indexPath.row])
+        
+        return cell
     }
 }

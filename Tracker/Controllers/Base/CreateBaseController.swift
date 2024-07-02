@@ -35,7 +35,6 @@ class CreateBaseController: PopUpViewController {
     }()
     
     private let tableViewDelegate = TrackersTableViewDelegate()
-    private let tableViewDataSource = TrackersTableViewDataSource()
     private let cell = TrackersTableViewCell()
     private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
         cellType: TrackersTableViewCell.self,
@@ -116,8 +115,8 @@ extension CreateBaseController {
         
         tableViewDelegate.view = self
         trackersTableView.delegate = tableViewDelegate
-        tableViewDataSource.data = tableCategory
-        trackersTableView.dataSource = tableViewDataSource
+        tableViewDelegate.data = tableCategory
+        trackersTableView.dataSource = tableViewDelegate
     }
     
     @objc private func cancleButtonTapped() {

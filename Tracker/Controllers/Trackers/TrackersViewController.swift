@@ -29,6 +29,23 @@ final class TrackersViewController: BaseController {
                     color: .ypColorSelection11,
                     emoji: "🌸",
                     schedule: []),
+        ]),
+        TrackerCategory(name: "Вторая категория", trackers: [
+            Tracker(id: UUID(),
+                    name: "Поливать растения",
+                    color: .ypColorSelection5,
+                    emoji: "❤️",
+                    schedule: []),
+            Tracker(id: UUID(),
+                    name: "Кошка заслонила камеру на созвоне",
+                    color: .ypColorSelection3,
+                    emoji: "😹",
+                    schedule: []),
+            Tracker(id: UUID(),
+                    name: "Бабушка прислала открытку в ватсапе",
+                    color: .ypColorSelection11,
+                    emoji: "🌸",
+                    schedule: []),
         ])
     ]
     private var completedTrackers: [TrackerRecord] = []
