@@ -15,7 +15,8 @@ final class ScheduleViewController: PopUpViewController {
     private let cell = ScheduleTableViewCell()
     private lazy var scheduleTableView: TrackersTableView<ScheduleTableViewCell> = TrackersTableView(
         cellType: ScheduleTableViewCell.self,
-        cellIdentifier: ScheduleTableViewCell.reuseIdentifier
+        cellIdentifier: ScheduleTableViewCell.reuseIdentifier,
+        isScrollEnable: true
     )
     
     private lazy var doneButton = MainButton(title: "Готово")
@@ -45,7 +46,7 @@ extension ScheduleViewController {
             scheduleTableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 87),
             scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            scheduleTableView.heightAnchor.constraint(equalToConstant: 525),
+            scheduleTableView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -24),
             
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),

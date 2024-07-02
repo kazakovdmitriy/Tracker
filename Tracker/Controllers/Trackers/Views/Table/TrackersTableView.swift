@@ -9,13 +9,13 @@ import UIKit
 
 final class TrackersTableView<CellType: UITableViewCell>: UITableView {
     
-    init(cellType: CellType.Type, cellIdentifier: String) {
+    init(cellType: CellType.Type, cellIdentifier: String, isScrollEnable: Bool = false) {
         super.init(frame: .zero,
                    style: .plain)
         
         self.layer.cornerRadius = 16
         self.layer.masksToBounds = true
-        self.isScrollEnabled = false
+        self.isScrollEnabled = isScrollEnable
         self.separatorStyle = .singleLine
         self.separatorColor = .ypBackground
         

@@ -47,7 +47,7 @@ extension TrackerCollectionViewDelegate: UICollectionViewDataSource {
 }
 
 extension TrackerCollectionViewDelegate: UICollectionViewDelegateFlowLayout {
-
+    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -58,6 +58,19 @@ extension TrackerCollectionViewDelegate: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         // Установите нужный размер ячейки
-        return CGSize(width: 167, height: 148)
+        
+        let cellWidth = (collectionView.layer.frame.width - 10) / 2
+        
+        return CGSize(width: cellWidth, height: 148)
+    }
+    
+    // Минимальное межстрочное расстояние
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    // Минимальное межколоночное расстояние
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
     }
 }

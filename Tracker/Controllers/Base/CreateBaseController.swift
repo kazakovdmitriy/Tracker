@@ -95,7 +95,7 @@ extension CreateBaseController {
             
             stackButtonView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackButtonView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            stackButtonView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24)
         ])
         
     }
