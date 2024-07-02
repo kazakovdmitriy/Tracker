@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		680FCD062C34758400B17E7A /* TrackerCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680FCD052C34758400B17E7A /* TrackerCollectionViewDelegate.swift */; };
 		6837ED382C2457FF00B66453 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6837ED372C2457FF00B66453 /* AppDelegate.swift */; };
 		6837ED3A2C2457FF00B66453 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6837ED392C2457FF00B66453 /* SceneDelegate.swift */; };
 		6837ED3C2C2457FF00B66453 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6837ED3B2C2457FF00B66453 /* StatisticsViewController.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		680FCD052C34758400B17E7A /* TrackerCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		6837ED342C2457FF00B66453 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6837ED372C2457FF00B66453 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6837ED392C2457FF00B66453 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 			children = (
 				68B9E8CC2C2F69EA006FFF48 /* TrackersTableViewDelegate.swift */,
 				68641FA12C32082D002D3505 /* ScheduleTableViewDelegate.swift */,
+				680FCD052C34758400B17E7A /* TrackerCollectionViewDelegate.swift */,
 			);
 			path = Trackers;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				6837ED562C246F7F00B66453 /* TrackersViewController.swift in Sources */,
 				689375D12C2E15D1004B67E3 /* StubView.swift in Sources */,
 				68E2E6D72C2F24CB00F2A65A /* NewPracticeViewController.swift in Sources */,
+				680FCD062C34758400B17E7A /* TrackerCollectionViewDelegate.swift in Sources */,
 				68E2E6D52C2F0B5400F2A65A /* PopUpViewController.swift in Sources */,
 				686F51602C2996C80020B804 /* QuantityManagementView.swift in Sources */,
 				68613C092C3173E8003177B4 /* TrackersTableView.swift in Sources */,
