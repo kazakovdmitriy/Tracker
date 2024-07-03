@@ -8,6 +8,10 @@
 import UIKit
 
 final class QuantityManagementView: BaseView {
+    
+    private var isDone: Bool = false
+    private var days: Int = 0
+    
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         
@@ -30,6 +34,8 @@ final class QuantityManagementView: BaseView {
         
         button.setImage(image, for: .normal)
         button.tintColor = .ypWhite
+        
+        button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         return button
     }()
@@ -83,7 +89,7 @@ extension QuantityManagementView {
 }
 
 extension QuantityManagementView {
-    func makeButtonDone() {
+    private func makeButtonDone() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
         let image = UIImage(systemName: "checkmark", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
@@ -95,7 +101,7 @@ extension QuantityManagementView {
         }
     }
     
-    func makeButtonAdd() {
+    private func makeButtonAdd() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
         let image = UIImage(systemName: "plus", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
@@ -105,5 +111,18 @@ extension QuantityManagementView {
             let newColor = currentColor.withAlphaComponent(1.0)
             addButton.backgroundColor = newColor
         }
+    }
+    
+    @objc private func addButtonTapped() {
+        if isDone {
+            makeButtonAdd()
+            days -= 1
+        } else {
+            makeButtonDone()
+            days += 1
+        }
+        
+        dateLabel.text = getDayString(for: days)
+        isDone = !isDone
     }
 }

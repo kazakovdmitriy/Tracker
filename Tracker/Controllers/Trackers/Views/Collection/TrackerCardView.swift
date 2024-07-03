@@ -16,7 +16,7 @@ final class TrackerCardView: UICollectionViewCell {
     
     func configure(title: String, bgColor: UIColor, emoji: String) {
         cardView.configure(title: title, bgColor: bgColor, emoji: emoji)
-        quantityView.configure(buttonBg: bgColor, days: 2)
+        quantityView.configure(buttonBg: bgColor, days: 0)
     }
     
     override init(frame: CGRect) {
