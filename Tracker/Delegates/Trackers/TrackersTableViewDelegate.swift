@@ -9,8 +9,9 @@ import UIKit
 
 final class TrackersTableViewDelegate: NSObject {
     
-    weak var view: CreateBaseController?
+    weak var view: UIViewController?
     var data: [String] = []
+    var trackersCategory: [String] = []
 }
 
 // MARK: - TrackersTableViewDelegate
@@ -24,12 +25,28 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
                    didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 1 {
-            let scheduleViewController = ScheduleViewController()
-            scheduleViewController.modalPresentationStyle = .popover
-            
-            view?.present(scheduleViewController, animated: true)
-        }
+        
+        if let view = view as? NewPracticeViewController {
+                if indexPath.row == 0 {
+                    let choiseCategoryVC = CategoryViewController()
+                    choiseCategoryVC.tableCategory = trackersCategory
+                    view.present(choiseCategoryVC, animated: true)
+                } else if indexPath.row == 1 {
+                    let scheduleViewController = ScheduleViewController()
+                    scheduleViewController.modalPresentationStyle = .popover
+                    scheduleViewController.delegate = view
+                    view.present(scheduleViewController, animated: true)
+                }
+            } else if let view = view as? NewIrregularViewController {
+                // Обработка для NewIrregularViewController
+                if indexPath.row == 0 {
+                    let choiseCategoryVC = CategoryViewController()
+                    choiseCategoryVC.tableCategory = trackersCategory
+                    view.present(choiseCategoryVC, animated: true)
+                }
+            } else {
+                return
+            }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -65,7 +82,9 @@ extension TrackersTableViewDelegate: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = TrackersTableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TrackersTableViewCell.reuseIdentifier, for: indexPath) as? TrackersTableViewCell else {
+            return UITableViewCell()
+        }
         
         cell.configure(with: data[indexPath.row])
         

@@ -10,6 +10,8 @@ import UIKit
 class CreateBaseController: PopUpViewController {
     
     var tableCategory: [String]
+    var trackerCategory: [String]
+    var tableViewDelegate: TrackersTableViewDelegate?
     
     private lazy var nameTrackerInputField: UITextField = {
         let textField = UITextField()
@@ -34,9 +36,8 @@ class CreateBaseController: PopUpViewController {
         return textField
     }()
     
-    private let tableViewDelegate = TrackersTableViewDelegate()
     private let cell = TrackersTableViewCell()
-    private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
+    lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
         cellType: TrackersTableViewCell.self,
         cellIdentifier: TrackersTableViewCell.reuseIdentifier
     )
@@ -53,10 +54,13 @@ class CreateBaseController: PopUpViewController {
         return stack
     }()
     
-    init(tableCategory: [String], 
-         title: String) {
+    init(title: String,
+         tableCategory: [String],
+         trackerCategory: [String]
+    ) {
         
         self.tableCategory = tableCategory
+        self.trackerCategory = trackerCategory
         
         super.init(title: title)
     }
@@ -110,12 +114,12 @@ extension CreateBaseController {
         cancleButton.layer.borderColor = UIColor.ypRed.cgColor
         cancleButton.layer.borderWidth = 1
         
-        createButton.configure(action: #selector(createButtonTapped), target: nil)
-        cancleButton.configure(action: #selector(cancleButtonTapped), target: nil)
+        createButton.configure(action: #selector(createButtonTapped))
+        cancleButton.configure(action: #selector(cancleButtonTapped))
         
-        tableViewDelegate.view = self
+//        tableViewDelegate?.view = self
         trackersTableView.delegate = tableViewDelegate
-        tableViewDelegate.data = tableCategory
+        tableViewDelegate?.data = tableCategory
         trackersTableView.dataSource = tableViewDelegate
     }
     
@@ -144,6 +148,4 @@ extension CreateBaseController: UITextFieldDelegate {
         }
         return true
     }
-    
 }
-

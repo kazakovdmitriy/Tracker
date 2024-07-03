@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func doneButtonTapped(weakDays: [WeekDays])
+}
+
 final class ScheduleViewController: PopUpViewController {
+    
+    weak var delegate: ScheduleViewControllerDelegate?
     
     var tableCategory: [String] = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
@@ -57,15 +63,41 @@ extension ScheduleViewController {
     
     override func configureAppearance() {
         super.configureAppearance()
-
+        
         scheduleTableView.delegate = tableViewDelegate
         tableViewDelegate.data = tableCategory
         scheduleTableView.dataSource = tableViewDelegate
         
-        doneButton.configure(action: #selector(doneButtonTapped), target: nil)
+        doneButton.configure(action: #selector(doneButtonTapped))
     }
     
     @objc private func doneButtonTapped() {
+        
+        var activatedSwitches: [WeekDays] = []
+        
+        // Перебираем все ячейки таблицы
+        for indexPath in scheduleTableView.indexPathsForVisibleRows ?? [] {
+            if let cell = scheduleTableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
+                // Проверяем активирован ли переключатель в ячейке
+                if cell.isActive {
+                    switch cell.switchView.tag {
+                    case 0: activatedSwitches.append(.Monday)
+                    case 1: activatedSwitches.append(.Tuesday)
+                    case 2: activatedSwitches.append(.Wednesday)
+                    case 3: activatedSwitches.append(.Thursday)
+                    case 4: activatedSwitches.append(.Friday)
+                    case 5: activatedSwitches.append(.Saturday)
+                    case 6: activatedSwitches.append(.Sunday)
+                    default: activatedSwitches.append(.None)
+                    }
+                    
+                }
+            }
+        }
+        
+        // Теперь у вас в массиве activatedSwitches будут теги активированных switchView
+        delegate?.doneButtonTapped(weakDays: activatedSwitches)
+        
         dismiss(animated: true)
     }
 }

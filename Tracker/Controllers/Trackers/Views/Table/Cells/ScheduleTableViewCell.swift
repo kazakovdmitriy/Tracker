@@ -13,7 +13,11 @@ final class ScheduleTableViewCell: UITableViewCell {
     var cornerRadius: CGFloat = 0.0
     var roundedCorners: UIRectCorner = []
     
-    private let switchView: UISwitch = {
+    var isActive: Bool {
+            return switchView.isOn
+        }
+    
+    let switchView: UISwitch = {
         let switchView = UISwitch()
         
         switchView.setOn(false, animated: true)

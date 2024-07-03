@@ -36,7 +36,25 @@ final class QuantityManagementView: BaseView {
     
     func configure(buttonBg: UIColor, days: Int) {
         addButton.backgroundColor = buttonBg
-        dateLabel.text = "\(days) дней"
+        dateLabel.text = getDayString(for: days)
+    }
+    
+    private func getDayString(for number: Int) -> String {
+        let remainder10 = number % 10
+        let remainder100 = number % 100
+        
+        if remainder100 >= 11 && remainder100 <= 14 {
+            return "\(number) дней"
+        } else {
+            switch remainder10 {
+            case 1:
+                return "\(number) день"
+            case 2, 3, 4:
+                return "\(number) дня"
+            default:
+                return "\(number) дней"
+            }
+        }
     }
 }
 
@@ -62,11 +80,30 @@ extension QuantityManagementView {
             dateLabel.centerYAnchor.constraint(equalTo: addButton.centerYAnchor)
         ])
     }
-    
-    override func configureAppearance() {
-        super.configureAppearance()
+}
+
+extension QuantityManagementView {
+    func makeButtonDone() {
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
+        let image = UIImage(systemName: "checkmark", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
-        dateLabel.text = "1 день"
-        addButton.backgroundColor = .ypColorSelection1
+        addButton.setImage(image, for: .normal)
+        
+        if let currentColor = addButton.backgroundColor {
+            let newColor = currentColor.withAlphaComponent(0.3)
+            addButton.backgroundColor = newColor
+        }
+    }
+    
+    func makeButtonAdd() {
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
+        let image = UIImage(systemName: "plus", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
+        
+        addButton.setImage(image, for: .normal)
+        
+        if let currentColor = addButton.backgroundColor {
+            let newColor = currentColor.withAlphaComponent(1.0)
+            addButton.backgroundColor = newColor
+        }
     }
 }

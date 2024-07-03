@@ -27,6 +27,7 @@ enum R {
             static let newPractice = "Новая привычка"
             static let newIrregular = "Новое нерегулярное событие"
             static let schedule = "Расписание"
+            static let category = "Категория"
         }
     }
     

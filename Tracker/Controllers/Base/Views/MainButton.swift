@@ -36,8 +36,13 @@ final class MainButton: BaseView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(action: Selector, target: Any?) {
-        button.addTarget(target, action: action, for: .touchUpInside)
+    func configure(action: Selector, newTitle: String? = nil) {
+        
+        if let newTitle {
+            button.setTitle(newTitle, for: .normal)
+        }
+        
+        button.addTarget(nil, action: action, for: .touchUpInside)
     }
     
     func deactivateButton() {

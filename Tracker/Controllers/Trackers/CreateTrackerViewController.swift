@@ -8,6 +8,9 @@
 import UIKit
 
 final class CreateTrackerViewController: PopUpViewController {
+    
+    var categories: [String] = []
+    
     private lazy var practiceButton = MainButton(title: "Привычка")
     private lazy var irregularEventButton = MainButton(title: "Нерегулярные событие")
     private lazy var stackView: UIStackView = {
@@ -49,13 +52,14 @@ extension CreateTrackerViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
-        practiceButton.configure(action: #selector(practiceButtonTapped), target: nil)
-        irregularEventButton.configure(action: #selector(irregularButtonTapped), target: nil)
+        practiceButton.configure(action: #selector(practiceButtonTapped))
+        irregularEventButton.configure(action: #selector(irregularButtonTapped))
     }
     
     @objc private func practiceButtonTapped() {
         let newPracticeVC = NewPracticeViewController()
         newPracticeVC.modalPresentationStyle = .popover
+        newPracticeVC.categories = categories
         
         present(newPracticeVC, animated: true)
     }
@@ -63,6 +67,7 @@ extension CreateTrackerViewController {
     @objc private func irregularButtonTapped() {
         let newIrregularVC = NewIrregularViewController()
         newIrregularVC.modalPresentationStyle = .popover
+        newIrregularVC.categories = categories
         
         present(newIrregularVC, animated: true)
     }

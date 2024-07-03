@@ -23,7 +23,9 @@ extension TrackerCollectionViewDelegate: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCardView.reuseIdentifier, for: indexPath) as! TrackerCardView
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCardView.reuseIdentifier, for: indexPath) as? TrackerCardView else {
+            return UICollectionViewCell()
+        }
         let item = categories[indexPath.section].trackers[indexPath.row]
         cell.configure(title: item.name, bgColor: item.color, emoji: item.emoji)
         return cell

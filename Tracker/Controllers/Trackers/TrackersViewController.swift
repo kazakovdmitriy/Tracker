@@ -13,40 +13,40 @@ final class TrackersViewController: BaseController {
     private var currentDate: Date = Date()
     
     private var categories: [TrackerCategory] = [
-        TrackerCategory(name: "Домашний уют", trackers: [
-            Tracker(id: UUID(), 
-                    name: "Поливать растения",
-                    color: .ypColorSelection5,
-                    emoji: "❤️",
-                    schedule: []),
-            Tracker(id: UUID(),
-                    name: "Кошка заслонила камеру на созвоне",
-                    color: .ypColorSelection3,
-                    emoji: "😹",
-                    schedule: []),
-            Tracker(id: UUID(),
-                    name: "Бабушка прислала открытку в ватсапе",
-                    color: .ypColorSelection11,
-                    emoji: "🌸",
-                    schedule: []),
-        ]),
-        TrackerCategory(name: "Вторая категория", trackers: [
-            Tracker(id: UUID(),
-                    name: "Поливать растения",
-                    color: .ypColorSelection5,
-                    emoji: "❤️",
-                    schedule: []),
-            Tracker(id: UUID(),
-                    name: "Кошка заслонила камеру на созвоне",
-                    color: .ypColorSelection3,
-                    emoji: "😹",
-                    schedule: []),
-            Tracker(id: UUID(),
-                    name: "Бабушка прислала открытку в ватсапе",
-                    color: .ypColorSelection11,
-                    emoji: "🌸",
-                    schedule: []),
-        ])
+//        TrackerCategory(name: "Домашний уют", trackers: [
+//            Tracker(id: UUID(), 
+//                    name: "Поливать растения",
+//                    color: .ypColorSelection5,
+//                    emoji: "❤️",
+//                    schedule: []),
+//            Tracker(id: UUID(),
+//                    name: "Кошка заслонила камеру на созвоне",
+//                    color: .ypColorSelection3,
+//                    emoji: "😹",
+//                    schedule: []),
+//            Tracker(id: UUID(),
+//                    name: "Бабушка прислала открытку в ватсапе",
+//                    color: .ypColorSelection11,
+//                    emoji: "🌸",
+//                    schedule: []),
+//        ]),
+//        TrackerCategory(name: "Вторая категория", trackers: [
+//            Tracker(id: UUID(),
+//                    name: "Поливать растения",
+//                    color: .ypColorSelection5,
+//                    emoji: "❤️",
+//                    schedule: []),
+//            Tracker(id: UUID(),
+//                    name: "Кошка заслонила камеру на созвоне",
+//                    color: .ypColorSelection3,
+//                    emoji: "😹",
+//                    schedule: []),
+//            Tracker(id: UUID(),
+//                    name: "Бабушка прислала открытку в ватсапе",
+//                    color: .ypColorSelection11,
+//                    emoji: "🌸",
+//                    schedule: []),
+//        ])
     ]
     private var completedTrackers: [TrackerRecord] = []
     
@@ -73,8 +73,11 @@ final class TrackersViewController: BaseController {
     private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         
-        picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
+        picker.preferredDatePickerStyle = .compact
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.calendar.firstWeekday = 2
+        picker.tintColor = .ypBlue
         picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
         return picker
@@ -167,8 +170,16 @@ private extension TrackersViewController {
     }
     
     @objc private func addButtonTapped() {
+        
+        var trackerCategories: [String] = []
+        
+        for category in categories {
+            trackerCategories.append(category.name)
+        }
+        
         let createTrackerViewController = CreateTrackerViewController()
         createTrackerViewController.modalPresentationStyle = .popover
+        createTrackerViewController.categories = trackerCategories
         
         present(createTrackerViewController, animated: true)
     }

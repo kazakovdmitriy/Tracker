@@ -1,17 +1,18 @@
 //
-//  ScheduleTableViewDelegate.swift
+//  CategoryTableViewDelegate.swift
 //  Tracker
 //
-//  Created by Дмитрий on 01.07.2024.
+//  Created by Дмитрий on 03.07.2024.
 //
 
 import UIKit
 
-final class ScheduleTableViewDelegate: NSObject {
+final class CategoryTableViewDelegate: NSObject {
     var data: [String] = []
+    private var selectedCategoryIndex: Int?
 }
 
-extension ScheduleTableViewDelegate: UITableViewDelegate {
+extension CategoryTableViewDelegate: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 74
@@ -21,13 +22,13 @@ extension ScheduleTableViewDelegate: UITableViewDelegate {
                    didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         
-        if let cell = tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
-            cell.cellTapped()
-        }
+        selectedCategoryIndex = indexPath.row
+        
+        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let cell = cell as? TrackersTableViewCell else { return }
+        guard let cell = cell as? CategoryTableViewCell else { return }
         
         let totalRows = tableView.numberOfRows(inSection: indexPath.section)
         
@@ -49,22 +50,23 @@ extension ScheduleTableViewDelegate: UITableViewDelegate {
     }
 }
 
-extension ScheduleTableViewDelegate: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, 
+extension CategoryTableViewDelegate: UITableViewDataSource {
+    func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
     
-    func tableView(_ tableView: UITableView, 
+    func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath) as? CategoryTableViewCell else {
             return UITableViewCell()
         }
         
-        cell.configure(with: data[indexPath.row], switchId: indexPath.row)
+        let title = data[indexPath.row]
+        let isSelected = indexPath.row == selectedCategoryIndex
+        
+        cell.configure(with: data[indexPath.row], isSelected: isSelected)
         
         return cell
     }
-    
-    
 }

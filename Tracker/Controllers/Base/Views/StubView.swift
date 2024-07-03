@@ -11,23 +11,25 @@ final class StubView: BaseView {
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
+        view.alignment = .center
+        view.spacing = 15
         return view
     }()
     
     private lazy var stubEmptyLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "Что будем отслеживать?"
         label.font = R.Fonts.sfPro(with: 12)
         label.textColor = .ypBlack
         label.textAlignment = .center
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         
         return label
     }()
     
     private lazy var stubEmptyImage: UIImageView = {
-        let image = UIImage(named: "empty_trackers_image")
-        let view = UIImageView(image: image)
+        let view = UIImageView()
         
         view.contentMode = .scaleAspectFit
         
@@ -45,8 +47,8 @@ extension StubView {
         super.setupViews()
         
         setupView(stackView)
-        stackView.setupView(stubEmptyImage)
-        stackView.setupView(stubEmptyLabel)
+        stackView.addArrangedSubview(stubEmptyImage)
+        stackView.addArrangedSubview(stubEmptyLabel)
         
     }
     
@@ -54,13 +56,13 @@ extension StubView {
         super.constraintViews()
         
         NSLayoutConstraint.activate([
-            stubEmptyImage.widthAnchor.constraint(equalToConstant: 80),
-            stubEmptyImage.heightAnchor.constraint(equalTo: stubEmptyImage.widthAnchor),
-            stubEmptyImage.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            stubEmptyLabel.topAnchor.constraint(equalTo: stubEmptyImage.bottomAnchor, constant: 15),
-            stubEmptyLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            stubEmptyLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stubEmptyImage.widthAnchor.constraint(equalToConstant: 80),
+            stubEmptyImage.heightAnchor.constraint(equalTo: stubEmptyImage.widthAnchor)
         ])
     }
     
