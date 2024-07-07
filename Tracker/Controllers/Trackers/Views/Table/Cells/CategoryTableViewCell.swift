@@ -17,7 +17,8 @@ final class CategoryTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .regular, scale: .small)
-        let image = UIImage(systemName: "checkmark", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
+        let image = UIImage(systemName: "checkmark",
+                            withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
@@ -58,7 +59,7 @@ final class CategoryTableViewCell: UITableViewCell {
             checkmarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             checkmarkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
-            checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
+            checkmarkImageView.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     

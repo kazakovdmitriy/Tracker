@@ -9,46 +9,48 @@ import UIKit
 
 final class TrackersViewController: BaseController {
     
+    // MARK: - Private Properties
     private let dateFormatter = DateFormatter()
     private var currentDate: Date = Date()
+    private let calendar = Calendar(identifier: .gregorian)
     
     private var categories: [TrackerCategory] = [
         TrackerCategory(name: "Домашний уют", trackers: [
-            Tracker(id: UUID(), 
+            Tracker(id: UUID(uuidString: "B81135FC-F8FE-4956-A19A-BD9F9F2086E3") ?? UUID(),
                     name: "Поливать растения",
                     color: .ypColorSelection5,
                     emoji: "❤️",
-                    schedule: []),
-            Tracker(id: UUID(),
+                    schedule: [.monday, .wednesday]),
+            Tracker(id: UUID(uuidString: "BDE6641A-1AA1-4B3B-87C3-39C951548031") ?? UUID(),
                     name: "Кошка заслонила камеру на созвоне",
                     color: .ypColorSelection3,
                     emoji: "😹",
-                    schedule: []),
-            Tracker(id: UUID(),
+                    schedule: [.monday, .friday, .sunday, .saturday]),
+            Tracker(id: UUID(uuidString: "8FE2AE56-98F5-496B-8FF9-0ECAA4C477DA") ?? UUID(),
                     name: "Бабушка прислала открытку в ватсапе",
                     color: .ypColorSelection11,
                     emoji: "🌸",
-                    schedule: []),
+                    schedule: [.thursday, .tuesday])
         ]),
         TrackerCategory(name: "Вторая категория", trackers: [
-            Tracker(id: UUID(),
+            Tracker(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
                     name: "Поливать растения",
                     color: .ypColorSelection5,
                     emoji: "❤️",
-                    schedule: []),
-            Tracker(id: UUID(),
+                    schedule: [.monday]),
+            Tracker(id: UUID(uuidString: "5F8AFE7A-53A4-4E71-BD9B-3DC7BDC5F4D4") ?? UUID(),
                     name: "Кошка заслонила камеру на созвоне",
                     color: .ypColorSelection3,
                     emoji: "😹",
-                    schedule: []),
-            Tracker(id: UUID(),
+                    schedule: [.sunday, .saturday]),
+            Tracker(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
                     name: "Бабушка прислала открытку в ватсапе",
                     color: .ypColorSelection11,
                     emoji: "🌸",
-                    schedule: []),
+                    schedule: [.wednesday, .tuesday, .friday])
         ])
     ]
-    private var completedTrackers: [TrackerRecord] = []
+    private var completedTrackers: Set<TrackerRecord> = []
     
     private lazy var trackerStubView = StubView()
     
@@ -88,6 +90,7 @@ final class TrackersViewController: BaseController {
     private lazy var collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: collectionLayout)
 }
 
+// MARK: - Setup View
 extension TrackersViewController {
     override func setupViews() {
         super.setupViews()
@@ -126,7 +129,7 @@ extension TrackersViewController {
         
         let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
         trackerStubView.configure(with: "Что будем отслеживать?", and: emptyImage)
-                
+        
         if !categories.isEmpty {
             trackerStubView.isHidden = true
         } else {
@@ -135,10 +138,8 @@ extension TrackersViewController {
         
         configureCollectionView()
     }
-}
-
-private extension TrackersViewController {
-    func setupNavigationBar() {
+    
+    private func setupNavigationBar() {
         // Устанавливаем крупный заголовок
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
@@ -151,12 +152,14 @@ private extension TrackersViewController {
         
     }
     
-    func configureCollectionView() {
+    private func configureCollectionView() {
         
         collectionLayout.itemSize = CGSize(width: view.frame.width - 20, height: 100)
         collectionLayout.minimumLineSpacing = 10
         
         collectionDelegate.categories = categories
+        collectionDelegate.completedTrackers = completedTrackers
+        collectionDelegate.currentDate = currentDate
         
         collectionView.backgroundColor = .clear
         
@@ -168,8 +171,33 @@ private extension TrackersViewController {
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
     }
+}
+
+extension TrackersViewController: CreateBaseControllerDelegate {
     
-    @objc private func addButtonTapped() {
+    private func addTracker(to categoryName: String, tracker: Tracker) {
+        if let index = categories.firstIndex(where: { $0.name == categoryName }) {
+            // Категория уже существует, создаём новый экземпляр категории с добавленным трекером
+            let category = categories[index]
+            var newTrackers = category.trackers
+            newTrackers.append(tracker)
+            let updatedCategory = TrackerCategory(name: category.name, trackers: newTrackers)
+            categories[index] = updatedCategory
+        } else {
+            // Категории не существует, создаём новую категорию и добавляем трекер
+            let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
+            categories.append(newCategory)
+        }
+    }
+    
+    func didTapCreateTrackerButton(category: String, tracker: Tracker) {
+        addTracker(to: category, tracker: tracker)
+    }
+}
+
+// MARK: - Selectors
+private extension TrackersViewController {
+    @objc func addButtonTapped() {
         
         var trackerCategories: [String] = []
         
@@ -183,19 +211,18 @@ private extension TrackersViewController {
         
         present(createTrackerViewController, animated: true)
     }
-}
-
-extension TrackersViewController: UISearchBarDelegate {
     
-}
-
-extension TrackersViewController {
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
+        
+        collectionDelegate.currentDate = currentDate
+        
+        print("Изменилась дата \(currentDate)")
     }
+}
+
+// MARK: - UISearchBarDelegate
+extension TrackersViewController: UISearchBarDelegate {
+    
 }

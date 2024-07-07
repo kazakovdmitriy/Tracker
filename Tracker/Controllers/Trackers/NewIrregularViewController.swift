@@ -9,10 +9,13 @@ import UIKit
 
 final class NewIrregularViewController: CreateBaseController {
     
+    // MARK: - Public Properties
     var categories: [String] = []
     
+    // MARK: - Private Properties
     private var tableDelegate: TrackersTableViewDelegate?
     
+    // MARK: - Initializers
     init() {
         super.init(title: R.Strings.NavTitle.newIrregular,
                    tableCategory: ["Категория"],

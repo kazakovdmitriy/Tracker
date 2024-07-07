@@ -11,7 +11,7 @@ public extension UISearchBar {
 
     func setTextColor(color: UIColor) {
         let svs = subviews.flatMap { $0.subviews }
-        guard let tf = (svs.filter { $0 is UITextField }).first as? UITextField else { return }
-        tf.textColor = color
+        guard let textField = (svs.filter { $0 is UITextField }).first as? UITextField else { return }
+        textField.textColor = color
     }
 }

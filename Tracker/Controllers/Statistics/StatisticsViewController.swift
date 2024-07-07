@@ -83,4 +83,3 @@ private extension StatisticsViewController {
         navigationItem.title = R.Strings.NavBar.statistics
     }
 }
-

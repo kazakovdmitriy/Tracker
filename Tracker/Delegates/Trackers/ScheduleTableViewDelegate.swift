@@ -57,7 +57,9 @@ extension ScheduleTableViewDelegate: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, 
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, 
+                                                       for: indexPath) as? ScheduleTableViewCell
+        else {
             return UITableViewCell()
         }
         
@@ -65,6 +67,4 @@ extension ScheduleTableViewDelegate: UITableViewDataSource {
         
         return cell
     }
-    
-    
 }

@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol QuantityManagementViewProtocol: AnyObject {
+    func didTapPlusCardButton(with state: Bool)
+}
+
 final class QuantityManagementView: BaseView {
+    
+    weak var delegate: QuantityManagementViewProtocol?
     
     private var isDone: Bool = false
     private var days: Int = 0
@@ -30,7 +36,8 @@ final class QuantityManagementView: BaseView {
         button.layer.masksToBounds = true
         
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
-        let image = UIImage(systemName: "plus", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
+        let image = UIImage(systemName: "plus", 
+                            withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
         button.setImage(image, for: .normal)
         button.tintColor = .ypWhite
@@ -40,9 +47,10 @@ final class QuantityManagementView: BaseView {
         return button
     }()
     
-    func configure(buttonBg: UIColor, days: Int) {
+    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol) {
         addButton.backgroundColor = buttonBg
         dateLabel.text = getDayString(for: days)
+        self.delegate = delegate
     }
     
     private func getDayString(for number: Int) -> String {
@@ -91,7 +99,8 @@ extension QuantityManagementView {
 extension QuantityManagementView {
     private func makeButtonDone() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
-        let image = UIImage(systemName: "checkmark", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
+        let image = UIImage(systemName: "checkmark", 
+                            withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
         addButton.setImage(image, for: .normal)
         
@@ -103,7 +112,8 @@ extension QuantityManagementView {
     
     private func makeButtonAdd() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
-        let image = UIImage(systemName: "plus", withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
+        let image = UIImage(systemName: "plus", 
+                            withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
         
         addButton.setImage(image, for: .normal)
         
@@ -114,6 +124,9 @@ extension QuantityManagementView {
     }
     
     @objc private func addButtonTapped() {
+        
+        delegate?.didTapPlusCardButton(with: isDone)
+        
         if isDone {
             makeButtonAdd()
             days -= 1

@@ -7,11 +7,20 @@
 
 import UIKit
 
+protocol CreateBaseControllerDelegate: AnyObject {
+    func didTapCreateTrackerButton(category: String, tracker: Tracker)
+}
+
 class CreateBaseController: PopUpViewController {
     
     var tableCategory: [String]
     var trackerCategory: [String]
     var tableViewDelegate: TrackersTableViewDelegate?
+    
+    lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
+        cellType: TrackersTableViewCell.self,
+        cellIdentifier: TrackersTableViewCell.reuseIdentifier
+    )
     
     private lazy var nameTrackerInputField: UITextField = {
         let textField = UITextField()
@@ -37,10 +46,6 @@ class CreateBaseController: PopUpViewController {
     }()
     
     private let cell = TrackersTableViewCell()
-    lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
-        cellType: TrackersTableViewCell.self,
-        cellIdentifier: TrackersTableViewCell.reuseIdentifier
-    )
     
     private lazy var cancleButton = MainButton(title: "Отменить")
     private lazy var createButton = MainButton(title: "Создать")
@@ -109,26 +114,19 @@ extension CreateBaseController {
         
         createButton.deactivateButton()
         
-        cancleButton.setColors(bg: .clear, title: .ypRed)
+        cancleButton.setColors(bgColor: .clear, title: .ypRed)
         cancleButton.layer.cornerRadius = 16
         cancleButton.layer.borderColor = UIColor.ypRed.cgColor
         cancleButton.layer.borderWidth = 1
         
-        createButton.configure(action: #selector(createButtonTapped))
-        cancleButton.configure(action: #selector(cancleButtonTapped))
-        
-//        tableViewDelegate?.view = self
         trackersTableView.delegate = tableViewDelegate
         tableViewDelegate?.data = tableCategory
         trackersTableView.dataSource = tableViewDelegate
     }
     
-    @objc private func cancleButtonTapped() {
-        dismiss(animated: true)
-    }
-    
-    @objc private func createButtonTapped() {
-        print("нажали создать")
+    func addActionToButton(create: Selector, cancle: Selector) {
+        createButton.configure(action: create)
+        cancleButton.configure(action: cancle)
     }
 }
 
@@ -138,10 +136,12 @@ extension CreateBaseController: UITextFieldDelegate {
         return true
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField, 
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         let userEnteredString = textField.text
         let newString = (userEnteredString! as NSString).replacingCharacters(in: range, with: string) as NSString
-        if  newString != ""{
+        if  newString != "" {
             createButton.activateButton()
         } else {
             createButton.deactivateButton()

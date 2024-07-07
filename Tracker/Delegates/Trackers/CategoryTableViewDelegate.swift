@@ -10,6 +10,13 @@ import UIKit
 final class CategoryTableViewDelegate: NSObject {
     var data: [String] = []
     private var selectedCategoryIndex: Int?
+    
+    func getSelectedCategory() -> String? {
+        guard let index = selectedCategoryIndex else {
+            return nil
+        }
+        return data[index]
+    }
 }
 
 extension CategoryTableViewDelegate: UITableViewDelegate {
@@ -58,11 +65,12 @@ extension CategoryTableViewDelegate: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath) as? CategoryTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath
+        ) as? CategoryTableViewCell else {
             return UITableViewCell()
         }
         
-        let title = data[indexPath.row]
         let isSelected = indexPath.row == selectedCategoryIndex
         
         cell.configure(with: data[indexPath.row], isSelected: isSelected)

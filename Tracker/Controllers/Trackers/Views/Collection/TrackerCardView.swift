@@ -7,16 +7,25 @@
 
 import UIKit
 
+protocol TrackerCardViewProtocol: AnyObject {
+    func didTapPlusButton(with id: UUID, and state: Bool)
+}
+
 final class TrackerCardView: UICollectionViewCell {
+    
+    weak var delegate: TrackerCardViewProtocol?
     
     static let reuseIdentifier = "TrackerCardView"
     
+    private var id: UUID?
     private lazy var cardView = CardView()
     private lazy var quantityView = QuantityManagementView()
     
-    func configure(title: String, bgColor: UIColor, emoji: String) {
+    func configure(id: UUID, title: String, bgColor: UIColor, emoji: String, plusDelegate: TrackerCardViewProtocol) {
+        self.id = id
+        delegate = plusDelegate
         cardView.configure(title: title, bgColor: bgColor, emoji: emoji)
-        quantityView.configure(buttonBg: bgColor, days: 0)
+        quantityView.configure(buttonBg: bgColor, days: 0, delegate: self)
     }
     
     override init(frame: CGRect) {
@@ -46,3 +55,9 @@ final class TrackerCardView: UICollectionViewCell {
     }
 }
 
+extension TrackerCardView: QuantityManagementViewProtocol {
+    func didTapPlusCardButton(with state: Bool) {
+        guard let id = id else { return }
+        delegate?.didTapPlusButton(with: id, and: state)
+    }
+}

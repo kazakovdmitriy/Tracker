@@ -55,8 +55,8 @@ final class MainButton: BaseView {
         button.isUserInteractionEnabled = true
     }
     
-    func setColors(bg: UIColor, title: UIColor) {
-        button.backgroundColor = bg
+    func setColors(bgColor: UIColor, title: UIColor) {
+        button.backgroundColor = bgColor
         button.setTitleColor(title, for: .normal)
     }
 }
@@ -77,8 +77,7 @@ extension MainButton {
             button.topAnchor.constraint(equalTo: topAnchor),
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            button.heightAnchor.constraint(equalToConstant: 60),
+            button.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
-

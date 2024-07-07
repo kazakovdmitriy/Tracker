@@ -65,9 +65,4 @@ extension StubView {
             stubEmptyImage.heightAnchor.constraint(equalTo: stubEmptyImage.widthAnchor)
         ])
     }
-    
-    override func configureAppearance() {
-        super.configureAppearance()
-        
-    }
 }

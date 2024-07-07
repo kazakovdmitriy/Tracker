@@ -15,7 +15,7 @@ final class TrackersTableViewCell: UITableViewCell {
     var roundedCorners: UIRectCorner = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         self.setupCell()
     }
     
@@ -40,7 +40,11 @@ final class TrackersTableViewCell: UITableViewCell {
         self.textLabel?.textColor = .ypBlack
     }
     
-    func configure(with text: String) {
-        self.textLabel?.text = text
+    func configure(with title: String) {
+        self.textLabel?.text = title
+    }
+    
+    func setSubtitle(with text: String) {
+        self.detailTextLabel?.text = text
     }
 }

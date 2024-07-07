@@ -8,7 +8,7 @@
 import UIKit
 
 enum WeekDays: CaseIterable {
-    case Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, None
+    case monday, tuesday, wednesday, thursday, friday, saturday, sunday, none
 }
 
 struct Tracker {

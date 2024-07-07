@@ -91,12 +91,7 @@ extension CardView {
             
             titleLabel.leadingAnchor.constraint(equalTo: backgroundColorView.leadingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: backgroundColorView.trailingAnchor, constant: -12),
-            titleLabel.bottomAnchor.constraint(equalTo: backgroundColorView.bottomAnchor, constant: -12),
+            titleLabel.bottomAnchor.constraint(equalTo: backgroundColorView.bottomAnchor, constant: -12)
         ])
-    }
-    
-    override func configureAppearance() {
-        super.configureAppearance()
-        
     }
 }

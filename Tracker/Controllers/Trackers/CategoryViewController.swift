@@ -7,11 +7,17 @@
 
 import UIKit
 
+protocol CategoryViewControllerDelegate: AnyObject {
+    func doneButtonTapped(selectedCategory: String)
+}
+
 final class CategoryViewController: PopUpViewController {
-    weak var delegate: ScheduleViewControllerDelegate?
     
+    // MARK: - Public Properties
+    weak var delegate: CategoryViewControllerDelegate?
     var tableCategory: [String] = []
     
+    // MARK: - Private Properties
     private let tableViewDelegate = CategoryTableViewDelegate()
     
     private lazy var categoryTableView: TrackersTableView<CategoryTableViewCell> = TrackersTableView(
@@ -23,6 +29,7 @@ final class CategoryViewController: PopUpViewController {
     private lazy var doneButton = MainButton(title: "Готово")
     private lazy var stubView = StubView()
     
+    // MARK: - Initializers
     init() {
         super.init(title: R.Strings.NavTitle.category)
     }
@@ -86,17 +93,19 @@ extension CategoryViewController {
             
             doneButton.configure(action: #selector(choiseCategoryButtonTapped))
         }
-        
-        
     }
-    
-    @objc private func choiseCategoryButtonTapped() {
-                
+}
+
+private extension CategoryViewController {
+    @objc func choiseCategoryButtonTapped() {
+        if let selectedCategory = tableViewDelegate.getSelectedCategory() {
+            delegate?.doneButtonTapped(selectedCategory: selectedCategory)
+        }
+        
         dismiss(animated: true)
     }
     
-    @objc private func addCategoryButtonTapped() {
-                
+    @objc func addCategoryButtonTapped() {
         dismiss(animated: true)
     }
 }

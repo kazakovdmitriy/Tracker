@@ -13,12 +13,14 @@ protocol ScheduleViewControllerDelegate: AnyObject {
 
 final class ScheduleViewController: PopUpViewController {
     
+    // MARK: - Public Properties
     weak var delegate: ScheduleViewControllerDelegate?
-    
     var tableCategory: [String] = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
+    // MARK: - Private Properties
     private let tableViewDelegate = ScheduleTableViewDelegate()
     private let cell = ScheduleTableViewCell()
+    
     private lazy var scheduleTableView: TrackersTableView<ScheduleTableViewCell> = TrackersTableView(
         cellType: ScheduleTableViewCell.self,
         cellIdentifier: ScheduleTableViewCell.reuseIdentifier,
@@ -27,6 +29,7 @@ final class ScheduleViewController: PopUpViewController {
     
     private lazy var doneButton = MainButton(title: "Готово")
     
+    // MARK: - Initializers
     init() {
         super.init(title: R.Strings.NavTitle.schedule)
     }
@@ -39,7 +42,6 @@ final class ScheduleViewController: PopUpViewController {
 extension ScheduleViewController {
     override func setupViews() {
         super.setupViews()
-        
         view.setupView(scheduleTableView)
         view.setupView(doneButton)
     }
@@ -48,7 +50,6 @@ extension ScheduleViewController {
         super.constraintViews()
         
         NSLayoutConstraint.activate([
-            
             scheduleTableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 87),
             scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -70,8 +71,10 @@ extension ScheduleViewController {
         
         doneButton.configure(action: #selector(doneButtonTapped))
     }
-    
-    @objc private func doneButtonTapped() {
+}
+
+private extension ScheduleViewController {
+    @objc func doneButtonTapped() {
         
         var activatedSwitches: [WeekDays] = []
         
@@ -80,24 +83,24 @@ extension ScheduleViewController {
             if let cell = scheduleTableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
                 // Проверяем активирован ли переключатель в ячейке
                 if cell.isActive {
-                    switch cell.switchView.tag {
-                    case 0: activatedSwitches.append(.Monday)
-                    case 1: activatedSwitches.append(.Tuesday)
-                    case 2: activatedSwitches.append(.Wednesday)
-                    case 3: activatedSwitches.append(.Thursday)
-                    case 4: activatedSwitches.append(.Friday)
-                    case 5: activatedSwitches.append(.Saturday)
-                    case 6: activatedSwitches.append(.Sunday)
-                    default: activatedSwitches.append(.None)
-                    }
-                    
+                    activatedSwitches.append(getWeekdays(cellIndex: cell.switchView.tag))
                 }
             }
         }
-        
-        // Теперь у вас в массиве activatedSwitches будут теги активированных switchView
         delegate?.doneButtonTapped(weakDays: activatedSwitches)
-        
         dismiss(animated: true)
+    }
+    
+    func getWeekdays(cellIndex: Int) -> WeekDays {
+        switch cellIndex {
+        case 0: return .monday
+        case 1: return .tuesday
+        case 2: return .wednesday
+        case 3: return .thursday
+        case 4: return .friday
+        case 5: return .saturday
+        case 6: return .sunday
+        default: return .none
+        }
     }
 }

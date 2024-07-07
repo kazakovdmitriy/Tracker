@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct TrackerRecord {
+struct TrackerRecord: Hashable {
     let id: UUID
     let dateComplete: Date
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(dateComplete)
+    }
 }
