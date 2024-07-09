@@ -22,7 +22,7 @@ class CreateBaseController: PopUpViewController {
         cellIdentifier: TrackersTableViewCell.reuseIdentifier
     )
     
-    private lazy var nameTrackerInputField: UITextField = {
+    internal lazy var nameTrackerInputField: UITextField = {
         let textField = UITextField()
         
         textField.backgroundColor = .ypBackground

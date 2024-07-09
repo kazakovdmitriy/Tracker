@@ -140,7 +140,9 @@ extension TrackersViewController {
         let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
         trackerStubView.configure(with: "Что будем отслеживать?", and: emptyImage)
         
-        if !categories.isEmpty {
+        // Проверка есть ли трекеры для текущего дня
+        let todayCategories = filterTrackersForToday()
+        if !todayCategories.isEmpty {
             hideStubView()
         } else {
             showStubView()
@@ -238,7 +240,8 @@ extension TrackersViewController: CreateBaseControllerDelegate {
     func didTapCreateTrackerButton(category: String, tracker: Tracker) {
         let newCategory = createNewTrackerList(to: category, tracker: tracker)
         categories = newCategory
-        updateCollectionView(with: newCategory)
+        let todaysCategory = filterTrackersForToday()
+        updateCollectionView(with: todaysCategory)
     }
 }
 

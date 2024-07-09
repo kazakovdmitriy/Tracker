@@ -44,7 +44,9 @@ extension TrackerCollectionViewDelegate: UICollectionViewDataSource {
             emoji: item.emoji,
             days: days,
             isDone: isDone,
-            plusDelegate: self)
+            plusDelegate: self,
+            date: currentDate ?? Date()
+        )
         
         cell.configure(config: config)
         

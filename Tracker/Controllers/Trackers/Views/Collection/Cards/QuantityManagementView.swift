@@ -47,7 +47,7 @@ final class QuantityManagementView: BaseView {
         return button
     }()
     
-    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol, isDone: Bool) {
+    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol, isDone: Bool, date: Date) {
         self.isDone = isDone
         self.delegate = delegate
         self.days = days
@@ -55,6 +55,12 @@ final class QuantityManagementView: BaseView {
         addButton.backgroundColor = buttonBg
         dateLabel.text = getDayString(for: days)
         changeButtonStatus()
+        
+        if date > Date() {
+            addButton.isEnabled = false
+        } else {
+            addButton.isEnabled = true
+        }
     }
     
     private func getDayString(for number: Int) -> String {
