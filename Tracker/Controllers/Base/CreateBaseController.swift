@@ -122,11 +122,19 @@ extension CreateBaseController {
         trackersTableView.delegate = tableViewDelegate
         tableViewDelegate?.data = tableCategory
         trackersTableView.dataSource = tableViewDelegate
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     func addActionToButton(create: Selector, cancle: Selector) {
         createButton.configure(action: create)
         cancleButton.configure(action: cancle)
+    }
+    
+    @objc private func handleTap() {
+        nameTrackerInputField.resignFirstResponder()
     }
 }
 

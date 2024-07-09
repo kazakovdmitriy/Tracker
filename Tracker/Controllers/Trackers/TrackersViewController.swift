@@ -20,7 +20,7 @@ final class TrackersViewController: BaseController {
                     name: "Поливать растения",
                     color: .ypColorSelection5,
                     emoji: "❤️",
-                    schedule: [.monday, .wednesday]),
+                    schedule: [.monday]),
             Tracker(id: UUID(uuidString: "BDE6641A-1AA1-4B3B-87C3-39C951548031") ?? UUID(),
                     name: "Кошка заслонила камеру на созвоне",
                     color: .ypColorSelection3,
@@ -30,7 +30,7 @@ final class TrackersViewController: BaseController {
                     name: "Бабушка прислала открытку в ватсапе",
                     color: .ypColorSelection11,
                     emoji: "🌸",
-                    schedule: [.thursday, .tuesday])
+                    schedule: [.monday, .thursday, .tuesday])
         ]),
         TrackerCategory(name: "Вторая категория", trackers: [
             Tracker(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
@@ -42,15 +42,25 @@ final class TrackersViewController: BaseController {
                     name: "Кошка заслонила камеру на созвоне",
                     color: .ypColorSelection3,
                     emoji: "😹",
-                    schedule: [.sunday, .saturday]),
+                    schedule: [.monday, .sunday, .saturday]),
             Tracker(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
                     name: "Бабушка прислала открытку в ватсапе",
                     color: .ypColorSelection11,
                     emoji: "🌸",
-                    schedule: [.wednesday, .tuesday, .friday])
+                    schedule: [.monday, .tuesday, .friday])
         ])
     ]
     private var completedTrackers: Set<TrackerRecord> = []
+    
+    private var trackerCategoriesList: [String] {
+        var trackerCategories: [String] = []
+        
+        for category in categories {
+            trackerCategories.append(category.name)
+        }
+        
+        return trackerCategories
+    }
     
     private lazy var trackerStubView = StubView()
     
@@ -131,12 +141,22 @@ extension TrackersViewController {
         trackerStubView.configure(with: "Что будем отслеживать?", and: emptyImage)
         
         if !categories.isEmpty {
-            trackerStubView.isHidden = true
+            hideStubView()
         } else {
-            trackerStubView.isHidden = false
+            showStubView()
         }
         
         configureCollectionView()
+    }
+    
+    private func showStubView() {
+        trackerStubView.isHidden = false
+        collectionView.isHidden = true
+    }
+    
+    private func hideStubView() {
+        trackerStubView.isHidden = true
+        collectionView.isHidden = false
     }
     
     private func setupNavigationBar() {
@@ -157,7 +177,7 @@ extension TrackersViewController {
         collectionLayout.itemSize = CGSize(width: view.frame.width - 20, height: 100)
         collectionLayout.minimumLineSpacing = 10
         
-        collectionDelegate.categories = categories
+        collectionDelegate.categories = filterTrackersForToday()
         collectionDelegate.completedTrackers = completedTrackers
         collectionDelegate.currentDate = currentDate
         
@@ -170,55 +190,199 @@ extension TrackersViewController {
         collectionView.register(TrackerSectionHeader.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
+        
+        let dateFormatter = ISO8601DateFormatter()
+        let newCompletedTrackers: Set<TrackerRecord> = [
+            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-01T10:44:00+03:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-02T10:44:00+03:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-03T10:44:00+03:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-04T10:44:00+03:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-04T10:44:00+30:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-05T10:44:00+30:00") ?? Date()),
+            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
+                          dateComplete: dateFormatter.date(from: "2024-07-01T10:44:00+30:00") ?? Date()),
+        ]
+        
+        collectionDelegate.completedTrackers = newCompletedTrackers
     }
 }
 
 extension TrackersViewController: CreateBaseControllerDelegate {
     
-    private func addTracker(to categoryName: String, tracker: Tracker) {
-        if let index = categories.firstIndex(where: { $0.name == categoryName }) {
+    private func createNewTrackerList(to categoryName: String, tracker: Tracker) -> [TrackerCategory] {
+        
+        var newCategories = categories
+        
+        if let index = newCategories.firstIndex(where: { $0.name == categoryName }) {
             // Категория уже существует, создаём новый экземпляр категории с добавленным трекером
             let category = categories[index]
             var newTrackers = category.trackers
             newTrackers.append(tracker)
             let updatedCategory = TrackerCategory(name: category.name, trackers: newTrackers)
-            categories[index] = updatedCategory
+            newCategories[index] = updatedCategory
         } else {
             // Категории не существует, создаём новую категорию и добавляем трекер
             let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
-            categories.append(newCategory)
+            newCategories.append(newCategory)
         }
+        
+        return newCategories
     }
     
     func didTapCreateTrackerButton(category: String, tracker: Tracker) {
-        addTracker(to: category, tracker: tracker)
+        let newCategory = createNewTrackerList(to: category, tracker: tracker)
+        categories = newCategory
+        updateCollectionView(with: newCategory)
     }
 }
 
 // MARK: - Selectors
 private extension TrackersViewController {
     @objc func addButtonTapped() {
-        
-        var trackerCategories: [String] = []
-        
-        for category in categories {
-            trackerCategories.append(category.name)
-        }
-        
         let createTrackerViewController = CreateTrackerViewController()
         createTrackerViewController.modalPresentationStyle = .popover
-        createTrackerViewController.categories = trackerCategories
+        createTrackerViewController.delegate = self
         
         present(createTrackerViewController, animated: true)
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        
+        let currentWeek = calendar.component(.weekday, from: currentDate)
+        let choiseWeek = calendar.component(.weekday, from: sender.date)
+        
+        if currentWeek == choiseWeek {
+            collectionView.reloadData()
+        }
+        
         let selectedDate = sender.date
         currentDate = selectedDate
-        
         collectionDelegate.currentDate = currentDate
         
-        print("Изменилась дата \(currentDate)")
+        let newCategories = filterTrackersForToday()
+        updateCollectionView(with: newCategories)
+    }
+}
+
+// MARK: - Update collection view
+private extension TrackersViewController {
+    
+    func getCurrentWeekDay() -> WeekDays? {
+        let weekDay = calendar.component(.weekday, from: currentDate)
+        
+        switch weekDay {
+        case 1: return .sunday
+        case 2: return .monday
+        case 3: return .tuesday
+        case 4: return .wednesday
+        case 5: return .thursday
+        case 6: return .friday
+        case 7: return .saturday
+        default: return nil
+        }
+    }
+    
+    func filterTrackersForToday() -> [TrackerCategory] {
+        guard let today = getCurrentWeekDay() else { return [] }
+        
+        var filteredCategories: [TrackerCategory] = []
+        
+        for category in categories {
+            let filteredTrackers = category.trackers.filter { $0.schedule.contains(today) }
+            if !filteredTrackers.isEmpty {
+                filteredCategories.append(TrackerCategory(name: category.name, trackers: filteredTrackers))
+            }
+        }
+        
+        return filteredCategories
+    }
+    
+    func updateCollectionView(with newCategories: [TrackerCategory]) {
+        
+        let oldCategories = collectionDelegate.categories
+        collectionDelegate.categories = newCategories
+        
+        if newCategories.isEmpty {
+            showStubView()
+            collectionView.reloadData()
+        } else {
+            hideStubView()
+            collectionView.performBatchUpdates({
+                let changes = diff(old: oldCategories, new: newCategories)
+                for change in changes {
+                    switch change {
+                    case let .insert(index):
+                        collectionView.insertSections(IndexSet(integer: index))
+                    case let .delete(index):
+                        collectionView.deleteSections(IndexSet(integer: index))
+                    case let .update(index):
+                        collectionView.reloadSections(IndexSet(integer: index))
+                    case let .move(from, to):
+                        collectionView.moveSection(from, toSection: to)
+                    }
+                }
+            })
+        }
+    }
+    
+    func diff(old: [TrackerCategory], new: [TrackerCategory]) -> [Change] {
+        var changes: [Change] = []
+        
+        let oldNames = old.map { $0.name }
+        let newNames = new.map { $0.name }
+        
+        let diffResult = newNames.difference(from: oldNames)
+        
+        for change in diffResult {
+            switch change {
+            case let .remove(offset, _, _):
+                changes.append(.delete(offset))
+            case let .insert(offset, _, _):
+                changes.append(.insert(offset))
+            }
+        }
+        
+        for (index, name) in oldNames.enumerated() {
+            if let newIndex = newNames.firstIndex(of: name), index != newIndex {
+                changes.append(.move(index, newIndex))
+            } else if let _ = newNames.firstIndex(of: name), new[index].trackers != old[index].trackers {
+                changes.append(.update(index))
+            }
+        }
+        
+        return changes
+    }
+    
+    enum Change {
+        case insert(Int)
+        case delete(Int)
+        case update(Int)
+        case move(Int, Int)
+    }
+}
+
+extension TrackersViewController: CreateTrackerViewControllerDelegate {
+    func selectedPracticeVC() {
+        let newPracticeVC = NewPracticeViewController()
+        newPracticeVC.modalPresentationStyle = .popover
+        newPracticeVC.categories = trackerCategoriesList
+        newPracticeVC.delegate = self
+        
+        present(newPracticeVC, animated: true)
+    }
+    
+    func selectedIrregularVC() {
+        let newIrregularVC = NewIrregularViewController()
+        newIrregularVC.modalPresentationStyle = .popover
+        newIrregularVC.categories = trackerCategoriesList
+        
+        present(newIrregularVC, animated: true)
     }
 }
 

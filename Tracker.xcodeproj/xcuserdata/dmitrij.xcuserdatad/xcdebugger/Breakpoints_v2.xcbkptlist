@@ -24,64 +24,238 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F9199651-6C78-4483-ADF1-193547871FCE"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
-            landmarkName = "addTracker(to:tracker:)"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "createNewTrackerList(to:tracker:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3E5AE920-A6FF-447B-BE07-520760658ADE"
+            uuid = "24958150-2C0D-4767-8EA1-58B2773122DF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Tracker/Controllers/Trackers/CreateTrackerViewController.swift"
+            filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
-            landmarkName = "practiceButtonTapped()"
+            startingLineNumber = "269"
+            endingLineNumber = "269"
+            landmarkName = "datePickerValueChanged(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9F0E9E43-3500-4BDC-BA24-E8810266E07F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "240"
+            endingLineNumber = "240"
+            landmarkName = "didTapCreateTrackerButton(category:tracker:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF392C41-C9AF-4D4D-ACA6-CF3B5515364B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "collectionView(_:cellForItemAt:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "3E5AE920-A6FF-447B-BE07-520760658ADE - b9ac7b36648d6084"
+                  uuid = "CF392C41-C9AF-4D4D-ACA6-CF3B5515364B - 44c1101cba19d0e9"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Tracker.CreateTrackerViewController.irregularButtonTapped() -&gt; ()"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
                   moduleName = "Tracker"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Controllers/Trackers/CreateTrackerViewController.swift"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "88"
-                  endingLineNumber = "88"
-                  offsetFromSymbolStart = "100">
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "1936">
                </Location>
                <Location
-                  uuid = "3E5AE920-A6FF-447B-BE07-520760658ADE - 7191010f2a8e8242"
+                  uuid = "CF392C41-C9AF-4D4D-ACA6-CF3B5515364B - 44c1101cba19d088"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Tracker.CreateTrackerViewController.practiceButtonTapped() -&gt; ()"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
                   moduleName = "Tracker"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Controllers/Trackers/CreateTrackerViewController.swift"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "88"
-                  endingLineNumber = "88"
-                  offsetFromSymbolStart = "1180">
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "2728">
+               </Location>
+               <Location
+                  uuid = "CF392C41-C9AF-4D4D-ACA6-CF3B5515364B - 44c1101cba19d0e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "2748">
+               </Location>
+               <Location
+                  uuid = "CF392C41-C9AF-4D4D-ACA6-CF3B5515364B - 44c1101cba19d0ce"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "2720">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C973A86A-0708-4672-A322-30EBA17E38ED"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Controllers/Trackers/Views/Collection/Cards/QuantityManagementView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "addButtonTapped()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C973A86A-0708-4672-A322-30EBA17E38ED - 2bee14024e934f64"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.QuantityManagementView.changeButtonStatus() -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Controllers/Trackers/Views/Collection/Cards/QuantityManagementView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "140"
+                  endingLineNumber = "140"
+                  offsetFromSymbolStart = "396">
+               </Location>
+               <Location
+                  uuid = "C973A86A-0708-4672-A322-30EBA17E38ED - f96ab68db3ba2c88"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.QuantityManagementView.addButtonTapped() -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Controllers/Trackers/Views/Collection/Cards/QuantityManagementView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "07AC4FBF-5084-44F6-A99A-A1121D2D1736"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "collectionView(_:cellForItemAt:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "07AC4FBF-5084-44F6-A99A-A1121D2D1736 - 44c1101cba19d153"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "2488">
+               </Location>
+               <Location
+                  uuid = "07AC4FBF-5084-44F6-A99A-A1121D2D1736 - 44c1101cba19d153"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerCollectionViewDelegate.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Delegates/Trackers/TrackerCollectionViewDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "2328">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9A788AC-6301-4331-A852-386C091BF6FB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Controllers/Trackers/Views/Collection/Cards/QuantityManagementView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "changeButtonStatus()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

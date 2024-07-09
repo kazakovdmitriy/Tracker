@@ -61,6 +61,8 @@ extension NewPracticeViewController {
         } else {
             print("[NewPracticeViewController]: Не выбрана категория")
         }
+        
+        dismiss(animated: true)
     }
 }
 

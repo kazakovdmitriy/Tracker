@@ -37,5 +37,15 @@ extension NewIrregularViewController {
         tableViewDelegate?.trackersCategory = categories
         
         super.configureAppearance()
+        
+        addActionToButton(create: #selector(createButtonTapped), cancle: #selector(cancleButtonTapped))
+    }
+    
+    @objc private func cancleButtonTapped() {
+        dismiss(animated: true)
+    }
+    
+    @objc private func createButtonTapped() {
+        print("Создание")
     }
 }

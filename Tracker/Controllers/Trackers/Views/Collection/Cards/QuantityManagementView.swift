@@ -16,7 +16,7 @@ final class QuantityManagementView: BaseView {
     weak var delegate: QuantityManagementViewProtocol?
     
     private var isDone: Bool = false
-    private var days: Int = 0
+    private var days: Int = 100
     
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
@@ -47,10 +47,14 @@ final class QuantityManagementView: BaseView {
         return button
     }()
     
-    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol) {
+    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol, isDone: Bool) {
+        self.isDone = isDone
+        self.delegate = delegate
+        self.days = days
+        
         addButton.backgroundColor = buttonBg
         dateLabel.text = getDayString(for: days)
-        self.delegate = delegate
+        changeButtonStatus()
     }
     
     private func getDayString(for number: Int) -> String {
@@ -97,7 +101,7 @@ extension QuantityManagementView {
 }
 
 extension QuantityManagementView {
-    private func makeButtonDone() {
+    func makeButtonDone() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
         let image = UIImage(systemName: "checkmark", 
                             withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
@@ -110,7 +114,7 @@ extension QuantityManagementView {
         }
     }
     
-    private func makeButtonAdd() {
+    func makeButtonAdd() {
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold, scale: .medium)
         let image = UIImage(systemName: "plus", 
                             withConfiguration: symbolConfiguration)?.withRenderingMode(.alwaysTemplate)
@@ -123,19 +127,27 @@ extension QuantityManagementView {
         }
     }
     
+    private func changeButtonStatus() {
+                
+        if isDone {
+            makeButtonDone()
+        } else {
+            makeButtonAdd()
+        }
+    }
+    
     @objc private func addButtonTapped() {
         
-        delegate?.didTapPlusCardButton(with: isDone)
-        
         if isDone {
-            makeButtonAdd()
             days -= 1
         } else {
-            makeButtonDone()
             days += 1
         }
-        
-        dateLabel.text = getDayString(for: days)
         isDone = !isDone
+        
+        changeButtonStatus()
+        dateLabel.text = getDayString(for: days)
+        
+        delegate?.didTapPlusCardButton(with: isDone)
     }
 }

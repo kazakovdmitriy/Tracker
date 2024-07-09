@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol CreateTrackerViewControllerDelegate: AnyObject {
+    func selectedPracticeVC()
+    func selectedIrregularVC()
+}
+
 final class CreateTrackerViewController: PopUpViewController {
     
     // MARK: - Public Properties
-    var categories: [String] = []
+    weak var delegate: CreateTrackerViewControllerDelegate?
 
     // MARK: - Private Properties
     private lazy var practiceButton = MainButton(title: "Привычка")
@@ -64,35 +69,14 @@ extension CreateTrackerViewController {
 // MARK: - Selectros
 private extension CreateTrackerViewController {
     @objc func practiceButtonTapped() {
-        
-        guard let tabBarController = self.presentingViewController as? TabBarController else {
-            print("Ошибка: Не удалось получить доступ к TabBarController")
-            return
+        dismiss(animated: true) {
+            self.delegate?.selectedPracticeVC()
         }
-        
-        guard let navController = tabBarController.selectedViewController as? UINavigationController else {
-            print("Ошибка: Не удалось получить доступ к UINavigationController в TabBarController")
-            return
-        }
-        
-        guard let trackersVC = navController.viewControllers.first(where: { $0 is TrackersViewController }) as? TrackersViewController else {
-            print("Ошибка: Не удалось найти TrackersViewController внутри UINavigationController")
-            return
-        }
-        
-        let newPracticeVC = NewPracticeViewController()
-        newPracticeVC.modalPresentationStyle = .popover
-        newPracticeVC.categories = categories
-        newPracticeVC.delegate = trackersVC
-        
-        present(newPracticeVC, animated: true)
     }
     
     @objc func irregularButtonTapped() {
-        let newIrregularVC = NewIrregularViewController()
-        newIrregularVC.modalPresentationStyle = .popover
-        newIrregularVC.categories = categories
-        
-        present(newIrregularVC, animated: true)
+        dismiss(animated: true) {
+            self.delegate?.selectedIrregularVC()
+        }
     }
 }
