@@ -28,7 +28,7 @@ final class ScheduleTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setupCell()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -43,12 +43,12 @@ final class ScheduleTableViewCell: UITableViewCell {
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath
-        self.layer.mask = mask
+        layer.mask = mask
     }
     
     func configure(with text: String, switchId: Int) {
-        self.textLabel?.text = text
-        self.switchView.tag = switchId
+        textLabel?.text = text
+        switchView.tag = switchId
     }
     
     func cellTapped() {
@@ -56,10 +56,11 @@ final class ScheduleTableViewCell: UITableViewCell {
     }
     
     private func setupCell() {
-        self.accessoryType = .disclosureIndicator
-        self.backgroundColor = .ypBackground
-        self.textLabel?.textColor = .ypBlack
+        accessoryType = .disclosureIndicator
+        backgroundColor = .ypBackground
+        textLabel?.textColor = .ypBlack
+        selectionStyle = .none
         
-        self.accessoryView = switchView
+        accessoryView = switchView
     }
 }

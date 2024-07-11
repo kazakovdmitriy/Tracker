@@ -13,10 +13,6 @@ final class TrackerCollectionViewDelegate: NSObject {
     var currentDate: Date?
 }
 
-extension TrackerCollectionViewDelegate: UICollectionViewDelegate {
-    
-}
-
 extension TrackerCollectionViewDelegate: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
@@ -128,21 +124,13 @@ extension TrackerCollectionViewDelegate: TrackerCardViewProtocol {
         
         guard let currentDate = currentDate else { return }
         
-        if currentDate > Date() {
-            print("Нельзя отмечать будущие трекеры")
-        } else {
-            print("Нажата кнопка плюс на трекере: \(id) в состоянии \(isActive) для даты: \(currentDate)")
+        if currentDate <= Date() {
             let newTrackerRecord = TrackerRecord(id: id, dateComplete: currentDate)
             
             if !isActive {
-                if let newTrackerRecord = completedTrackers.remove(newTrackerRecord) {
-                    print("\(newTrackerRecord) was removed.")
-                } else {
-                    print("Banana not found in the set.")
-                }
+                completedTrackers.remove(newTrackerRecord)
             } else {
                 completedTrackers.insert(newTrackerRecord)
-                print("\(newTrackerRecord) was add.")
             }
         }
     }

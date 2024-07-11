@@ -14,43 +14,8 @@ final class TrackersViewController: BaseController {
     private var currentDate: Date = Date()
     private let calendar = Calendar(identifier: .gregorian)
     
-    private var categories: [TrackerCategory] = [
-        TrackerCategory(name: "Домашний уют", trackers: [
-            Tracker(id: UUID(uuidString: "B81135FC-F8FE-4956-A19A-BD9F9F2086E3") ?? UUID(),
-                    name: "Поливать растения",
-                    color: .ypColorSelection5,
-                    emoji: "❤️",
-                    schedule: [.monday]),
-            Tracker(id: UUID(uuidString: "BDE6641A-1AA1-4B3B-87C3-39C951548031") ?? UUID(),
-                    name: "Кошка заслонила камеру на созвоне",
-                    color: .ypColorSelection3,
-                    emoji: "😹",
-                    schedule: [.monday, .friday, .sunday, .saturday]),
-            Tracker(id: UUID(uuidString: "8FE2AE56-98F5-496B-8FF9-0ECAA4C477DA") ?? UUID(),
-                    name: "Бабушка прислала открытку в ватсапе",
-                    color: .ypColorSelection11,
-                    emoji: "🌸",
-                    schedule: [.monday, .thursday, .tuesday])
-        ]),
-        TrackerCategory(name: "Вторая категория", trackers: [
-            Tracker(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
-                    name: "Поливать растения",
-                    color: .ypColorSelection5,
-                    emoji: "❤️",
-                    schedule: [.monday]),
-            Tracker(id: UUID(uuidString: "5F8AFE7A-53A4-4E71-BD9B-3DC7BDC5F4D4") ?? UUID(),
-                    name: "Кошка заслонила камеру на созвоне",
-                    color: .ypColorSelection3,
-                    emoji: "😹",
-                    schedule: [.monday, .sunday, .saturday]),
-            Tracker(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
-                    name: "Бабушка прислала открытку в ватсапе",
-                    color: .ypColorSelection11,
-                    emoji: "🌸",
-                    schedule: [.monday, .tuesday, .friday])
-        ])
-    ]
-    private var completedTrackers: Set<TrackerRecord> = []
+    private var categories: [TrackerCategory] = Mocks.categories
+    private var completedTrackers: Set<TrackerRecord> = Mocks.completedTrackers
     
     private var trackerCategoriesList: [String] {
         var trackerCategories: [String] = []
@@ -142,23 +107,28 @@ extension TrackersViewController {
         
         // Проверка есть ли трекеры для текущего дня
         let todayCategories = filterTrackersForToday()
-        if !todayCategories.isEmpty {
-            hideStubView()
-        } else {
-            showStubView()
-        }
+        
+        changeStateStubView(isHidden: !todayCategories.isEmpty)
+        
+//        if !todayCategories.isEmpty {
+//            hideStubView()
+//        } else {
+//            showStubView()
+//        }
         
         configureCollectionView()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
-    private func showStubView() {
-        trackerStubView.isHidden = false
-        collectionView.isHidden = true
+    @objc private func hideKeyboard() {
+        view.endEditing(true)
     }
     
-    private func hideStubView() {
-        trackerStubView.isHidden = true
-        collectionView.isHidden = false
+    private func changeStateStubView(isHidden: Bool) {
+        trackerStubView.isHidden = isHidden
+        collectionView.isHidden = !isHidden
     }
     
     private func setupNavigationBar() {
@@ -193,31 +163,22 @@ extension TrackersViewController {
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
         
-        let dateFormatter = ISO8601DateFormatter()
-        let newCompletedTrackers: Set<TrackerRecord> = [
-            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-01T10:44:00+03:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-02T10:44:00+03:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-03T10:44:00+03:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "A5EF31C6-A9CB-4E24-B14A-0619A253B739") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-04T10:44:00+03:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-04T10:44:00+30:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-05T10:44:00+30:00") ?? Date()),
-            TrackerRecord(id: UUID(uuidString: "F1406143-AC13-493C-BA82-8CF9FD7389B2") ?? UUID(),
-                          dateComplete: dateFormatter.date(from: "2024-07-01T10:44:00+30:00") ?? Date()),
-        ]
-        
-        collectionDelegate.completedTrackers = newCompletedTrackers
+        collectionDelegate.completedTrackers = completedTrackers
     }
 }
 
+// MARK: - CreateBaseContollerDelegate
 extension TrackersViewController: CreateBaseControllerDelegate {
+    func didTapCreateTrackerButton(category: String, 
+                                   tracker: Tracker) {
+        let newCategory = createNewTrackerList(to: category, tracker: tracker)
+        categories = newCategory
+        let todaysCategory = filterTrackersForToday()
+        updateCollectionView(with: todaysCategory)
+    }
     
-    private func createNewTrackerList(to categoryName: String, tracker: Tracker) -> [TrackerCategory] {
+    private func createNewTrackerList(to categoryName: String, 
+                                      tracker: Tracker) -> [TrackerCategory] {
         
         var newCategories = categories
         
@@ -235,13 +196,6 @@ extension TrackersViewController: CreateBaseControllerDelegate {
         }
         
         return newCategories
-    }
-    
-    func didTapCreateTrackerButton(category: String, tracker: Tracker) {
-        let newCategory = createNewTrackerList(to: category, tracker: tracker)
-        categories = newCategory
-        let todaysCategory = filterTrackersForToday()
-        updateCollectionView(with: todaysCategory)
     }
 }
 
@@ -312,10 +266,10 @@ private extension TrackersViewController {
         collectionDelegate.categories = newCategories
         
         if newCategories.isEmpty {
-            showStubView()
+            changeStateStubView(isHidden: false)
             collectionView.reloadData()
         } else {
-            hideStubView()
+            changeStateStubView(isHidden: true)
             collectionView.performBatchUpdates({
                 let changes = diff(old: oldCategories, new: newCategories)
                 for change in changes {
@@ -334,7 +288,8 @@ private extension TrackersViewController {
         }
     }
     
-    func diff(old: [TrackerCategory], new: [TrackerCategory]) -> [Change] {
+    func diff(old: [TrackerCategory], 
+              new: [TrackerCategory]) -> [Change] {
         var changes: [Change] = []
         
         let oldNames = old.map { $0.name }
@@ -391,5 +346,9 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
 
 // MARK: - UISearchBarDelegate
 extension TrackersViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        searchBar.resignFirstResponder()
+    }
     
 }

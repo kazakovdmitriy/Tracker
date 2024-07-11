@@ -20,6 +20,12 @@ final class TrackersTableView<CellType: UITableViewCell>: UITableView {
         self.separatorColor = .ypBackground
         
         self.register(cellType, forCellReuseIdentifier: cellIdentifier)
+        
+        if UIScreen.main.bounds.height <= 568 {
+            alwaysBounceVertical = true
+        } else {
+            alwaysBounceVertical = false
+        }
     }
     
     required init?(coder: NSCoder) {

@@ -16,7 +16,7 @@ final class TrackersTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        self.setupCell()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -31,20 +31,20 @@ final class TrackersTableViewCell: UITableViewCell {
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath
-        self.layer.mask = mask
-    }
-    
-    private func setupCell() {
-        self.accessoryType = .disclosureIndicator
-        self.backgroundColor = .ypBackground
-        self.textLabel?.textColor = .ypBlack
+        layer.mask = mask
     }
     
     func configure(with title: String) {
-        self.textLabel?.text = title
+        textLabel?.text = title
     }
     
     func setSubtitle(with text: String) {
-        self.detailTextLabel?.text = text
+        detailTextLabel?.text = text
+    }
+    
+    private func setupCell() {
+        accessoryType = .disclosureIndicator
+        backgroundColor = .ypBackground
+        textLabel?.textColor = .ypBlack
     }
 }

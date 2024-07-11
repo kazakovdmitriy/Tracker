@@ -19,7 +19,6 @@ final class ScheduleViewController: PopUpViewController {
     
     // MARK: - Private Properties
     private let tableViewDelegate = ScheduleTableViewDelegate()
-    private let cell = ScheduleTableViewCell()
     
     private lazy var scheduleTableView: TrackersTableView<ScheduleTableViewCell> = TrackersTableView(
         cellType: ScheduleTableViewCell.self,

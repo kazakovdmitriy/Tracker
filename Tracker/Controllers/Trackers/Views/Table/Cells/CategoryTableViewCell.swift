@@ -28,8 +28,8 @@ final class CategoryTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setupSubviews()
-        self.setupCell()
+        setupSubviews()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -44,11 +44,11 @@ final class CategoryTableViewCell: UITableViewCell {
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath
-        self.layer.mask = mask
+        layer.mask = mask
     }
     
     func configure(with text: String, isSelected: Bool = false) {
-        self.textLabel?.text = text
+        textLabel?.text = text
         checkmarkImageView.isHidden = !isSelected
     }
     
@@ -64,10 +64,10 @@ final class CategoryTableViewCell: UITableViewCell {
     }
     
     private func setupCell() {
-        self.accessoryType = .disclosureIndicator
-        self.backgroundColor = .ypBackground
-        self.textLabel?.textColor = .ypBlack
+        accessoryType = .disclosureIndicator
+        backgroundColor = .ypBackground
+        textLabel?.textColor = .ypBlack
         
-        self.accessoryView = checkmarkImageView
+        accessoryView = checkmarkImageView
     }
 }

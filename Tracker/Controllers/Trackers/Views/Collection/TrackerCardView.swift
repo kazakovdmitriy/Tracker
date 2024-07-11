@@ -7,8 +7,6 @@
 
 import UIKit
 
-// func configure(id: UUID, title: String, bgColor: UIColor, emoji: String, isDoneTracker: Bool, plusDelegate: TrackerCardViewProtocol)
-
 struct TrackerCardConfig {
     let id: UUID
     let title: String
@@ -26,9 +24,9 @@ protocol TrackerCardViewProtocol: AnyObject {
 
 final class TrackerCardView: UICollectionViewCell {
     
-    weak var delegate: TrackerCardViewProtocol?
-    
     static let reuseIdentifier = "TrackerCardView"
+    
+    weak var delegate: TrackerCardViewProtocol?
     
     private var id: UUID?
     private lazy var cardView = CardView()

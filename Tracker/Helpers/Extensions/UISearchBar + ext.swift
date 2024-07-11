@@ -7,7 +7,7 @@
 
 import UIKit
 
-public extension UISearchBar {
+extension UISearchBar {
 
     func setTextColor(color: UIColor) {
         let svs = subviews.flatMap { $0.subviews }

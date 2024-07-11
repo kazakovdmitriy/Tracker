@@ -13,16 +13,14 @@ protocol CreateBaseControllerDelegate: AnyObject {
 
 class CreateBaseController: PopUpViewController {
     
-    var tableCategory: [String]
-    var trackerCategory: [String]
     var tableViewDelegate: TrackersTableViewDelegate?
-    
+        
     lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
         cellType: TrackersTableViewCell.self,
         cellIdentifier: TrackersTableViewCell.reuseIdentifier
     )
     
-    internal lazy var nameTrackerInputField: UITextField = {
+    lazy var nameTrackerInputField: UITextField = {
         let textField = UITextField()
         
         textField.backgroundColor = .ypBackground
@@ -34,7 +32,15 @@ class CreateBaseController: PopUpViewController {
         )
         textField.textColor = .ypBlack
         
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        textField.rightView = paddingView
+        textField.rightViewMode = .always
+        
+        textField.layer.borderColor = UIColor.clear.cgColor
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         
@@ -44,8 +50,6 @@ class CreateBaseController: PopUpViewController {
         
         return textField
     }()
-    
-    private let cell = TrackersTableViewCell()
     
     private lazy var cancleButton = MainButton(title: "Отменить")
     private lazy var createButton = MainButton(title: "Создать")
@@ -58,6 +62,9 @@ class CreateBaseController: PopUpViewController {
         
         return stack
     }()
+    
+    private let tableCategory: [String]
+    private let trackerCategory: [String]
     
     init(title: String,
          tableCategory: [String],
