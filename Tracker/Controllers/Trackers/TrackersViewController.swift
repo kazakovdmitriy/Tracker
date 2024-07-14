@@ -62,7 +62,7 @@ final class TrackersViewController: BaseController {
     
     private let collectionLayout = UICollectionViewFlowLayout()
     private let collectionDelegate = TrackerCollectionViewDelegate()
-    private lazy var collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: collectionLayout)
+    private lazy var collectionView = UICollectionView(frame: view.frame, collectionViewLayout: collectionLayout)
 }
 
 // MARK: - Setup View
@@ -110,12 +110,6 @@ extension TrackersViewController {
         
         changeStateStubView(isHidden: !todayCategories.isEmpty)
         
-//        if !todayCategories.isEmpty {
-//            hideStubView()
-//        } else {
-//            showStubView()
-//        }
-        
         configureCollectionView()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -135,7 +129,7 @@ extension TrackersViewController {
         // Устанавливаем крупный заголовок
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.title = R.Strings.NavBar.trackers
+        navigationItem.title = Strings.NavBar.trackers
         
         navigationItem.leftBarButtonItem = addButton
         

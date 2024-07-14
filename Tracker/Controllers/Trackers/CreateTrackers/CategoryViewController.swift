@@ -31,7 +31,7 @@ final class CategoryViewController: PopUpViewController {
     
     // MARK: - Initializers
     init() {
-        super.init(title: R.Strings.NavTitle.category)
+        super.init(title: Strings.NavTitle.category)
     }
     
     required init?(coder: NSCoder) {

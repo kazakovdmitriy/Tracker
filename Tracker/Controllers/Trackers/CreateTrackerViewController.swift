@@ -18,8 +18,8 @@ final class CreateTrackerViewController: PopUpViewController {
     weak var delegate: CreateTrackerViewControllerDelegate?
 
     // MARK: - Private Properties
-    private lazy var practiceButton = MainButton(title: "Привычка")
-    private lazy var irregularEventButton = MainButton(title: "Нерегулярные событие")
+    private lazy var practiceButton = MainButton(title: Strings.CreateTrackerVC.practiceButton)
+    private lazy var irregularEventButton = MainButton(title: Strings.CreateTrackerVC.irregularEventButton)
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -29,7 +29,7 @@ final class CreateTrackerViewController: PopUpViewController {
     
     // MARK: - Initializers
     init() {
-        super.init(title: R.Strings.NavTitle.createTrackers)
+        super.init(title: Strings.NavTitle.createTrackers)
     }
     
     required init?(coder: NSCoder) {

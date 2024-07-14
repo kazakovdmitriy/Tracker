@@ -7,17 +7,6 @@
 
 import UIKit
 
-struct TrackerCardConfig {
-    let id: UUID
-    let title: String
-    let color: UIColor
-    let emoji: String
-    let days: Int
-    let isDone: Bool
-    let plusDelegate: TrackerCardViewProtocol
-    let date: Date
-}
-
 protocol TrackerCardViewProtocol: AnyObject {
     func didTapPlusButton(with id: UUID, isActive: Bool)
 }
@@ -42,11 +31,8 @@ final class TrackerCardView: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        cardView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(cardView)
-        
-        quantityView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(quantityView)
+        contentView.setupView(cardView)
+        contentView.setupView(quantityView)
         
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor),

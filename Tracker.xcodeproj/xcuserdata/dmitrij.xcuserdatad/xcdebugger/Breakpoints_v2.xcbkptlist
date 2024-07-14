@@ -30,8 +30,8 @@
             filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "226"
-            endingLineNumber = "226"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
             landmarkName = "datePickerValueChanged(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "didTapCreateTrackerButton(category:tracker:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -252,8 +252,8 @@
             filePath = "Tracker/Controllers/Trackers/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
             landmarkName = "updateCollectionView(with:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -17,7 +17,7 @@ final class NewIrregularViewController: CreateBaseController {
     
     // MARK: - Initializers
     init() {
-        super.init(title: R.Strings.NavTitle.newIrregular,
+        super.init(title: Strings.NavTitle.newIrregular,
                    tableCategory: ["Категория"],
                    trackerCategory: categories
         )

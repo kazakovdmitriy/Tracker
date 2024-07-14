@@ -13,7 +13,7 @@ final class StatisticsViewController: BaseController {
         let label = UILabel()
         
         label.text = "Анализировать пока нечего"
-        label.font = R.Fonts.sfPro(with: 12)
+        label.font = Fonts.sfPro(with: 12)
         label.textColor = .ypBlack
         label.textAlignment = .center
         
@@ -80,6 +80,6 @@ private extension StatisticsViewController {
         // Устанавливаем крупный заголовок
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.title = R.Strings.NavBar.statistics
+        navigationItem.title = Strings.NavBar.statistics
     }
 }

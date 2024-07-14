@@ -19,7 +19,7 @@ final class StubView: BaseView {
     private lazy var stubEmptyLabel: UILabel = {
         let label = UILabel()
         
-        label.font = R.Fonts.sfPro(with: 12)
+        label.font = Fonts.sfPro(with: 12)
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.numberOfLines = 0

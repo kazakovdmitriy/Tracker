@@ -19,7 +19,7 @@ final class NewPracticeViewController: CreateBaseController {
     
     // MARK: - Initializers
     init() {
-        super.init(title: R.Strings.NavTitle.newPractice,
+        super.init(title: Strings.NavTitle.newPractice,
                    tableCategory: ["Категория", "Расписание"],
                    trackerCategory: categories
         )

@@ -30,7 +30,7 @@ final class ScheduleViewController: PopUpViewController {
     
     // MARK: - Initializers
     init() {
-        super.init(title: R.Strings.NavTitle.schedule)
+        super.init(title: Strings.NavTitle.schedule)
     }
     
     required init?(coder: NSCoder) {
