@@ -7,6 +7,12 @@
 
 import UIKit
 
+struct TrackerData {
+    let name: String
+    let emoji: String
+    let color: UIColor
+}
+
 protocol CreateBaseControllerDelegate: AnyObject {
     func didTapCreateTrackerButton(category: String, tracker: Tracker)
 }
@@ -26,7 +32,7 @@ class CreateBaseController: PopUpViewController {
         return view
     }()
     
-    lazy var nameTrackerInputField: UITextField = {
+    private lazy var nameTrackerInputField: UITextField = {
         let textField = UITextField()
         
         textField.backgroundColor = .ypBackground
@@ -109,6 +115,19 @@ class CreateBaseController: PopUpViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func getData() -> TrackerData? {
+        
+        guard 
+            let index1 = selectedIndexPathSection1?.row,
+            let index2 = selectedIndexPathSection2?.row,
+            let name = nameTrackerInputField.text
+        else {
+            return nil
+        }
+        
+        return TrackerData(name: name, emoji: emojiList[index1], color: colorList[index2])
     }
 }
 

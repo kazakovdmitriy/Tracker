@@ -50,12 +50,13 @@ extension NewPracticeViewController {
         
         if let category = tableDelegate.choiseCategory {
             let schedule = tableDelegate.weekDaysSchedule
-            let title = nameTrackerInputField.text ?? ""
+            
+            guard let trackerData = getData() else { return }
             
             let newTracker = Tracker(id: UUID(),
-                                     name: title,
-                                     color: .ypColorSelection13,
-                                     emoji: "🤡",
+                                     name: trackerData.name,
+                                     color: trackerData.color,
+                                     emoji: trackerData.emoji,
                                      schedule: schedule)
             
             delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
