@@ -16,7 +16,7 @@ final class QuantityManagementView: BaseView {
     weak var delegate: QuantityManagementViewProtocol?
     
     private var isDone: Bool = false
-    private var days: Int = 100
+    private var days: Int = 0
     
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
@@ -47,7 +47,11 @@ final class QuantityManagementView: BaseView {
         return button
     }()
     
-    func configure(buttonBg: UIColor, days: Int, delegate: QuantityManagementViewProtocol, isDone: Bool, date: Date) {
+    func configure(buttonBg: UIColor, 
+                   days: Int,
+                   delegate: QuantityManagementViewProtocol,
+                   isDone: Bool,
+                   date: Date) {
         self.isDone = isDone
         self.delegate = delegate
         self.days = days

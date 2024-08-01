@@ -7,10 +7,6 @@
 
 import UIKit
 
-enum WeekDays: CaseIterable {
-    case monday, tuesday, wednesday, thursday, friday, saturday, sunday, none
-}
-
 struct Tracker: Equatable {
     let id: UUID
     let name: String

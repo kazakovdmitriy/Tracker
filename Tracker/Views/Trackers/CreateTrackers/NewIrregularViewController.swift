@@ -10,10 +10,11 @@ import UIKit
 final class NewIrregularViewController: CreateBaseController {
     
     // MARK: - Public Properties
+    weak var delegate: CreateBaseControllerDelegate?
     var categories: [String] = []
     
     // MARK: - Private Properties
-    private var tableDelegate: TrackersTableViewDelegate?
+    private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
     init() {
@@ -46,6 +47,22 @@ extension NewIrregularViewController {
     }
     
     @objc private func createButtonTapped() {
-        print("Создание")
+        if let category = tableDelegate.choiseCategory {
+            
+            guard let trackerData = getData() else { return }
+            
+            let newTracker = Tracker(id: UUID(),
+                                     name: trackerData.name,
+                                     color: trackerData.color,
+                                     emoji: trackerData.emoji,
+                                     schedule: [WeekDays.none])
+            
+            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
+        } else {
+            print("[NewPracticeViewController]: Не выбрана категория")
+        }
+        
+        dismiss(animated: true)
     }
 }
+

@@ -30,6 +30,7 @@ final class NewPracticeViewController: CreateBaseController {
     }
 }
 
+// MARK: - Buttons handlers
 extension NewPracticeViewController {
     override func configureAppearance() {
         tableDelegate.view = self
@@ -39,7 +40,8 @@ extension NewPracticeViewController {
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped), cancle: #selector(cancleButtonTapped))
+        addActionToButton(create: #selector(createButtonTapped), 
+                          cancle: #selector(cancleButtonTapped))
     }
     
     @objc private func cancleButtonTapped() {
@@ -71,13 +73,13 @@ extension NewPracticeViewController {
 extension NewPracticeViewController: ScheduleViewControllerDelegate {
     func doneButtonTapped(weakDays weekDays: [WeekDays]) {
         tableDelegate.weekDaysSchedule = weekDays
-        trackersTableView.reloadData()
+        reloadTable()
     }
 }
 
 extension NewPracticeViewController: CategoryViewControllerDelegate {
     func doneButtonTapped(selectedCategory: String) {
         tableDelegate.choiseCategory = selectedCategory
-        trackersTableView.reloadData()
+        reloadTable()
     }
 }
