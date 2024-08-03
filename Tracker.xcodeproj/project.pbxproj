@@ -43,7 +43,7 @@
 		687C99302C432C2100559766 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 687C992F2C432C2100559766 /* Images.swift */; };
 		687C99322C432D4E00559766 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 687C99312C432D4E00559766 /* Strings.swift */; };
 		689375D12C2E15D1004B67E3 /* StubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689375D02C2E15D1004B67E3 /* StubView.swift */; };
-		689375D32C2E1943004B67E3 /* CreateTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689375D22C2E1943004B67E3 /* CreateTrackerViewController.swift */; };
+		689375D32C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689375D22C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift */; };
 		689375D52C2E1A04004B67E3 /* MainButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689375D42C2E1A04004B67E3 /* MainButton.swift */; };
 		68A87C1F2C2489E400263A5E /* UIView + ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A87C1E2C2489E400263A5E /* UIView + ext.swift */; };
 		68A87C212C248CE700263A5E /* BaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A87C202C248CE700263A5E /* BaseController.swift */; };
@@ -100,7 +100,7 @@
 		687C992F2C432C2100559766 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		687C99312C432D4E00559766 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		689375D02C2E15D1004B67E3 /* StubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubView.swift; sourceTree = "<group>"; };
-		689375D22C2E1943004B67E3 /* CreateTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrackerViewController.swift; sourceTree = "<group>"; };
+		689375D22C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiseTypeTrackerViewController.swift; sourceTree = "<group>"; };
 		689375D42C2E1A04004B67E3 /* MainButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainButton.swift; sourceTree = "<group>"; };
 		68A87C1E2C2489E400263A5E /* UIView + ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView + ext.swift"; sourceTree = "<group>"; };
 		68A87C202C248CE700263A5E /* BaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseController.swift; sourceTree = "<group>"; };
@@ -217,7 +217,7 @@
 				68FBA1652C432EBA00173177 /* CreateTrackers */,
 				6837ED572C246FF000B66453 /* Views */,
 				6837ED552C246F7F00B66453 /* TrackersViewController.swift */,
-				689375D22C2E1943004B67E3 /* CreateTrackerViewController.swift */,
+				689375D22C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift */,
 			);
 			path = Trackers;
 			sourceTree = "<group>";
@@ -512,7 +512,7 @@
 				68613C092C3173E8003177B4 /* TrackersTableView.swift in Sources */,
 				686F51622C29978B0020B804 /* CardView.swift in Sources */,
 				68A87C232C24AAF400263A5E /* UISearchBar + ext.swift in Sources */,
-				689375D32C2E1943004B67E3 /* CreateTrackerViewController.swift in Sources */,
+				689375D32C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -31,7 +31,6 @@ final class NewIrregularViewController: CreateBaseController {
 
 extension NewIrregularViewController {
     override func configureAppearance() {
-        let tableDelegate = TrackersTableViewDelegate()
         tableDelegate.view = self
         
         tableViewDelegate = tableDelegate
@@ -39,7 +38,8 @@ extension NewIrregularViewController {
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped), cancle: #selector(cancleButtonTapped))
+        addActionToButton(create: #selector(createButtonTapped), 
+                          cancle: #selector(cancleButtonTapped))
     }
     
     @objc private func cancleButtonTapped() {
@@ -47,6 +47,7 @@ extension NewIrregularViewController {
     }
     
     @objc private func createButtonTapped() {
+        
         if let category = tableDelegate.choiseCategory {
             
             guard let trackerData = getData() else { return }
@@ -55,14 +56,27 @@ extension NewIrregularViewController {
                                      name: trackerData.name,
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
-                                     schedule: [WeekDays.none])
+                                     type: .irregular,
+                                     schedule: [WeekDays.monday, 
+                                                WeekDays.tuesday,
+                                                WeekDays.wednesday,
+                                                WeekDays.thursday,
+                                                WeekDays.friday,
+                                                WeekDays.saturday,
+                                                WeekDays.sunday])
             
             delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
         } else {
-            print("[NewPracticeViewController]: Не выбрана категория")
+            print("[NewIrregularViewController]: Не выбрана категория")
         }
         
         dismiss(animated: true)
     }
 }
 
+extension NewIrregularViewController: CategoryViewControllerDelegate {
+    func doneButtonTapped(selectedCategory: String) {
+        tableDelegate.choiseCategory = selectedCategory
+        reloadTable()
+    }
+}

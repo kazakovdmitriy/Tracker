@@ -209,7 +209,7 @@ extension TrackersViewController: CreateBaseControllerDelegate {
 // MARK: - Selectors
 private extension TrackersViewController {
     @objc func addButtonTapped() {
-        let createTrackerViewController = CreateTrackerViewController()
+        let createTrackerViewController = ChoiseTypeTrackerViewController()
         createTrackerViewController.modalPresentationStyle = .popover
         createTrackerViewController.delegate = self
         
@@ -258,7 +258,10 @@ private extension TrackersViewController {
         var filteredCategories: [TrackerCategory] = []
         
         for category in categories {
-            let filteredTrackers = category.trackers.filter { $0.schedule.contains(today) }
+            let filteredTrackers = category.trackers.filter {
+                // TODO: выяснить, нужно ли отображать нерегулярное событие в день, когда оно было выполнено
+                ($0.schedule.contains(today) && $0.type == .practice) || ($0.type == .irregular && !completedTrackers.containtRecord(withId: $0.id))
+            }
             if !filteredTrackers.isEmpty {
                 filteredCategories.append(TrackerCategory(name: category.name, trackers: filteredTrackers))
             }
@@ -313,7 +316,6 @@ private extension TrackersViewController {
             }
         }
         
-        // TODO: Добавить каким-то образом изменение, если изменилось количество записей в completedTrackers
         for (index, name) in oldNames.enumerated() {
             if let newIndex = newNames.firstIndex(of: name), index != newIndex {
                 changes.append(.move(index, newIndex))
@@ -364,6 +366,7 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
         let newIrregularVC = NewIrregularViewController()
         newIrregularVC.modalPresentationStyle = .popover
         newIrregularVC.categories = ["Тестовая"] // TODO: не забудь удалить потом
+        newIrregularVC.delegate = self
         
         present(newIrregularVC, animated: true)
     }

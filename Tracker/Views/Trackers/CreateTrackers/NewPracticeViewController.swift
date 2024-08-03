@@ -59,6 +59,7 @@ extension NewPracticeViewController {
                                      name: trackerData.name,
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
+                                     type: .practice,
                                      schedule: schedule)
             
             delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)

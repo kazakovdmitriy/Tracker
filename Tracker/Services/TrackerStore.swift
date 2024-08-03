@@ -30,7 +30,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     
     private func initializeFetchedResultsController() {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                               managedObjectContext: context,
@@ -52,6 +52,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         trackerEntity.name = tracker.name
         trackerEntity.emoji = tracker.emoji
         trackerEntity.color = tracker.color
+        trackerEntity.isPractice = tracker.type == .practice ? true : false
         trackerEntity.schedule = tracker.schedule as NSObject
         
         saveContext()
@@ -88,10 +89,13 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             throw TrackerStoreError.decodingErrorInvalidScedule
         }
         
+        let isPratice = trackerEntity.isPractice
+        
         return Tracker(id: id,
                        name: name,
                        color: color,
                        emoji: emoji,
+                       type: isPratice ? .practice : .irregular,
                        schedule: schedule)
     }
     

@@ -8,8 +8,7 @@
 import UIKit
 
 final class TrackersTableViewDelegate: NSObject {
-    
-    weak var view: UIViewController?
+    weak var view: CreateBaseController?
     var data: [String] = []
     var trackersCategory: [String] = []
     var weekDaysSchedule: [WeekDays] = []
@@ -44,6 +43,7 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
             if indexPath.row == 0 {
                 let choiseCategoryVC = CategoryViewController()
                 choiseCategoryVC.tableCategory = trackersCategory
+                choiseCategoryVC.delegate = view
                 view.present(choiseCategoryVC, animated: true)
             }
         } else {
