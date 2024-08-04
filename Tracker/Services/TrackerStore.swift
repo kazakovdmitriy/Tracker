@@ -45,7 +45,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func createTracker(tracker: Tracker) -> TrackerCoreData? {
+    func createTracker(tracker: Tracker) {
         let trackerEntity = TrackerCoreData(context: context)
         
         trackerEntity.id = tracker.id
@@ -56,7 +56,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         trackerEntity.schedule = tracker.schedule as NSObject
         
         saveContext()
-        return trackerEntity
     }
     
     func fetchedObjects() -> [Tracker] {
@@ -65,11 +64,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
         
         return trackerEntities.compactMap { try? tracker(from: $0) }
-    }
-    
-    func delete(entity1: TrackerCoreData) {
-        context.delete(entity1)
-        saveContext()
     }
     
     private func tracker(from trackerEntity: TrackerCoreData) throws -> Tracker {

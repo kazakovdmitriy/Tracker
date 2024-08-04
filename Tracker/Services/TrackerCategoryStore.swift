@@ -5,13 +5,12 @@
 //  Created by Дмитрий on 02.08.2024.
 //
 
-import Foundation
 import CoreData
 
 final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
+    
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
-    
     
     init(context: NSManagedObjectContext = CoreDataService.shared.context) {
         self.context = context
@@ -19,13 +18,12 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         initializeFetchedResultsController()
     }
     
-    func createTrackerRecord(trackerCategory: TrackerCategory) -> TrackerCategoryCoreData? {
+    func createTrackerRecord(trackerCategory: TrackerCategory) {
         let trackerCategoryEntity = TrackerCategoryCoreData(context: context)
         
         trackerCategoryEntity.name = trackerCategory.name
         
         saveContext()
-        return trackerCategoryEntity
     }
     
     func fetchedObjects() -> [TrackerCategory] {
@@ -34,26 +32,6 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         }
         
         return trackerEntities.compactMap { try? trackerCategory(from: $0) }
-    }
-    
-    func fetchTrackerRecord(trackerCategory: TrackerCategory) throws -> TrackerCategoryCoreData? {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@",
-                                             trackerCategory.name as CVarArg)
-        fetchRequest.fetchLimit = 1
-        
-        do {
-            let results = try context.fetch(fetchRequest)
-            return results.first
-        } catch {
-            print("Failed to fetch TrackerRecord: \(error)")
-            throw TrackerRecordStoreError.fetchError
-        }
-    }
-    
-    func delete(entity1: TrackerRecordCoreData) {
-        context.delete(entity1)
-        saveContext()
     }
     
     private func saveContext() {

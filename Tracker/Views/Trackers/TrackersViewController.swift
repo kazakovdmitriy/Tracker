@@ -175,7 +175,7 @@ extension TrackersViewController: CreateBaseControllerDelegate {
     func didTapCreateTrackerButton(category: String,
                                    tracker: Tracker) {
         
-        let _ = trackerStore.createTracker(tracker: tracker)
+        trackerStore.createTracker(tracker: tracker)
         
         let newCategory = createNewTrackerList(to: category, 
                                                tracker: tracker)
@@ -258,9 +258,16 @@ private extension TrackersViewController {
         var filteredCategories: [TrackerCategory] = []
         
         for category in categories {
-            let filteredTrackers = category.trackers.filter {
-                // TODO: выяснить, нужно ли отображать нерегулярное событие в день, когда оно было выполнено
-                ($0.schedule.contains(today) && $0.type == .practice) || ($0.type == .irregular && !completedTrackers.containtRecord(withId: $0.id))
+            let filteredTrackers = category.trackers.filter { (tracker: Tracker) in                
+                switch tracker.type {
+                case .practice:
+                    return tracker.schedule.contains(today)
+                case .irregular:
+                    return (
+                        !completedTrackers.containtRecord(withId: tracker.id) || 
+                        completedTrackers.containtRecordForDay(withId: tracker.id, andDate: currentDate)
+                    )
+                }
             }
             if !filteredTrackers.isEmpty {
                 filteredCategories.append(TrackerCategory(name: category.name, trackers: filteredTrackers))

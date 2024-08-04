@@ -137,12 +137,10 @@ extension TrackerCollectionViewDelegate: TrackerCardViewProtocol {
             
             if !isActive {
                 completedTrackers.remove(newTrackerRecord)
-                if let deleteTrackerRecord = try? trackerRecordStore.fetchTrackerRecord(trackerRecord: newTrackerRecord) {
-                    trackerRecordStore.delete(entity1: deleteTrackerRecord)
-                }
+                try? trackerRecordStore.delete(trackerRecord: newTrackerRecord)
             } else {
                 completedTrackers.insert(newTrackerRecord)
-                _ = trackerRecordStore.createTrackerRecord(trackerRecord: newTrackerRecord)
+                trackerRecordStore.createTrackerRecord(trackerRecord: newTrackerRecord)
             }
         }
         

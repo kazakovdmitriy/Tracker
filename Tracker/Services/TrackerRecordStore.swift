@@ -5,7 +5,6 @@
 //  Created by Дмитрий on 31.07.2024.
 //
 
-import Foundation
 import CoreData
 
 enum TrackerRecordStoreError: Error {
@@ -19,21 +18,19 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     
-    
     init(context: NSManagedObjectContext = CoreDataService.shared.context) {
         self.context = context
         super.init()
         initializeFetchedResultsController()
     }
     
-    func createTrackerRecord(trackerRecord: TrackerRecord) -> TrackerRecordCoreData? {
+    func createTrackerRecord(trackerRecord: TrackerRecord) {
         let trackerRecordEntity = TrackerRecordCoreData(context: context)
         
         trackerRecordEntity.id = trackerRecord.id
         trackerRecordEntity.dateComplete = trackerRecord.dateComplete
         
         saveContext()
-        return trackerRecordEntity
     }
     
     func fetchedObjects() -> Set<TrackerRecord> {
@@ -44,25 +41,24 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         return Set(trackerEntities.compactMap { try? trackerRecord(from: $0) })
     }
     
-    func fetchTrackerRecord(trackerRecord: TrackerRecord) throws -> TrackerRecordCoreData? {
+    func delete(trackerRecord: TrackerRecord) throws {
+        
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@", 
+        fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@",
                                              trackerRecord.id as CVarArg,
                                              trackerRecord.dateComplete as CVarArg)
         fetchRequest.fetchLimit = 1
         
         do {
             let results = try context.fetch(fetchRequest)
-            return results.first
+            if let entity1 = results.first {
+                context.delete(entity1)
+                saveContext()
+            }
         } catch {
             print("Failed to fetch TrackerRecord: \(error)")
             throw TrackerRecordStoreError.fetchError
         }
-    }
-    
-    func delete(entity1: TrackerRecordCoreData) {
-        context.delete(entity1)
-        saveContext()
     }
     
     private func saveContext() {

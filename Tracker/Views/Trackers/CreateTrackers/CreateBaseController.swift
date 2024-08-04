@@ -28,9 +28,12 @@ class CreateBaseController: PopUpViewController {
     ]
     
     private let colorList: [UIColor] = [
-        .ypColorSelection1, .ypColorSelection2, .ypColorSelection3, .ypColorSelection4, .ypColorSelection5, .ypColorSelection6,
-        .ypColorSelection7, .ypColorSelection8, .ypColorSelection9, .ypColorSelection10, .ypColorSelection11, .ypColorSelection12,
-        .ypColorSelection13, .ypColorSelection14, .ypColorSelection15, .ypColorSelection16, .ypColorSelection17, .ypColorSelection18,
+        .ypColorSelection1, .ypColorSelection2, .ypColorSelection3, 
+        .ypColorSelection4, .ypColorSelection5, .ypColorSelection6,
+        .ypColorSelection7, .ypColorSelection8, .ypColorSelection9, 
+        .ypColorSelection10, .ypColorSelection11, .ypColorSelection12,
+        .ypColorSelection13, .ypColorSelection14, .ypColorSelection15, 
+        .ypColorSelection16, .ypColorSelection17, .ypColorSelection18,
     ]
     
     private let tableCategory: [String]
@@ -81,10 +84,17 @@ class CreateBaseController: PopUpViewController {
         return textField
     }()
     
-    private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
-        cellType: TrackersTableViewCell.self,
-        cellIdentifier: TrackersTableViewCell.reuseIdentifier
-    )
+    private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = {
+        let table = TrackersTableView(
+            cellType: TrackersTableViewCell.self,
+            cellIdentifier: TrackersTableViewCell.reuseIdentifier
+        )
+        
+        table.estimatedRowHeight = 74
+        table.rowHeight = UITableView.automaticDimension
+        
+        return table
+    }()
     
     private let emojiColorCollectionViewLayout = UICollectionViewFlowLayout()
     private lazy var emojiColorCollectionView = UICollectionView(frame: view.frame, 
@@ -171,12 +181,12 @@ extension CreateBaseController {
             
             nameTrackerInputField.heightAnchor.constraint(equalToConstant: 75),
             nameTrackerInputField.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
-            nameTrackerInputField.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
             nameTrackerInputField.topAnchor.constraint(equalTo: scrollStackViewContainer.topAnchor),
             
             trackersTableView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             trackersTableView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
-            trackersTableView.heightAnchor.constraint(equalToConstant: 150),
+            // TODO: Разобраться с высотой tableView
+            trackersTableView.heightAnchor.constraint(equalToConstant: 148),
             
             emojiColorCollectionView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             emojiColorCollectionView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
@@ -186,7 +196,6 @@ extension CreateBaseController {
             stackButtonView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
             stackButtonView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -24)
         ])
-        
     }
     
     override func configureAppearance() {
@@ -210,6 +219,7 @@ extension CreateBaseController {
         cancleButton.layer.borderWidth = 1
         
         scrollView.contentSize = scrollStackViewContainer.bounds.size
+        reloadTableData()
     }
     
     func addActionToButton(create: Selector, cancle: Selector) {
@@ -219,6 +229,12 @@ extension CreateBaseController {
     
     @objc private func handleTap() {
         nameTrackerInputField.resignFirstResponder()
+    }
+    
+    private func reloadTableData() {
+        trackersTableView.reloadData()
+        trackersTableView.beginUpdates()
+        trackersTableView.endUpdates()
     }
     
     private func setupCollectionView() {

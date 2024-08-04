@@ -28,9 +28,3 @@ struct TrackerRecord: Hashable {
         hasher.combine(dateComplete)
     }
 }
-
-extension Set where Element == TrackerRecord {
-    func containtRecord(withId id: UUID) -> Bool {
-        return self.contains { $0.id == id }
-    }
-}
