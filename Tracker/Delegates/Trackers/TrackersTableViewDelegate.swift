@@ -8,8 +8,7 @@
 import UIKit
 
 final class TrackersTableViewDelegate: NSObject {
-    
-    weak var view: UIViewController?
+    weak var view: CreateBaseController?
     var data: [String] = []
     var trackersCategory: [String] = []
     var weekDaysSchedule: [WeekDays] = []
@@ -34,7 +33,7 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
                 choiseCategoryVC.delegate = view
                 view.present(choiseCategoryVC, animated: true)
             } else if indexPath.row == 1 {
-                let scheduleViewController = ScheduleViewController()
+                let scheduleViewController = ScheduleViewController(activatedSwitches: weekDaysSchedule)
                 scheduleViewController.modalPresentationStyle = .popover
                 scheduleViewController.delegate = view
                 view.present(scheduleViewController, animated: true)
@@ -44,6 +43,7 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
             if indexPath.row == 0 {
                 let choiseCategoryVC = CategoryViewController()
                 choiseCategoryVC.tableCategory = trackersCategory
+                choiseCategoryVC.delegate = view
                 view.present(choiseCategoryVC, animated: true)
             }
         } else {
@@ -123,6 +123,10 @@ extension TrackersTableViewDelegate: UITableViewDataSource {
         let sortedWeekDays = weekDays.sorted { orderedWeekDays.firstIndex(of: $0)! < orderedWeekDays.firstIndex(of: $1)! }
         let weekDaysStrings = sortedWeekDays.compactMap { weekDaysMap[$0] }
         
-        return weekDaysStrings.joined(separator: ", ")
+        if weekDaysStrings.count == 7 {
+            return "Каждый день"
+        } else {
+            return weekDaysStrings.joined(separator: ", ")
+        }
     }
 }
