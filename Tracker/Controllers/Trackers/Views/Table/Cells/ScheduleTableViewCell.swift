@@ -46,13 +46,9 @@ final class ScheduleTableViewCell: UITableViewCell {
         layer.mask = mask
     }
     
-    func configure(with text: String, 
-                   isActivate: Bool,
-                   switchId: Int
-    ) {
+    func configure(with text: String, switchId: Int) {
         textLabel?.text = text
         switchView.tag = switchId
-        switchView.setOn(isActivate, animated: false)
     }
     
     func cellTapped() {

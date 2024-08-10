@@ -9,30 +9,6 @@ import UIKit
 
 final class ScheduleTableViewDelegate: NSObject {
     var data: [String] = []
-    var activatedSwitches: [WeekDays] = []
-    
-    private func containtWeekAtIndex(_ index: Int) -> Bool {
-        let weekDay = weekDayAtIndex(index)
-        
-        if activatedSwitches.contains(weekDay) {
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    private func weekDayAtIndex(_ index: Int) -> WeekDays {
-        switch index {
-        case 0: return .monday
-        case 1: return .tuesday
-        case 2: return .wednesday
-        case 3: return .thursday
-        case 4: return .friday
-        case 5: return .saturday
-        case 6: return . sunday
-        default: return .none
-        }
-    }
 }
 
 extension ScheduleTableViewDelegate: UITableViewDelegate {
@@ -87,10 +63,7 @@ extension ScheduleTableViewDelegate: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configure(with: data[indexPath.row],
-                       isActivate: containtWeekAtIndex(indexPath.row),
-                       switchId: indexPath.row)
-        
+        cell.configure(with: data[indexPath.row], switchId: indexPath.row)
         
         return cell
     }

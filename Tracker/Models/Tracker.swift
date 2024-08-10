@@ -7,9 +7,8 @@
 
 import UIKit
 
-enum TrackerType {
-    case practice
-    case irregular
+enum WeekDays: CaseIterable {
+    case monday, tuesday, wednesday, thursday, friday, saturday, sunday, none
 }
 
 struct Tracker: Equatable {
@@ -17,15 +16,13 @@ struct Tracker: Equatable {
     let name: String
     let color: UIColor
     let emoji: String
-    let type: TrackerType
-    let schedule: [WeekDays]
+    let schedule: [WeekDays] // Нужно будет сделать структуру для рассписания
     
     static func == (lhs: Tracker, rhs: Tracker) -> Bool {
         return lhs.id == rhs.id &&
         lhs.name == rhs.name &&
         lhs.color == rhs.color &&
         lhs.emoji == rhs.emoji &&
-        lhs.type == rhs.type &&
         lhs.schedule == rhs.schedule
     }
 }
