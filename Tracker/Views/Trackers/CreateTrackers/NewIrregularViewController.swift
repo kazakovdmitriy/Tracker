@@ -38,8 +38,10 @@ extension NewIrregularViewController {
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped), 
+        addActionToButton(create: #selector(createButtonTapped),
                           cancle: #selector(cancleButtonTapped))
+        
+        reloadTable()
     }
     
     @objc private func cancleButtonTapped() {
@@ -57,7 +59,7 @@ extension NewIrregularViewController {
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
                                      type: .irregular,
-                                     schedule: [WeekDays.monday, 
+                                     schedule: [WeekDays.monday,
                                                 WeekDays.tuesday,
                                                 WeekDays.wednesday,
                                                 WeekDays.thursday,

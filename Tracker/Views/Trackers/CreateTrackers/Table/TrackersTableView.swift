@@ -18,6 +18,8 @@ final class TrackersTableView<CellType: UITableViewCell>: UITableView {
         self.isScrollEnabled = isScrollEnable
         self.separatorStyle = .singleLine
         self.separatorColor = .ypBackground
+        self.estimatedRowHeight = 78
+        self.rowHeight = 78
         
         self.register(cellType, forCellReuseIdentifier: cellIdentifier)
         

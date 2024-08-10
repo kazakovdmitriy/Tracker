@@ -28,12 +28,12 @@ class CreateBaseController: PopUpViewController {
     ]
     
     private let colorList: [UIColor] = [
-        .ypColorSelection1, .ypColorSelection2, .ypColorSelection3, 
-        .ypColorSelection4, .ypColorSelection5, .ypColorSelection6,
-        .ypColorSelection7, .ypColorSelection8, .ypColorSelection9, 
-        .ypColorSelection10, .ypColorSelection11, .ypColorSelection12,
-        .ypColorSelection13, .ypColorSelection14, .ypColorSelection15, 
-        .ypColorSelection16, .ypColorSelection17, .ypColorSelection18,
+        .ypColorSelection1, .ypColorSelection2, .ypColorSelection3,
+            .ypColorSelection4, .ypColorSelection5, .ypColorSelection6,
+        .ypColorSelection7, .ypColorSelection8, .ypColorSelection9,
+            .ypColorSelection10, .ypColorSelection11, .ypColorSelection12,
+        .ypColorSelection13, .ypColorSelection14, .ypColorSelection15,
+            .ypColorSelection16, .ypColorSelection17, .ypColorSelection18,
     ]
     
     private let tableCategory: [String]
@@ -41,7 +41,9 @@ class CreateBaseController: PopUpViewController {
     
     private var selectedIndexPathSection1: IndexPath? = nil
     private var selectedIndexPathSection2: IndexPath? = nil
-        
+    
+    private var tableViewHeightConstraint: NSLayoutConstraint?
+    
     private lazy var scrollView = UIScrollView()
     
     private let scrollStackViewContainer: UIStackView = {
@@ -84,22 +86,15 @@ class CreateBaseController: PopUpViewController {
         return textField
     }()
     
-    private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = {
-        let table = TrackersTableView(
-            cellType: TrackersTableViewCell.self,
-            cellIdentifier: TrackersTableViewCell.reuseIdentifier
-        )
-        
-        table.estimatedRowHeight = 74
-        table.rowHeight = UITableView.automaticDimension
-        
-        return table
-    }()
+    private lazy var trackersTableView: TrackersTableView<TrackersTableViewCell> = TrackersTableView(
+        cellType: TrackersTableViewCell.self,
+        cellIdentifier: TrackersTableViewCell.reuseIdentifier
+    )
     
     private let emojiColorCollectionViewLayout = UICollectionViewFlowLayout()
-    private lazy var emojiColorCollectionView = UICollectionView(frame: view.frame, 
+    private lazy var emojiColorCollectionView = UICollectionView(frame: view.frame,
                                                                  collectionViewLayout: emojiColorCollectionViewLayout)
-
+    
     private lazy var cancleButton = MainButton(title: "Отменить")
     private lazy var createButton = MainButton(title: "Создать")
     
@@ -129,7 +124,7 @@ class CreateBaseController: PopUpViewController {
     
     func getData() -> TrackerData? {
         
-        guard 
+        guard
             let index1 = selectedIndexPathSection1?.row,
             let index2 = selectedIndexPathSection2?.row,
             let name = nameTrackerInputField.text
@@ -141,7 +136,19 @@ class CreateBaseController: PopUpViewController {
     }
     
     func reloadTable() {
+        updateTableViewHeight()
         trackersTableView.reloadData()
+    }
+    
+    private func updateTableViewHeight() {
+        let numberOfRows = tableViewDelegate?.data.count ?? 0
+        
+        print(numberOfRows, trackersTableView.rowHeight)
+        
+        let height = CGFloat(numberOfRows) * trackersTableView.rowHeight
+        tableViewHeightConstraint?.constant = height
+        print(height)
+        view.layoutIfNeeded()
     }
 }
 
@@ -158,6 +165,9 @@ extension CreateBaseController {
          stackButtonView].forEach {
             scrollStackViewContainer.addArrangedSubview($0)
         }
+        
+        tableViewHeightConstraint = trackersTableView.heightAnchor.constraint(equalToConstant: 148)
+        tableViewHeightConstraint?.isActive = true
         
         stackButtonView.addArrangedSubview(cancleButton)
         stackButtonView.addArrangedSubview(createButton)
@@ -185,9 +195,7 @@ extension CreateBaseController {
             
             trackersTableView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             trackersTableView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
-            // TODO: Разобраться с высотой tableView
-            trackersTableView.heightAnchor.constraint(equalToConstant: 148),
-            
+
             emojiColorCollectionView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             emojiColorCollectionView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
             emojiColorCollectionView.heightAnchor.constraint(equalToConstant: 408),
@@ -219,6 +227,7 @@ extension CreateBaseController {
         cancleButton.layer.borderWidth = 1
         
         scrollView.contentSize = scrollStackViewContainer.bounds.size
+        
         reloadTableData()
     }
     
@@ -251,8 +260,8 @@ extension CreateBaseController {
         emojiColorCollectionView.register(ColorCellView.self,
                                           forCellWithReuseIdentifier: ColorCellView.reuseIdentifier)
         emojiColorCollectionView.register(TrackerSectionHeader.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
+                                          forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                          withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
     }
 }
 
@@ -262,7 +271,7 @@ extension CreateBaseController: UITextFieldDelegate {
         return true
     }
     
-    func textField(_ textField: UITextField, 
+    func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
         let userEnteredString = textField.text
@@ -314,7 +323,7 @@ extension CreateBaseController: UICollectionViewDelegate {
 }
 
 extension CreateBaseController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, 
+    func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         
         if section == 0 {
@@ -324,7 +333,7 @@ extension CreateBaseController: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, 
+    func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let isSelected: Bool
