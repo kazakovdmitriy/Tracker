@@ -23,16 +23,9 @@ final class TrackerCardView: UICollectionViewCell {
     
     func configure(config: TrackerCardConfig) {
         self.id = config.id
-        
         delegate = config.plusDelegate
-        cardView.configure(title: config.title,
-                           bgColor: config.color,
-                           emoji: config.emoji)
-        quantityView.configure(buttonBg: config.color,
-                               days: config.days,
-                               delegate: self,
-                               isDone: config.isDone,
-                               date: config.date)
+        cardView.configure(title: config.title, bgColor: config.color, emoji: config.emoji)
+        quantityView.configure(buttonBg: config.color, days: config.days, delegate: self, isDone: config.isDone, date: config.date)
     }
     
     override init(frame: CGRect) {

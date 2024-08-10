@@ -12,7 +12,7 @@ protocol CreateTrackerViewControllerDelegate: AnyObject {
     func selectedIrregularVC()
 }
 
-final class ChoiseTypeTrackerViewController: PopUpViewController {
+final class CreateTrackerViewController: PopUpViewController {
     
     // MARK: - Public Properties
     weak var delegate: CreateTrackerViewControllerDelegate?
@@ -38,7 +38,7 @@ final class ChoiseTypeTrackerViewController: PopUpViewController {
 }
 
 // MARK: - Setup View
-extension ChoiseTypeTrackerViewController {
+extension CreateTrackerViewController {
     override func setupViews() {
         super.setupViews()
         
@@ -67,7 +67,7 @@ extension ChoiseTypeTrackerViewController {
 }
 
 // MARK: - Selectros
-private extension ChoiseTypeTrackerViewController {
+private extension CreateTrackerViewController {
     @objc func practiceButtonTapped() {
         dismiss(animated: true) {
             self.delegate?.selectedPracticeVC()
