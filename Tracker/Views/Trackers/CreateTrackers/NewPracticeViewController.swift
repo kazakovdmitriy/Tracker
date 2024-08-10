@@ -30,6 +30,7 @@ final class NewPracticeViewController: CreateBaseController {
     }
 }
 
+// MARK: - Buttons handlers
 extension NewPracticeViewController {
     override func configureAppearance() {
         tableDelegate.view = self
@@ -39,7 +40,8 @@ extension NewPracticeViewController {
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped), cancle: #selector(cancleButtonTapped))
+        addActionToButton(create: #selector(createButtonTapped), 
+                          cancle: #selector(cancleButtonTapped))
     }
     
     @objc private func cancleButtonTapped() {
@@ -50,12 +52,14 @@ extension NewPracticeViewController {
         
         if let category = tableDelegate.choiseCategory {
             let schedule = tableDelegate.weekDaysSchedule
-            let title = nameTrackerInputField.text ?? ""
+            
+            guard let trackerData = getData() else { return }
             
             let newTracker = Tracker(id: UUID(),
-                                     name: title,
-                                     color: .ypColorSelection13,
-                                     emoji: "🤡",
+                                     name: trackerData.name,
+                                     color: trackerData.color,
+                                     emoji: trackerData.emoji,
+                                     type: .practice,
                                      schedule: schedule)
             
             delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
@@ -70,13 +74,13 @@ extension NewPracticeViewController {
 extension NewPracticeViewController: ScheduleViewControllerDelegate {
     func doneButtonTapped(weakDays weekDays: [WeekDays]) {
         tableDelegate.weekDaysSchedule = weekDays
-        trackersTableView.reloadData()
+        reloadTable()
     }
 }
 
 extension NewPracticeViewController: CategoryViewControllerDelegate {
     func doneButtonTapped(selectedCategory: String) {
         tableDelegate.choiseCategory = selectedCategory
-        trackersTableView.reloadData()
+        reloadTable()
     }
 }

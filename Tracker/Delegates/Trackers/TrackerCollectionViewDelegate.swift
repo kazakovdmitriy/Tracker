@@ -7,10 +7,18 @@
 
 import UIKit
 
+protocol TrackerCollectionViewDelegateProtocol: AnyObject {
+    func didChangeCompletedTrackers(with data: Set<TrackerRecord>)
+}
+
 final class TrackerCollectionViewDelegate: NSObject {
     var categories: [TrackerCategory] = []
     var completedTrackers: Set<TrackerRecord> = []
     var currentDate: Date?
+    
+    weak var delegate: TrackerCollectionViewDelegateProtocol?
+    
+    private let trackerRecordStore = TrackerRecordStore()
 }
 
 extension TrackerCollectionViewDelegate: UICollectionViewDataSource {
@@ -129,9 +137,13 @@ extension TrackerCollectionViewDelegate: TrackerCardViewProtocol {
             
             if !isActive {
                 completedTrackers.remove(newTrackerRecord)
+                try? trackerRecordStore.delete(trackerRecord: newTrackerRecord)
             } else {
                 completedTrackers.insert(newTrackerRecord)
+                trackerRecordStore.createTrackerRecord(trackerRecord: newTrackerRecord)
             }
         }
+        
+        delegate?.didChangeCompletedTrackers(with: completedTrackers)
     }
 }

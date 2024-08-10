@@ -14,8 +14,11 @@ final class TrackersViewController: BaseController {
     private var currentDate: Date = Date()
     private let calendar = Calendar(identifier: .gregorian)
     
-    private var categories: [TrackerCategory] = Mocks.categories
-    private var completedTrackers: Set<TrackerRecord> = Mocks.completedTrackers
+    private let trackerStore = TrackerStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: Set<TrackerRecord> = []
     
     private var trackerCategoriesList: [String] {
         var trackerCategories: [String] = []
@@ -98,6 +101,11 @@ extension TrackersViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
+        let tracker = trackerStore.fetchedObjects()
+        categories.append(TrackerCategory(name: "Тестовая", trackers: tracker)) // TODO: Удалить после реализации сохранения категории
+        
+        completedTrackers = trackerRecordStore.fetchedObjects()
+        
         searchBar.delegate = self
         
         addButton.tintColor = .ypBlack
@@ -146,6 +154,7 @@ extension TrackersViewController {
         collectionDelegate.categories = filterTrackersForToday()
         collectionDelegate.completedTrackers = completedTrackers
         collectionDelegate.currentDate = currentDate
+        collectionDelegate.delegate = self
         
         collectionView.backgroundColor = .clear
         
@@ -163,15 +172,19 @@ extension TrackersViewController {
 
 // MARK: - CreateBaseContollerDelegate
 extension TrackersViewController: CreateBaseControllerDelegate {
-    func didTapCreateTrackerButton(category: String, 
+    func didTapCreateTrackerButton(category: String,
                                    tracker: Tracker) {
-        let newCategory = createNewTrackerList(to: category, tracker: tracker)
+        
+        trackerStore.createTracker(tracker: tracker)
+        
+        let newCategory = createNewTrackerList(to: category, 
+                                               tracker: tracker)
         categories = newCategory
         let todaysCategory = filterTrackersForToday()
         updateCollectionView(with: todaysCategory)
     }
     
-    private func createNewTrackerList(to categoryName: String, 
+    private func createNewTrackerList(to categoryName: String,
                                       tracker: Tracker) -> [TrackerCategory] {
         
         var newCategories = categories
@@ -196,7 +209,7 @@ extension TrackersViewController: CreateBaseControllerDelegate {
 // MARK: - Selectors
 private extension TrackersViewController {
     @objc func addButtonTapped() {
-        let createTrackerViewController = CreateTrackerViewController()
+        let createTrackerViewController = ChoiseTypeTrackerViewController()
         createTrackerViewController.modalPresentationStyle = .popover
         createTrackerViewController.delegate = self
         
@@ -245,7 +258,17 @@ private extension TrackersViewController {
         var filteredCategories: [TrackerCategory] = []
         
         for category in categories {
-            let filteredTrackers = category.trackers.filter { $0.schedule.contains(today) }
+            let filteredTrackers = category.trackers.filter { (tracker: Tracker) in                
+                switch tracker.type {
+                case .practice:
+                    return tracker.schedule.contains(today)
+                case .irregular:
+                    return (
+                        !completedTrackers.containtRecord(withId: tracker.id) || 
+                        completedTrackers.containtRecordForDay(withId: tracker.id, andDate: currentDate)
+                    )
+                }
+            }
             if !filteredTrackers.isEmpty {
                 filteredCategories.append(TrackerCategory(name: category.name, trackers: filteredTrackers))
             }
@@ -282,7 +305,7 @@ private extension TrackersViewController {
         }
     }
     
-    func diff(old: [TrackerCategory], 
+    func diff(old: [TrackerCategory],
               new: [TrackerCategory]) -> [Change] {
         var changes: [Change] = []
         
@@ -308,6 +331,23 @@ private extension TrackersViewController {
             }
         }
         
+        // Проверка изменений в completedTrackers
+        for (index, oldCategory) in old.enumerated() {
+            if new.firstIndex(where: { $0.name == oldCategory.name }) != nil {
+                let oldTrackers = oldCategory.trackers
+                
+                for tracker in oldTrackers {
+                    let isCompletedOld = completedTrackers.contains { $0.id == tracker.id }
+                    let isCompletedNew = completedTrackers.contains { $0.id == tracker.id && $0.dateComplete == currentDate }
+                    
+                    if isCompletedOld != isCompletedNew {
+                        changes.append(.update(index))
+                        break
+                    }
+                }
+            }
+        }
+        
         return changes
     }
     
@@ -323,7 +363,7 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func selectedPracticeVC() {
         let newPracticeVC = NewPracticeViewController()
         newPracticeVC.modalPresentationStyle = .popover
-        newPracticeVC.categories = trackerCategoriesList
+        newPracticeVC.categories = ["Тестовая"] // TODO: не забудь удалить потом
         newPracticeVC.delegate = self
         
         present(newPracticeVC, animated: true)
@@ -332,7 +372,8 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func selectedIrregularVC() {
         let newIrregularVC = NewIrregularViewController()
         newIrregularVC.modalPresentationStyle = .popover
-        newIrregularVC.categories = trackerCategoriesList
+        newIrregularVC.categories = ["Тестовая"] // TODO: не забудь удалить потом
+        newIrregularVC.delegate = self
         
         present(newIrregularVC, animated: true)
     }
@@ -345,4 +386,10 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
     }
     
+}
+
+extension TrackersViewController: TrackerCollectionViewDelegateProtocol {
+    func didChangeCompletedTrackers(with data: Set<TrackerRecord>) {
+        completedTrackers = data
+    }
 }
