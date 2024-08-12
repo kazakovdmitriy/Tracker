@@ -33,6 +33,8 @@ final class OnboardingViewController: UIPageViewController {
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         
+        button.addTarget(nil, action: #selector(didTapButton), for: .touchUpInside)
+        
         return button
     }()
     
@@ -78,6 +80,21 @@ final class OnboardingViewController: UIPageViewController {
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             button.heightAnchor.constraint(equalToConstant: 60),
         ])
+    }
+}
+
+extension OnboardingViewController {
+    @objc func didTapButton() {
+        UserDefaults.standard.set(true, forKey: "isOnboardingHidden")
+        
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        
+        let tabBarController = TabBarController()
+        
+        window.rootViewController = tabBarController
     }
 }
 

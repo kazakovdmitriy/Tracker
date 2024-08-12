@@ -59,6 +59,7 @@
 		68E2E6D52C2F0B5400F2A65A /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E2E6D42C2F0B5400F2A65A /* PopUpViewController.swift */; };
 		68E2E6D72C2F24CB00F2A65A /* NewPracticeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E2E6D62C2F24CB00F2A65A /* NewPracticeViewController.swift */; };
 		68F3C5AF2C6AA90C00D0E997 /* OnboardingChildViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3C5AE2C6AA90C00D0E997 /* OnboardingChildViewController.swift */; };
+		68F3C5B12C6AB52F00D0E997 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3C5B02C6AB52F00D0E997 /* SplashViewController.swift */; };
 		68F6E76C2C5FEFE20012D45F /* Set + ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F6E76B2C5FEFE20012D45F /* Set + ext.swift */; };
 		68F6E76E2C5FF97A0012D45F /* Date + ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F6E76D2C5FF97A0012D45F /* Date + ext.swift */; };
 		68FBA1642C432DF300173177 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68FBA1632C432DF300173177 /* Fonts.swift */; };
@@ -121,6 +122,7 @@
 		68E2E6D42C2F0B5400F2A65A /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		68E2E6D62C2F24CB00F2A65A /* NewPracticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPracticeViewController.swift; sourceTree = "<group>"; };
 		68F3C5AE2C6AA90C00D0E997 /* OnboardingChildViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingChildViewController.swift; sourceTree = "<group>"; };
+		68F3C5B02C6AB52F00D0E997 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		68F6E76B2C5FEFE20012D45F /* Set + ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set + ext.swift"; sourceTree = "<group>"; };
 		68F6E76D2C5FF97A0012D45F /* Date + ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date + ext.swift"; sourceTree = "<group>"; };
 		68FBA1632C432DF300173177 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
@@ -204,8 +206,8 @@
 		6837ED4E2C246C8700B66453 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				68C3E57F2C694C230052AC24 /* Onboarding */,
 				6837ED5D2C247EFC00B66453 /* Common */,
+				68C3E57F2C694C230052AC24 /* Onboarding */,
 				6837ED5E2C247F0500B66453 /* Statistics */,
 				6837ED542C246F5D00B66453 /* Trackers */,
 				6837ED4F2C246DFA00B66453 /* Navigation */,
@@ -219,6 +221,7 @@
 				68C3E5862C69569E0052AC24 /* Views */,
 				6837ED502C246E1F00B66453 /* TabBarController.swift */,
 				6837ED522C246E2A00B66453 /* NavBarController.swift */,
+				68F3C5B02C6AB52F00D0E997 /* SplashViewController.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -536,6 +539,7 @@
 				6861FC602C49BBF400EEC1BF /* WeekDays.swift in Sources */,
 				68A89BA72C444078008ADA2F /* ColorCellView.swift in Sources */,
 				68FBA1642C432DF300173177 /* Fonts.swift in Sources */,
+				68F3C5B12C6AB52F00D0E997 /* SplashViewController.swift in Sources */,
 				689375D12C2E15D1004B67E3 /* StubView.swift in Sources */,
 				68E2E6D72C2F24CB00F2A65A /* NewPracticeViewController.swift in Sources */,
 				680FCD062C34758400B17E7A /* TrackerCollectionViewDelegate.swift in Sources */,

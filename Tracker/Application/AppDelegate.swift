@@ -19,9 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DaysValueTransformer.register()
         
         window = UIWindow()
-//        window?.rootViewController = TabBarController()
-        window?.rootViewController = OnboardingViewController(transitionStyle: .scroll,
-                                                              navigationOrientation: .horizontal)
+        //        window?.rootViewController = TabBarController()
+        window?.rootViewController = SplashViewController()
+                window?.rootViewController = OnboardingViewController(transitionStyle: .scroll,
+                                                                      navigationOrientation: .horizontal)
         window?.makeKeyAndVisible()
         
         return true

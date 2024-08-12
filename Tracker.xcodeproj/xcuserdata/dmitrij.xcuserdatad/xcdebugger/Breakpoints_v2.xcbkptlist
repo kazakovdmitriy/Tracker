@@ -374,7 +374,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "506C408F-7EBC-4D1F-A0DE-DDE4270B7F42"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Tracker/Views/Trackers/CreateTrackers/NewPracticeViewController.swift"
