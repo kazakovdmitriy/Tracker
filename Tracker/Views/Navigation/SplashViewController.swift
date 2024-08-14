@@ -23,10 +23,8 @@ final class SplashViewController: BaseController {
         super.viewDidAppear(animated)
         
         if UserDefaults.standard.bool(forKey: "isOnboardingHidden") {
-            print("TabBar")
             switchToTabBar()
         } else {
-            print("Onboarding")
             switchToOnboarding()
         }
     }

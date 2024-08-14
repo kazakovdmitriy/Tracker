@@ -11,7 +11,6 @@ final class NewIrregularViewController: CreateBaseController {
     
     // MARK: - Public Properties
     weak var delegate: CreateBaseControllerDelegate?
-    var categories: [String] = []
     
     // MARK: - Private Properties
     private let tableDelegate = TrackersTableViewDelegate()
@@ -19,8 +18,7 @@ final class NewIrregularViewController: CreateBaseController {
     // MARK: - Initializers
     init() {
         super.init(title: Strings.NavTitle.newIrregular,
-                   tableCategory: ["Категория"],
-                   trackerCategory: categories
+                   tableCategory: ["Категория"]
         )
     }
     
@@ -34,7 +32,6 @@ extension NewIrregularViewController {
         tableDelegate.view = self
         
         tableViewDelegate = tableDelegate
-        tableViewDelegate?.trackersCategory = categories
         
         super.configureAppearance()
         

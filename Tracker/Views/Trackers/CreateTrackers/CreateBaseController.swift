@@ -37,7 +37,6 @@ class CreateBaseController: PopUpViewController {
     ]
     
     private let tableCategory: [String]
-    private let trackerCategory: [String]
     
     private var selectedIndexPathSection1: IndexPath? = nil
     private var selectedIndexPathSection2: IndexPath? = nil
@@ -108,12 +107,10 @@ class CreateBaseController: PopUpViewController {
     }()
     
     init(title: String,
-         tableCategory: [String],
-         trackerCategory: [String]
+         tableCategory: [String]
     ) {
         
         self.tableCategory = tableCategory
-        self.trackerCategory = trackerCategory
         
         super.init(title: title)
     }
@@ -143,11 +140,9 @@ class CreateBaseController: PopUpViewController {
     private func updateTableViewHeight() {
         let numberOfRows = tableViewDelegate?.data.count ?? 0
         
-        print(numberOfRows, trackersTableView.rowHeight)
-        
         let height = CGFloat(numberOfRows) * trackersTableView.rowHeight
         tableViewHeightConstraint?.constant = height
-        print(height)
+        
         view.layoutIfNeeded()
     }
 }

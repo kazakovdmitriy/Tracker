@@ -29,7 +29,6 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
         if let view = view as? NewPracticeViewController {
             if indexPath.row == 0 {
                 let choiseCategoryVC = CategoryViewController()
-                choiseCategoryVC.tableCategory = trackersCategory
                 choiseCategoryVC.delegate = view
                 view.present(choiseCategoryVC, animated: true)
             } else if indexPath.row == 1 {
@@ -42,7 +41,6 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
             // Обработка для NewIrregularViewController
             if indexPath.row == 0 {
                 let choiseCategoryVC = CategoryViewController()
-                choiseCategoryVC.tableCategory = trackersCategory
                 choiseCategoryVC.delegate = view
                 view.present(choiseCategoryVC, animated: true)
             }

@@ -16,19 +16,10 @@ final class TrackersViewController: BaseController {
     
     private let trackerStore = TrackerStore()
     private let trackerRecordStore = TrackerRecordStore()
+    private let trackerCategoryStore = TrackerCategoryStore.shared
     
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
-    
-    private var trackerCategoriesList: [String] {
-        var trackerCategories: [String] = []
-        
-        for category in categories {
-            trackerCategories.append(category.name)
-        }
-        
-        return trackerCategories
-    }
     
     private lazy var trackerStubView = StubView()
     
@@ -101,8 +92,12 @@ extension TrackersViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
-        let tracker = trackerStore.fetchedObjects()
-        categories.append(TrackerCategory(name: "Тестовая", trackers: tracker)) // TODO: Удалить после реализации сохранения категории
+        // let tracker = trackerStore.fetchedObjects()
+        
+        categories = trackerCategoryStore.fetchCategoriesWithTrackers()
+        
+//        categories.append(TrackerCategory(name: "Тестовая",
+//                                          trackers: tracker)) // TODO: Удалить после реализации сохранения категории
         
         completedTrackers = trackerRecordStore.fetchedObjects()
         
@@ -175,7 +170,7 @@ extension TrackersViewController: CreateBaseControllerDelegate {
     func didTapCreateTrackerButton(category: String,
                                    tracker: Tracker) {
         
-        trackerStore.createTracker(tracker: tracker)
+        trackerStore.createTracker(tracker: tracker, toCategory: category)
         
         let newCategory = createNewTrackerList(to: category, 
                                                tracker: tracker)
@@ -363,7 +358,6 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func selectedPracticeVC() {
         let newPracticeVC = NewPracticeViewController()
         newPracticeVC.modalPresentationStyle = .popover
-        newPracticeVC.categories = ["Тестовая"] // TODO: не забудь удалить потом
         newPracticeVC.delegate = self
         
         present(newPracticeVC, animated: true)
@@ -372,7 +366,6 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func selectedIrregularVC() {
         let newIrregularVC = NewIrregularViewController()
         newIrregularVC.modalPresentationStyle = .popover
-        newIrregularVC.categories = ["Тестовая"] // TODO: не забудь удалить потом
         newIrregularVC.delegate = self
         
         present(newIrregularVC, animated: true)

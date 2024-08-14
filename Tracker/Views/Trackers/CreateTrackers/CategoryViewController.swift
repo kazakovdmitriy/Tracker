@@ -15,10 +15,11 @@ final class CategoryViewController: PopUpViewController {
     
     // MARK: - Public Properties
     weak var delegate: CategoryViewControllerDelegate?
-    var tableCategory: [String] = []
     
     // MARK: - Private Properties
-    private let tableViewDelegate = CategoryTableViewDelegate()
+    private var categories: [String] = []
+    private var selectedCategoryIndex: Int?
+    private let trackerCategoryStore = TrackerCategoryStore.shared
     
     private lazy var categoryTableView: TrackersTableView<CategoryTableViewCell> = TrackersTableView(
         cellType: CategoryTableViewCell.self,
@@ -26,7 +27,7 @@ final class CategoryViewController: PopUpViewController {
         isScrollEnable: true
     )
     
-    private lazy var doneButton = MainButton(title: "Готово")
+    private lazy var doneButton = MainButton(title: "Добавить категорию")
     private lazy var stubView = StubView()
     
     // MARK: - Initializers
@@ -73,39 +74,105 @@ extension CategoryViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
-        if tableCategory.isEmpty {
+        doneButton.configure(action: #selector(addCategoryButtonTapped))
+        categories = trackerCategoryStore.loadCategoryNames()
+        
+        categoryTableView.delegate = self
+        categoryTableView.dataSource = self
+        
+        if categories.isEmpty {
             
-            categoryTableView.isHidden = true
-            stubView.isHidden = false
+            showTable(isHidden: false)
             
             let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
             stubView.configure(with: "Привычки и события можно объединить по смыслу", and: emptyImage)
-            
-            doneButton.configure(action: #selector(addCategoryButtonTapped), newTitle: "Добавить категорию")
         } else {
-            
-            categoryTableView.isHidden = false
-            stubView.isHidden = true
-            
-            categoryTableView.delegate = tableViewDelegate
-            tableViewDelegate.data = tableCategory
-            categoryTableView.dataSource = tableViewDelegate
-            
-            doneButton.configure(action: #selector(choiseCategoryButtonTapped))
+            showTable(isHidden: true)
         }
+    }
+    
+    private func showTable(isHidden: Bool) {
+        categoryTableView.isHidden = !isHidden
+        stubView.isHidden = isHidden
     }
 }
 
-private extension CategoryViewController {
-    @objc func choiseCategoryButtonTapped() {
-        if let selectedCategory = tableViewDelegate.getSelectedCategory() {
-            delegate?.doneButtonTapped(selectedCategory: selectedCategory)
-        }
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 74
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        selectedCategoryIndex = indexPath.row
+        tableView.reloadData()
+        
+        delegate?.doneButtonTapped(selectedCategory: categories[indexPath.row])
         
         dismiss(animated: true)
     }
     
+    func tableView(_ tableView: UITableView,
+                   willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? CategoryTableViewCell else { return }
+        
+        let totalRows = tableView.numberOfRows(inSection: indexPath.section)
+        
+        if totalRows == 1 {
+            cell.cornerRadius = 16.0
+            cell.roundedCorners = [.allCorners]
+        } else {
+            cell.cornerRadius = 16.0
+            if indexPath.row == 0 {
+                cell.roundedCorners = [.topLeft, .topRight]
+            } else if indexPath.row == totalRows - 1 {
+                cell.roundedCorners = [.bottomLeft, .bottomRight]
+            } else {
+                cell.roundedCorners = []
+            }
+        }
+        
+        cell.setNeedsLayout()
+    }
+}
+
+extension CategoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath
+        ) as? CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let isSelected = indexPath.row == selectedCategoryIndex
+        
+        cell.configure(with: categories[indexPath.row], isSelected: isSelected)
+        
+        return cell
+    }
+}
+
+private extension CategoryViewController {
     @objc func addCategoryButtonTapped() {
-        dismiss(animated: true)
+        let createCategoryVC = CreateNewCategoryViewController()
+        createCategoryVC.delegate = self
+        present(createCategoryVC, animated: true)
+    }
+}
+
+extension CategoryViewController: CreateNewCategoryProtocol {
+    func didCreateNewCategory(newCategory: String) {
+        categories = trackerCategoryStore.loadCategoryNames()
+        showTable(isHidden: true)
+        categoryTableView.reloadData()
     }
 }
