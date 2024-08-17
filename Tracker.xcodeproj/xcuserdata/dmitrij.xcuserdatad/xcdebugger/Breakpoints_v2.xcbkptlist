@@ -316,8 +316,8 @@
             filePath = "Tracker/Delegates/Trackers/TrackersTableViewDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -492,8 +492,8 @@
             filePath = "Tracker/Views/Trackers/CreateTrackers/CategoryViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "tableView(_:cellForRowAt:)"
             landmarkType = "7">
             <Locations>
@@ -533,86 +533,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F088ED7A-E094-45D4-969B-BF1D07160945"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Views/Trackers/CreateTrackers/CategoryViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
-            landmarkName = "configureAppearance()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9324BAAB-89A1-4210-9575-9B58A2799061"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Services/TrackerCategoryStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
-            landmarkName = "createTrackerRecord(trackerCategory:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9324BAAB-89A1-4210-9575-9B58A2799061 - 22a030051c0007fe"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackerCategoryStore.createTrackerRecord(trackerCategory: Tracker.TrackerCategory) -&gt; ()"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "26"
-                  endingLineNumber = "26"
-                  offsetFromSymbolStart = "188">
-               </Location>
-               <Location
-                  uuid = "9324BAAB-89A1-4210-9575-9B58A2799061 - 22a030051c00067a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackerCategoryStore.createTrackerRecord(trackerCategory: Tracker.TrackerCategory) -&gt; ()"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "30"
-                  endingLineNumber = "30"
-                  offsetFromSymbolStart = "332">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0504CADC-180F-4804-911A-1D79490855D2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Views/Trackers/CreateTrackers/CategoryViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
-            landmarkName = "didCreateNewCategory(newCategory:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "5262CC97-0A0A-42E6-8BD7-77C7608C31E5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -620,8 +540,8 @@
             filePath = "Tracker/Services/TrackerCategoryStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
             landmarkName = "trackerCategoryAsString(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -684,8 +604,8 @@
             filePath = "Tracker/Views/Trackers/CreateTrackers/CategoryViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
             landmarkName = "didCreateNewCategory(newCategory:)"
             landmarkType = "7">
             <Locations>
@@ -720,100 +640,6 @@
                   offsetFromSymbolStart = "52">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E0211488-C570-4760-A645-C7F4EDC0BB2D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Services/TrackerCategoryStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "fetchedObjects()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E0211488-C570-4760-A645-C7F4EDC0BB2D - 14c97199bdc9686f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackerCategoryStore.fetchedObjectsAsObject() -&gt; Swift.Array&lt;Tracker.TrackerCategory&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "340">
-               </Location>
-               <Location
-                  uuid = "E0211488-C570-4760-A645-C7F4EDC0BB2D - c0efd29e29fbfe99"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Tracker.TrackerCategoryCoreData) -&gt; Swift.Optional&lt;Tracker.TrackerCategory&gt; in Tracker.TrackerCategoryStore.fetchedObjectsAsObject() -&gt; Swift.Array&lt;Tracker.TrackerCategory&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "E0211488-C570-4760-A645-C7F4EDC0BB2D - 83be494bca11261f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackerCategoryStore.fetchedObjects() -&gt; Swift.Array&lt;Swift.String&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "340">
-               </Location>
-               <Location
-                  uuid = "E0211488-C570-4760-A645-C7F4EDC0BB2D - 322626e6eabbf4e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Tracker.TrackerCategoryCoreData) -&gt; Swift.Optional&lt;Swift.String&gt; in Tracker.TrackerCategoryStore.fetchedObjects() -&gt; Swift.Array&lt;Swift.String&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitrij/Documents/SwiftProjects/Tracker/Tracker/Services/TrackerCategoryStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "48">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DEC8D056-9414-4085-B41B-E9A022A01CD4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Views/Trackers/CreateTrackers/CategoryViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "configureAppearance()"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

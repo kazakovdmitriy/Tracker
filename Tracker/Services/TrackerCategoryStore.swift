@@ -22,12 +22,25 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     func createTrackerRecord(trackerCategory: TrackerCategory) {
-        let trackerCategoryEntity = TrackerCategoryCoreData(context: context)
         
-        trackerCategoryEntity.id = UUID()
-        trackerCategoryEntity.name = trackerCategory.name
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", trackerCategory.name)
         
-        saveContext()
+        do {
+            let existingCategories = try context.fetch(fetchRequest)
+            if existingCategories.isEmpty {
+                let trackerCategoryEntity = TrackerCategoryCoreData(context: context)
+                
+                trackerCategoryEntity.id = UUID()
+                trackerCategoryEntity.name = trackerCategory.name
+                
+                saveContext()
+            } else {
+                print("Category with name \(trackerCategory.name) already exists.")
+            }
+        } catch {
+            print("Failed to check for existing category: \(error)")
+        }
     }
     
     func fetchCategoriesWithTrackers() -> [TrackerCategory] {
@@ -65,14 +78,6 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
             return []
         }
     }
-    
-//    func fetchedObjects() -> [String] {
-//        guard let trackerEntities = fetchedResultsController?.fetchedObjects else {
-//            return []
-//        }
-//        
-//        return trackerEntities.compactMap { try? trackerCategoryAsString(from: $0) }
-//    }
     
     private func trackerCategoryWithTrackers(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let name = trackerCategoryEntity.name else {
