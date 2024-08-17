@@ -8,6 +8,7 @@
 import UIKit
 
 final class SplashViewController: BaseController {
+    
     private lazy var imageLogo: UIImageView = {
         let imageView = UIImageView()
         let image = UIImage(named: "launch_screen_logo")
@@ -22,7 +23,7 @@ final class SplashViewController: BaseController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if UserDefaults.standard.bool(forKey: "isOnboardingHidden") {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.onboardingFlag) {
             switchToTabBar()
         } else {
             switchToOnboarding()
@@ -37,6 +38,11 @@ final class SplashViewController: BaseController {
         
         let onboardingVC = OnboardingViewController(transitionStyle: .scroll,
                                                     navigationOrientation: .horizontal)
+        
+        onboardingVC.buttonAction = {
+            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.onboardingFlag)
+            self.switchToTabBar()
+        }
         
         window.rootViewController = onboardingVC
     }

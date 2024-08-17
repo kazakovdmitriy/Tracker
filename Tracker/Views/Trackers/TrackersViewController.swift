@@ -91,14 +91,8 @@ extension TrackersViewController {
     
     override func configureAppearance() {
         super.configureAppearance()
-        
-        // let tracker = trackerStore.fetchedObjects()
-        
+                
         categories = trackerCategoryStore.fetchCategoriesWithTrackers()
-        
-//        categories.append(TrackerCategory(name: "Тестовая",
-//                                          trackers: tracker)) // TODO: Удалить после реализации сохранения категории
-        
         completedTrackers = trackerRecordStore.fetchedObjects()
         
         searchBar.delegate = self

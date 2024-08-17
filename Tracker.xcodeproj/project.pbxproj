@@ -57,6 +57,8 @@
 		68C3E5852C6956560052AC24 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C3E5842C6956560052AC24 /* OnboardingViewController.swift */; };
 		68C3E5882C6956AB0052AC24 /* SeparatorVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C3E5872C6956AB0052AC24 /* SeparatorVIew.swift */; };
 		68C414C42C4039F300128FED /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C414C32C4039F300128FED /* Mocks.swift */; };
+		68D001972C71342400CE472D /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D001962C71342400CE472D /* UserDefaultsKeys.swift */; };
+		68D001992C713D8C00CE472D /* OnboardingPageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D001982C713D8C00CE472D /* OnboardingPageModel.swift */; };
 		68E2E6D52C2F0B5400F2A65A /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E2E6D42C2F0B5400F2A65A /* PopUpViewController.swift */; };
 		68E2E6D72C2F24CB00F2A65A /* NewPracticeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E2E6D62C2F24CB00F2A65A /* NewPracticeViewController.swift */; };
 		68F3C5AF2C6AA90C00D0E997 /* OnboardingChildViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3C5AE2C6AA90C00D0E997 /* OnboardingChildViewController.swift */; };
@@ -121,6 +123,8 @@
 		68C3E5842C6956560052AC24 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		68C3E5872C6956AB0052AC24 /* SeparatorVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorVIew.swift; sourceTree = "<group>"; };
 		68C414C32C4039F300128FED /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		68D001962C71342400CE472D /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
+		68D001982C713D8C00CE472D /* OnboardingPageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageModel.swift; sourceTree = "<group>"; };
 		68E2E6D42C2F0B5400F2A65A /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		68E2E6D62C2F24CB00F2A65A /* NewPracticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPracticeViewController.swift; sourceTree = "<group>"; };
 		68F3C5AE2C6AA90C00D0E997 /* OnboardingChildViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingChildViewController.swift; sourceTree = "<group>"; };
@@ -201,6 +205,7 @@
 				687C992F2C432C2100559766 /* Images.swift */,
 				687C99312C432D4E00559766 /* Strings.swift */,
 				68FBA1632C432DF300173177 /* Fonts.swift */,
+				68D001962C71342400CE472D /* UserDefaultsKeys.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -352,6 +357,7 @@
 				686F51572C296E9A0020B804 /* TrackerCategory.swift */,
 				686F515A2C296EB10020B804 /* TrackerRecord.swift */,
 				6861FC5F2C49BBF400EEC1BF /* WeekDays.swift */,
+				68D001982C713D8C00CE472D /* OnboardingPageModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -520,6 +526,7 @@
 				68F6E76E2C5FF97A0012D45F /* Date + ext.swift in Sources */,
 				689375D52C2E1A04004B67E3 /* MainButton.swift in Sources */,
 				6861FC5A2C49B78500EEC1BF /* CoreDataService.swift in Sources */,
+				68D001992C713D8C00CE472D /* OnboardingPageModel.swift in Sources */,
 				68419D742C34B59700731D33 /* CategoryViewController.swift in Sources */,
 				6861FC5E2C49BB2000EEC1BF /* DaysValueTransformer.swift in Sources */,
 				68641FA02C320691002D3505 /* ScheduleTableViewCell.swift in Sources */,
@@ -534,6 +541,7 @@
 				6837ED382C2457FF00B66453 /* AppDelegate.swift in Sources */,
 				68613C052C316A4C003177B4 /* CreateBaseController.swift in Sources */,
 				686F515D2C2975A40020B804 /* TrackerCardView.swift in Sources */,
+				68D001972C71342400CE472D /* UserDefaultsKeys.swift in Sources */,
 				68641F9D2C31FE0E002D3505 /* ScheduleViewController.swift in Sources */,
 				68C3E5852C6956560052AC24 /* OnboardingViewController.swift in Sources */,
 				6837ED532C246E2A00B66453 /* NavBarController.swift in Sources */,

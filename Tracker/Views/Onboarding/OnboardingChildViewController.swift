@@ -8,12 +8,13 @@
 import UIKit
 
 final class OnboardingChildViewController: BaseController {
-    private let bgImageName: String
+    private let bgImage: UIImage
     private let labelString: String
     
-    init(bgImageName: String, labelString: String) {
-        self.bgImageName = bgImageName
-        self.labelString = labelString
+    init(page: OnboardingPageModel) {
+        
+        self.bgImage = page.image
+        self.labelString = page.text
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -24,7 +25,7 @@ final class OnboardingChildViewController: BaseController {
     
     private lazy var backgroundImage: UIImageView = {
         let imageVC = UIImageView()
-        let image = UIImage(named: bgImageName)
+        let image = bgImage
         
         imageVC.image = image
         imageVC.contentMode = .scaleAspectFill

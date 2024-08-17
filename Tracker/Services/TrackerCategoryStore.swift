@@ -12,11 +12,10 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
     
     static let shared = TrackerCategoryStore()
     
-    private let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext = CoreDataService.shared.context
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
     
-    private init(context: NSManagedObjectContext = CoreDataService.shared.context) {
-        self.context = context
+    private override init() {
         super.init()
         initializeFetchedResultsController()
     }

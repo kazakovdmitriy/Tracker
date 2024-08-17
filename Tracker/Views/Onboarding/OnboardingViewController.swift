@@ -9,6 +9,8 @@ import UIKit
 
 final class OnboardingViewController: UIPageViewController {
     
+    var buttonAction: (() -> Void)?
+    
     private lazy var pageControl: UIPageControl = {
         let pageControle = UIPageControl()
         
@@ -39,8 +41,8 @@ final class OnboardingViewController: UIPageViewController {
     }()
     
     private lazy var pages: [UIViewController] = {
-        let firstVC = OnboardingChildViewController(bgImageName: "onboarding_first_bg", labelString: Strings.Onboarding.first)
-        let secondVC = OnboardingChildViewController(bgImageName: "onboarding_second_bg", labelString: Strings.Onboarding.second)
+        let firstVC = OnboardingChildViewController(page: .first)
+        let secondVC = OnboardingChildViewController(page: .second)
         
         return [firstVC, secondVC]
     }()
@@ -85,16 +87,7 @@ final class OnboardingViewController: UIPageViewController {
 
 extension OnboardingViewController {
     @objc func didTapButton() {
-        UserDefaults.standard.set(true, forKey: "isOnboardingHidden")
-        
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
-        
-        let tabBarController = TabBarController()
-        
-        window.rootViewController = tabBarController
+        buttonAction?()
     }
 }
 

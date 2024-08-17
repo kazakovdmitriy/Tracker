@@ -17,7 +17,7 @@ final class CategoryViewController: PopUpViewController {
     weak var delegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
-    private var viewModel: CategoryViewModel
+    private var viewModel: CategoryViewModelProtocol
     
     private lazy var categoryTableView: TrackersTableView<CategoryTableViewCell> = TrackersTableView(
         cellType: CategoryTableViewCell.self,

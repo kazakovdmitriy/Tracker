@@ -7,7 +7,21 @@
 
 import Foundation
 
-final class CategoryViewModel {
+protocol CategoryViewModelProtocol: AnyObject {
+    
+    var categories: [String] { get }
+    var selectedCategoryIndex: Int? { get }
+    
+    var onCategoriesUpdated: (() -> Void)? { get set }
+    var onCategorySelected: ((String) -> Void)? { get set }
+    var onShowStubView: ((Bool) -> Void)? { get set }
+    
+    func loadCategories()
+    func addCategory(_ category: String)
+    func selectCategory(at index: Int)
+}
+
+final class CategoryViewModel: CategoryViewModelProtocol {
     
     // MARK: - Public properties
     var selectedCategoryIndex: Int?
