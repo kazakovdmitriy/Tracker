@@ -12,7 +12,6 @@ final class NewPracticeViewController: CreateBaseController {
     // MARK: - Public Properties
     weak var delegate: CreateBaseControllerDelegate?
     var selectedWeekDays: [WeekDays] = []
-    var categories: [String] = []
     
     // MARK: - Private Properties
     private let tableDelegate = TrackersTableViewDelegate()
@@ -20,8 +19,7 @@ final class NewPracticeViewController: CreateBaseController {
     // MARK: - Initializers
     init() {
         super.init(title: Strings.NavTitle.newPractice,
-                   tableCategory: ["Категория", "Расписание"],
-                   trackerCategory: categories
+                   tableCategory: ["Категория", "Расписание"]
         )
     }
     
@@ -36,7 +34,6 @@ extension NewPracticeViewController {
         tableDelegate.view = self
         
         tableViewDelegate = tableDelegate
-        tableViewDelegate?.trackersCategory = categories
         
         super.configureAppearance()
         

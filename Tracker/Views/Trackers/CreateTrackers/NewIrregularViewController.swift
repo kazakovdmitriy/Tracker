@@ -11,7 +11,6 @@ final class NewIrregularViewController: CreateBaseController {
     
     // MARK: - Public Properties
     weak var delegate: CreateBaseControllerDelegate?
-    var categories: [String] = []
     
     // MARK: - Private Properties
     private let tableDelegate = TrackersTableViewDelegate()
@@ -19,8 +18,7 @@ final class NewIrregularViewController: CreateBaseController {
     // MARK: - Initializers
     init() {
         super.init(title: Strings.NavTitle.newIrregular,
-                   tableCategory: ["Категория"],
-                   trackerCategory: categories
+                   tableCategory: ["Категория"]
         )
     }
     
@@ -34,12 +32,13 @@ extension NewIrregularViewController {
         tableDelegate.view = self
         
         tableViewDelegate = tableDelegate
-        tableViewDelegate?.trackersCategory = categories
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped), 
+        addActionToButton(create: #selector(createButtonTapped),
                           cancle: #selector(cancleButtonTapped))
+        
+        reloadTable()
     }
     
     @objc private func cancleButtonTapped() {
@@ -57,7 +56,7 @@ extension NewIrregularViewController {
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
                                      type: .irregular,
-                                     schedule: [WeekDays.monday, 
+                                     schedule: [WeekDays.monday,
                                                 WeekDays.tuesday,
                                                 WeekDays.wednesday,
                                                 WeekDays.thursday,

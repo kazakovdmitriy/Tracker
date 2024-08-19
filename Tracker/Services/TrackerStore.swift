@@ -45,7 +45,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func createTracker(tracker: Tracker) {
+    func createTracker(tracker: Tracker, toCategory categoryName: String) {
         let trackerEntity = TrackerCoreData(context: context)
         
         trackerEntity.id = tracker.id
@@ -54,6 +54,23 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         trackerEntity.color = tracker.color
         trackerEntity.isPractice = tracker.type == .practice ? true : false
         trackerEntity.schedule = tracker.schedule as NSObject
+        
+        // Поиск категории
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", categoryName)
+        
+        var trackerCategoryEntity: TrackerCategoryCoreData
+        do {
+            let fetchedCategories = try context.fetch(fetchRequest)
+            if let existingCategory = fetchedCategories.first {
+                trackerCategoryEntity = existingCategory
+                trackerCategoryEntity.addToTrackers_rel(trackerEntity)
+            }
+        } catch {
+            print("Failed to fetch category: \(error)")
+            return
+        }
+        
         
         saveContext()
     }

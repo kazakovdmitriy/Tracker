@@ -15,10 +15,9 @@ final class CategoryViewController: PopUpViewController {
     
     // MARK: - Public Properties
     weak var delegate: CategoryViewControllerDelegate?
-    var tableCategory: [String] = []
     
     // MARK: - Private Properties
-    private let tableViewDelegate = CategoryTableViewDelegate()
+    private var viewModel: CategoryViewModelProtocol
     
     private lazy var categoryTableView: TrackersTableView<CategoryTableViewCell> = TrackersTableView(
         cellType: CategoryTableViewCell.self,
@@ -26,11 +25,12 @@ final class CategoryViewController: PopUpViewController {
         isScrollEnable: true
     )
     
-    private lazy var doneButton = MainButton(title: "Готово")
+    private lazy var doneButton = MainButton(title: "Добавить категорию")
     private lazy var stubView = StubView()
     
     // MARK: - Initializers
-    init() {
+    init(viewModel: CategoryViewModel) {
+        self.viewModel = viewModel
         super.init(title: Strings.NavTitle.category)
     }
     
@@ -67,45 +67,111 @@ extension CategoryViewController {
             stubView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),
             stubView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60)
         ])
-        
     }
     
     override func configureAppearance() {
         super.configureAppearance()
         
-        if tableCategory.isEmpty {
-            
-            categoryTableView.isHidden = true
-            stubView.isHidden = false
-            
-            let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
-            stubView.configure(with: "Привычки и события можно объединить по смыслу", and: emptyImage)
-            
-            doneButton.configure(action: #selector(addCategoryButtonTapped), newTitle: "Добавить категорию")
-        } else {
-            
-            categoryTableView.isHidden = false
-            stubView.isHidden = true
-            
-            categoryTableView.delegate = tableViewDelegate
-            tableViewDelegate.data = tableCategory
-            categoryTableView.dataSource = tableViewDelegate
-            
-            doneButton.configure(action: #selector(choiseCategoryButtonTapped))
+        setupBindings()
+        
+        doneButton.configure(action: #selector(addCategoryButtonTapped))
+        
+        categoryTableView.delegate = self
+        categoryTableView.dataSource = self
+        
+        viewModel.loadCategories()
+    }
+    
+    private func setupBindings() {
+        viewModel.onCategoriesUpdated = { [weak self] in
+            self?.categoryTableView.reloadData()
         }
+        
+        viewModel.onCategorySelected = { [weak self] selectedCategory in
+            self?.delegate?.doneButtonTapped(selectedCategory: selectedCategory)
+            self?.dismiss(animated: true)
+        }
+        
+        viewModel.onShowStubView = { [weak self] isEmpty in
+            self?.showTable(isHidden: !isEmpty)
+            if isEmpty {
+                let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
+                self?.stubView.configure(with: "Привычки и события можно объединить по смыслу", and: emptyImage)
+            }
+        }
+    }
+    
+    private func showTable(isHidden: Bool) {
+        categoryTableView.isHidden = !isHidden
+        stubView.isHidden = isHidden
+    }
+    
+    @objc private func addCategoryButtonTapped() {
+        let createCategoryVC = CreateNewCategoryViewController()
+        createCategoryVC.delegate = self
+        present(createCategoryVC, animated: true)
     }
 }
 
-private extension CategoryViewController {
-    @objc func choiseCategoryButtonTapped() {
-        if let selectedCategory = tableViewDelegate.getSelectedCategory() {
-            delegate?.doneButtonTapped(selectedCategory: selectedCategory)
-        }
-        
-        dismiss(animated: true)
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 74
     }
     
-    @objc func addCategoryButtonTapped() {
-        dismiss(animated: true)
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        viewModel.selectCategory(at: indexPath.row)
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? CategoryTableViewCell else { return }
+        
+        let totalRows = tableView.numberOfRows(inSection: indexPath.section)
+        cell.cornerRadius = 16.0
+        
+        if totalRows == 1 {
+            cell.roundedCorners = [.allCorners]
+        } else {
+            if indexPath.row == 0 {
+                cell.roundedCorners = [.topLeft, .topRight]
+            } else if indexPath.row == totalRows - 1 {
+                cell.roundedCorners = [.bottomLeft, .bottomRight]
+            } else {
+                cell.roundedCorners = []
+            }
+        }
+        
+        cell.setNeedsLayout()
+    }
+}
+
+extension CategoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        return viewModel.categories.count
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath
+        ) as? CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let isSelected = indexPath.row == viewModel.selectedCategoryIndex
+        cell.configure(with: viewModel.categories[indexPath.row], isSelected: isSelected)
+        
+        return cell
+    }
+}
+
+extension CategoryViewController: CreateNewCategoryProtocol {
+    func didCreateNewCategory(newCategory: String) {
+        viewModel.addCategory(newCategory)
     }
 }

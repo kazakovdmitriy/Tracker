@@ -26,9 +26,14 @@ enum Strings {
         static let newIrregular = "Новое нерегулярное событие"
         static let schedule = "Расписание"
         static let category = "Категория"
+        static let createCategory = "Новая категория"
     }
     enum CreateTrackerVC {
         static let practiceButton = "Привычка"
         static let irregularEventButton = "Нерегулярные событие"
+    }
+    enum Onboarding {
+        static let first = "Отслеживайте только то, что хотите"
+        static let second = "Даже если это не литры воды и йога"
     }
 }
