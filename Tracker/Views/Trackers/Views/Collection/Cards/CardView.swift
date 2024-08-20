@@ -7,7 +7,16 @@
 
 import UIKit
 
+protocol CardViewDelegateProtocol: AnyObject {
+    func pinCardAction()
+    func editCardAction()
+    func deleteCardAction()
+}
+
 final class CardView: BaseView {
+    
+    weak var delegate: CardViewDelegateProtocol?
+    
     private lazy var backgroundColorView: UIView = {
         let view = UIView()
         
@@ -93,5 +102,38 @@ extension CardView {
             titleLabel.trailingAnchor.constraint(equalTo: backgroundColorView.trailingAnchor, constant: -12),
             titleLabel.bottomAnchor.constraint(equalTo: backgroundColorView.bottomAnchor, constant: -12)
         ])
+    }
+    
+    override func configureAppearance() {
+        super.configureAppearance()
+        
+        // Добавляем контекстное меню к ячейке
+        let interaction = UIContextMenuInteraction(delegate: self)
+        self.addInteraction(interaction)
+    }
+}
+
+extension CardView: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            // Создаем элементы контекстного меню
+            let pinAction = UIAction(title: "Закрепить") { [weak self] action in
+                guard let self = self else { return }
+                self.delegate?.pinCardAction()
+            }
+            
+            let editAction = UIAction(title: "Редактировать") { [weak self] action in
+                guard let self = self else { return }
+                self.delegate?.editCardAction()
+            }
+            
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
+                guard let self = self else { return }
+                self.delegate?.deleteCardAction()
+            }
+            
+            return UIMenu(children: [pinAction, editAction, deleteAction])
+        }
     }
 }

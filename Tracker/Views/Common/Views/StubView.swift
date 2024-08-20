@@ -8,6 +8,10 @@
 import UIKit
 
 final class StubView: BaseView {
+    
+    private var imageName: String
+    private var text: String
+    
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -19,6 +23,7 @@ final class StubView: BaseView {
     private lazy var stubEmptyLabel: UILabel = {
         let label = UILabel()
         
+        label.text = text
         label.font = Fonts.sfPro(with: 12)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -30,11 +35,24 @@ final class StubView: BaseView {
     
     private lazy var stubEmptyImage: UIImageView = {
         let view = UIImageView()
+        let image = UIImage(named: imageName) ?? UIImage()
         
+        view.image = image
         view.contentMode = .scaleAspectFit
         
         return view
     }()
+    
+    init(imageName: String, text: String) {
+        self.imageName = imageName
+        self.text = text
+        
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func configure(with title: String, and image: UIImage) {
         stubEmptyLabel.text = title

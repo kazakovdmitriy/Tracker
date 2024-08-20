@@ -56,6 +56,7 @@ extension NewPracticeViewController {
                                      name: trackerData.name,
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
+                                     originalCategory: category,
                                      type: .practice,
                                      schedule: schedule)
             

@@ -44,10 +44,11 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
     
     func fetchCategoriesWithTrackers() -> [TrackerCategory] {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         
         do {
             let trackerCategoryEntities = try context.fetch(fetchRequest)
+            print("Fetched categories with trackers: \(trackerCategoryEntities.count)")
             return try trackerCategoryEntities.map { try trackerCategoryWithTrackers(from: $0) }
         } catch {
             print("Failed to fetch categories with trackers: \(error)")
@@ -60,7 +61,8 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
         // Настройка сортировки по имени категории
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "name != %@", "Закрепленные")
         
         do {
             // Выполняем запрос
@@ -75,6 +77,28 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
             // Обработка ошибок
             print("Failed to fetch category names: \(error)")
             return []
+        }
+    }
+    
+    func checkAndCreatePinCategory() {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        
+        let categoryName = "Закрепленные"
+        
+        fetchRequest.predicate = NSPredicate(format: "name == %@", categoryName)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            if results.isEmpty {
+                let newRecord = TrackerCategoryCoreData(context: context)
+                newRecord.id = UUID()
+                newRecord.name = categoryName
+                
+                saveContext()
+            }
+        } catch {
+            print("Error fetching data: \(error)")
         }
     }
     
@@ -101,6 +125,9 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         guard let emoji = trackerEntity.emoji else {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
+        guard let originalCategory = trackerEntity.original_category else {
+            throw TrackerStoreError.decodingErrorInvalidOriginalCategory
+        }
         guard let schedule = trackerEntity.schedule as? [WeekDays] else {
             throw TrackerStoreError.decodingErrorInvalidScedule
         }
@@ -111,6 +138,7 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
                        name: name,
                        color: color,
                        emoji: emoji,
+                       originalCategory: originalCategory,
                        type: isPractice ? .practice : .irregular,
                        schedule: schedule)
     }

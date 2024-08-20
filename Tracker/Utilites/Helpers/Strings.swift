@@ -27,6 +27,7 @@ enum Strings {
         static let schedule = "Расписание"
         static let category = "Категория"
         static let createCategory = "Новая категория"
+        static let filter = "Фильтры"
     }
     enum CreateTrackerVC {
         static let practiceButton = "Привычка"

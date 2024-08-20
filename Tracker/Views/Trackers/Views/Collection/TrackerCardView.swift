@@ -9,6 +9,7 @@ import UIKit
 
 protocol TrackerCardViewProtocol: AnyObject {
     func didTapPlusButton(with id: UUID, isActive: Bool)
+    func pinCategory(forTracker id: UUID)
 }
 
 final class TrackerCardView: UICollectionViewCell {
@@ -18,12 +19,13 @@ final class TrackerCardView: UICollectionViewCell {
     weak var delegate: TrackerCardViewProtocol?
     
     private var id: UUID?
+    private var categories: String?
     private lazy var cardView = CardView()
     private lazy var quantityView = QuantityManagementView()
     
     func configure(config: TrackerCardConfig) {
         self.id = config.id
-        
+        self.categories = config.category
         delegate = config.plusDelegate
         cardView.configure(title: config.title,
                            bgColor: config.color,
@@ -52,6 +54,8 @@ final class TrackerCardView: UICollectionViewCell {
             quantityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             quantityView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+        
+        cardView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -63,5 +67,20 @@ extension TrackerCardView: QuantityManagementViewProtocol {
     func didTapPlusCardButton(with state: Bool) {
         guard let id = id else { return }
         delegate?.didTapPlusButton(with: id, isActive: state)
+    }
+}
+
+extension TrackerCardView: CardViewDelegateProtocol {
+    func pinCardAction() {
+        guard let id = id else { return }
+        delegate?.pinCategory(forTracker: id)
+    }
+    
+    func editCardAction() {
+        print("Редактировать")
+    }
+    
+    func deleteCardAction() {
+        print("Удалить")
     }
 }

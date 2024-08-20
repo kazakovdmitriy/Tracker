@@ -17,6 +17,7 @@ struct Tracker: Equatable {
     let name: String
     let color: UIColor
     let emoji: String
+    let originalCategory: String
     let type: TrackerType
     let schedule: [WeekDays]
     

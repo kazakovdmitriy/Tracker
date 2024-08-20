@@ -51,7 +51,9 @@ extension TrackersTableViewDelegate: UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, 
+                   willDisplay cell: UITableViewCell, 
+                   forRowAt indexPath: IndexPath) {
         guard let cell = cell as? TrackersTableViewCell else { return }
         
         let totalRows = tableView.numberOfRows(inSection: indexPath.section)

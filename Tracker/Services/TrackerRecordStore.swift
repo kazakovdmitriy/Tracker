@@ -15,11 +15,12 @@ enum TrackerRecordStoreError: Error {
 
 final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     
-    private let context: NSManagedObjectContext
+    static let shared = TrackerRecordStore()
+    
+    private let context: NSManagedObjectContext = CoreDataService.shared.context
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     
-    init(context: NSManagedObjectContext = CoreDataService.shared.context) {
-        self.context = context
+    private override init() {
         super.init()
         initializeFetchedResultsController()
     }

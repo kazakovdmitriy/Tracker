@@ -14,16 +14,18 @@ enum TrackerStoreError: Error {
     case decodingErrorInvalidColor
     case decodingErrorInvalidEmoji
     case decodingErrorInvalidScedule
+    case decodingErrorInvalidOriginalCategory
 }
 
 final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     
-    private let context: NSManagedObjectContext
+    static let shared = TrackerStore()
+    
+    private let context: NSManagedObjectContext = CoreDataService.shared.context
     private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     private let transformer = DaysValueTransformer()
     
-    init(context: NSManagedObjectContext = CoreDataService.shared.context) {
-        self.context = context
+    private override init() {
         super.init()
         initializeFetchedResultsController()
     }
@@ -51,6 +53,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         trackerEntity.id = tracker.id
         trackerEntity.name = tracker.name
         trackerEntity.emoji = tracker.emoji
+        trackerEntity.original_category = tracker.originalCategory
         trackerEntity.color = tracker.color
         trackerEntity.isPractice = tracker.type == .practice ? true : false
         trackerEntity.schedule = tracker.schedule as NSObject
@@ -75,6 +78,52 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         saveContext()
     }
     
+    func pinnedTracker(forTrackerId trackerId: UUID) {
+        // Поиск трекера по ID
+        let trackerFetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        trackerFetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
+        
+        do {
+            let fetchedTrackers = try context.fetch(trackerFetchRequest)
+            guard let trackerEntity = fetchedTrackers.first else {
+                print("Tracker not found with ID: \(trackerId)")
+                return
+            }
+            
+            // Определяем новую категорию
+            let newCategoryName: String
+            if trackerEntity.category_rel?.name == "Закрепленные" {
+                newCategoryName = trackerEntity.original_category ?? ""
+            } else {
+                newCategoryName = "Закрепленные"
+            }
+            
+            // Поиск новой категории
+            let categoryFetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+            categoryFetchRequest.predicate = NSPredicate(format: "name == %@", newCategoryName)
+            
+            let fetchedCategories = try context.fetch(categoryFetchRequest)
+            guard let newCategoryEntity = fetchedCategories.first else {
+                print("Category not found with name: \(newCategoryName)")
+                return
+            }
+            
+            // Удаление трекера из предыдущей категории
+            if let oldCategoryEntity = trackerEntity.category_rel {
+                oldCategoryEntity.removeFromTrackers_rel(trackerEntity)
+            }
+            
+            // Добавление трекера в новую категорию
+            newCategoryEntity.addToTrackers_rel(trackerEntity)
+            
+            print("Tracker with ID \(trackerId) moved to category \(newCategoryName)")
+            saveContext()
+            
+        } catch {
+            print("Failed to update tracker category: \(error)")
+        }
+    }
+    
     func fetchedObjects() -> [Tracker] {
         guard let trackerEntities = fetchedResultsController?.fetchedObjects else {
             return []
@@ -96,6 +145,9 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         guard let emoji = trackerEntity.emoji else {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
+        guard let originalCategory = trackerEntity.original_category else {
+            throw TrackerStoreError.decodingErrorInvalidOriginalCategory
+        }
         guard let schedule = trackerEntity.schedule as? [WeekDays] else {
             throw TrackerStoreError.decodingErrorInvalidScedule
         }
@@ -106,6 +158,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
                        name: name,
                        color: color,
                        emoji: emoji,
+                       originalCategory: originalCategory,
                        type: isPratice ? .practice : .irregular,
                        schedule: schedule)
     }
