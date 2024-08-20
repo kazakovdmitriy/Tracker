@@ -13,12 +13,17 @@ protocol TrackersViewModelProtocol {
     
     var categories: [TrackerCategory] { get }
     var showedCategories: [TrackerCategory] { get }
-    var completedTrackers: Set<TrackerRecord> { get }
     var currentDate: Date { get }
     
     func fetchCategories()
     func updateCompletedTrackers()
     func updateDate(_ date: Date)
+    func addCompletedTracker(_ tracker: TrackerRecord)
+    func removeCompletedTracker(_ tracker: TrackerRecord)
+    func pinTracker(forTrackerId id: UUID)
+    func getCountOfCompletedTrackers(date: Date, trackerId: UUID) -> Int
+    func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool
+    func createTracker(category: String, tracker: Tracker)
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
@@ -33,7 +38,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     private(set) var categories: [TrackerCategory] = []
     private(set) var showedCategories: [TrackerCategory] = []
-    private(set) var completedTrackers: Set<TrackerRecord> = []
+    private var internalCompletedTrackers: Set<TrackerRecord> = []
+    
+    var completedTrackers: Set<TrackerRecord> {
+        return internalCompletedTrackers
+    }
     
     private(set) var currentDate: Date = Date() {
         didSet {
@@ -48,13 +57,35 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func updateCompletedTrackers() {
-        completedTrackers = trackerRecordStore.fetchedObjects()
+        internalCompletedTrackers = trackerRecordStore.fetchedObjects()
         onCompletedTrackersUpdated?()
         updateCategories()
     }
     
     func updateDate(_ date: Date) {
         currentDate = date
+    }
+    
+    func addCompletedTracker(_ tracker: TrackerRecord) {
+        internalCompletedTrackers.insert(tracker)
+        trackerRecordStore.createTrackerRecord(trackerRecord: tracker)
+        onCompletedTrackersUpdated?()
+    }
+    
+    func removeCompletedTracker(_ tracker: TrackerRecord) {
+        internalCompletedTrackers.remove(tracker)
+        try? trackerRecordStore.delete(trackerRecord: tracker)
+        onCompletedTrackersUpdated?()
+    }
+    
+    func pinTracker(forTrackerId id: UUID) {
+        trackerStore.pinnedTracker(forTrackerId: id)
+        fetchCategories()
+    }
+    
+    func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool {
+        let trackerRecord = TrackerRecord(id: trackerId, dateComplete: date)
+        return internalCompletedTrackers.contains(trackerRecord)
     }
     
     func filterTrackersForToday() -> [TrackerCategory] {
@@ -69,8 +100,8 @@ final class TrackersViewModel: TrackersViewModelProtocol {
                     return tracker.schedule.contains(today)
                 case .irregular:
                     return (
-                        !completedTrackers.containtRecord(withId: tracker.id) ||
-                        completedTrackers.containtRecordForDay(withId: tracker.id, andDate: currentDate)
+                        !internalCompletedTrackers.containtRecord(withId: tracker.id) ||
+                        internalCompletedTrackers.containtRecordForDay(withId: tracker.id, andDate: currentDate)
                     )
                 }
             }
@@ -80,6 +111,23 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         }
         
         return filteredCategories
+    }
+    
+    func getCountOfCompletedTrackers(date: Date, trackerId: UUID) -> Int {
+        var trackerCounts: [UUID: Int] = [:]
+        
+        for tracker in internalCompletedTrackers {
+            if tracker.dateComplete <= date {
+                trackerCounts[tracker.id, default: 0] += 1
+            }
+        }
+        
+        return trackerCounts[trackerId] ?? 0
+    }
+    
+    func createTracker(category: String, tracker: Tracker) {
+        trackerStore.createTracker(tracker: tracker, toCategory: category)
+        fetchCategories()
     }
     
     private func getCurrentWeekDay() -> WeekDays? {
