@@ -128,6 +128,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     func createTracker(category: String, tracker: Tracker) {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
         fetchCategories()
+        updateCategories()
     }
     
     private func getCurrentWeekDay() -> WeekDays? {
