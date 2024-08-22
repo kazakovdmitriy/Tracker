@@ -28,7 +28,7 @@ protocol TrackersViewModelProtocol {
     func addCompletedTracker(for trackerId: UUID, dateComplete: Date)
     func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date)
     func pinTracker(forTrackerId id: UUID)
-    func getCountOfCompletedTrackers(date: Date, trackerId: UUID) -> Int
+    func getCountOfCompletedTrackers(trackerId: UUID) -> Int
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool
     func createTracker(category: String, tracker: Tracker)
     func deleteTracker(with id: UUID)
@@ -92,14 +92,12 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func addCompletedTracker(for trackerId: UUID, dateComplete: Date) {
-        // internalCompletedTrackers.insert(tracker)
         trackerRecordStore.createTrackerRecord(for: trackerId, dateComplete: dateComplete)
         fetchCategories()
         updateCategories()
     }
     
     func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date) {
-        // internalCompletedTrackers.remove(tracker)
         trackerRecordStore.deleteTrackerRecord(for: trackerId, on: dateComplete)
         fetchCategories()
         updateCategories()
@@ -140,16 +138,16 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         return filteredCategories
     }
     
-    func getCountOfCompletedTrackers(date: Date, trackerId: UUID) -> Int {
-        var trackerCounts: [UUID: Int] = [:]
+    func getCountOfCompletedTrackers(trackerId: UUID) -> Int {
         
-        for tracker in internalCompletedTrackers {
-            if tracker.dateComplete <= date {
-                trackerCounts[tracker.id, default: 0] += 1
-            }
+        guard let tracker = categories.flatMap({ $0.trackers }).first(where: { $0.id == trackerId }) else {
+            return 0
         }
         
-        return trackerCounts[trackerId] ?? 0
+        // Фильтруем записи, связанные с найденным трекером, по условию
+        let count = tracker.completedDate.filter { $0 <= currentDate }.count
+        
+        return count
     }
     
     func createTracker(category: String, tracker: Tracker) {

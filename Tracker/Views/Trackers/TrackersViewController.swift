@@ -282,7 +282,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             color: item.color,
             emoji: item.emoji,
             category: category,
-            days: item.completedDate.count,
+            days: viewModel.getCountOfCompletedTrackers(trackerId: item.id),
             isDone: isDone,
             isPinned: category == "Закрепленные",
             plusDelegate: self,
@@ -343,12 +343,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 10
-    }
-}
-
-private extension TrackersViewController {
-    func countTrackersDays(date: Date, trackerId: UUID) -> Int {
-        return viewModel.getCountOfCompletedTrackers(date: date, trackerId: trackerId)
     }
 }
 

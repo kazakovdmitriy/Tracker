@@ -168,22 +168,6 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func trackerCategoryAsObject(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let name = trackerCategoryEntity.name else {
-            throw TrackerRecordStoreError.decodingErrorInvalidId
-        }
-        
-        return TrackerCategory(name: name, trackers: [])
-    }
-    
-    private func trackerCategoryAsString(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> String {
-        guard let name = trackerCategoryEntity.name else {
-            throw TrackerRecordStoreError.decodingErrorInvalidId
-        }
-        
-        return name
-    }
-    
     private func initializeFetchedResultsController() {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
