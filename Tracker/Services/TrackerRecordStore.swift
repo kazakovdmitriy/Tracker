@@ -34,6 +34,75 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         saveContext()
     }
     
+    func createTrackerRecord(for trackerId: UUID, dateComplete: Date) {
+        print("call")
+        // Проверяем, существует ли уже запись с такой датой для данного трекера
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@", trackerId as CVarArg, dateComplete as CVarArg)
+        
+        do {
+            let existingRecords = try context.fetch(fetchRequest)
+            
+            // Если такая запись уже существует, ничего не делаем
+            if !existingRecords.isEmpty {
+                print("TrackerRecord with date \(dateComplete) for tracker \(trackerId) already exists.")
+                return
+            }
+            
+            // Если запись не найдена, создаем новую
+            guard let tracker = fetchTrackerById(trackerId: trackerId) else {
+                print("Tracker with ID \(trackerId) not found.")
+                return
+            }
+            
+            let trackerRecordEntity = TrackerRecordCoreData(context: context)
+            trackerRecordEntity.id = trackerId
+            trackerRecordEntity.dateComplete = dateComplete
+            
+            // Связываем новый TrackerRecord с соответствующим Tracker
+            tracker.addToRecord_rel(trackerRecordEntity)
+            
+            saveContext()
+            
+        } catch {
+            print("Failed to check existing TrackerRecord: \(error)")
+        }
+    }
+    
+    func deleteTrackerRecord(for trackerId: UUID, on dateComplete: Date) {
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: dateComplete)
+        
+        // Создаем диапазон дат для поиска записей, которые попадают в этот день
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+            print("Failed to calculate end of day.")
+            return
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(format: "tracker_rel.id == %@ AND dateComplete >= %@ AND dateComplete < %@",
+                                                 trackerId as CVarArg,
+                                                 startOfDay as CVarArg,
+                                                 endOfDay as CVarArg)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            let fetchRecords = try context.fetch(fetchRequest)
+            
+            if let recordToDelete = fetchRecords.first {
+                context.delete(recordToDelete)
+                saveContext()
+                print("TrackerRecord deleted for Tracker with ID \(trackerId) on \(dateComplete)")
+            } else {
+                print("No TrackerRecord found for Tracker with ID \(trackerId) on \(dateComplete)")
+            }
+        } catch {
+            print("Failed to fetch or delete TrackerRecord: \(error)")
+        }
+    }
+    
     func fetchedObjects() -> Set<TrackerRecord> {
         guard let trackerEntities = fetchedResultsController?.fetchedObjects else {
             return Set<TrackerRecord>()
@@ -42,23 +111,17 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         return Set(trackerEntities.compactMap { try? trackerRecord(from: $0) })
     }
     
-    func delete(trackerRecord: TrackerRecord) throws {
-        
-        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@",
-                                             trackerRecord.id as CVarArg,
-                                             trackerRecord.dateComplete as CVarArg)
+    private func fetchTrackerById(trackerId: UUID) -> TrackerCoreData? {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
         fetchRequest.fetchLimit = 1
         
         do {
-            let results = try context.fetch(fetchRequest)
-            if let entity1 = results.first {
-                context.delete(entity1)
-                saveContext()
-            }
+            let trackers = try context.fetch(fetchRequest)
+            return trackers.first
         } catch {
-            print("Failed to fetch TrackerRecord: \(error)")
-            throw TrackerRecordStoreError.fetchError
+            print("Failed to fetch Tracker by ID: \(error)")
+            return nil
         }
     }
     

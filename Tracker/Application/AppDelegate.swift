@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         DaysValueTransformer.register()
         TrackerCategoryStore.shared.checkAndCreatePinCategory()
+        AnalyticsService.activate()
         
         return true
     }

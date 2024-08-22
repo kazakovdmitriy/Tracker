@@ -7,6 +7,13 @@
 
 import Foundation
 
+enum TrackerFilter {
+    case all
+    case today
+    case done
+    case unfinished
+}
+
 protocol TrackersViewModelProtocol {
     var onCategoriesUpdated: (() -> Void)? { get set }
     var onCompletedTrackersUpdated: (() -> Void)? { get set }
@@ -18,12 +25,17 @@ protocol TrackersViewModelProtocol {
     func fetchCategories()
     func updateCompletedTrackers()
     func updateDate(_ date: Date)
-    func addCompletedTracker(_ tracker: TrackerRecord)
-    func removeCompletedTracker(_ tracker: TrackerRecord)
+    func addCompletedTracker(for trackerId: UUID, dateComplete: Date)
+    func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date)
     func pinTracker(forTrackerId id: UUID)
     func getCountOfCompletedTrackers(date: Date, trackerId: UUID) -> Int
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool
     func createTracker(category: String, tracker: Tracker)
+    func deleteTracker(with id: UUID)
+    func filterAllTrackers()
+    func filterTodayTrackers()
+    func filterDoneTrackers()
+    func filterUnfinishedTrackers()
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
@@ -31,7 +43,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     // MARK: - Properties
     var onCategoriesUpdated: (() -> Void)?
     var onCompletedTrackersUpdated: (() -> Void)?
-    
+
     private let trackerStore = TrackerStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
     private let trackerCategoryStore = TrackerCategoryStore.shared
@@ -39,6 +51,8 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private(set) var categories: [TrackerCategory] = []
     private(set) var showedCategories: [TrackerCategory] = []
     private var internalCompletedTrackers: Set<TrackerRecord> = []
+    
+    private var currentFilter: TrackerFilter = .all
     
     var completedTrackers: Set<TrackerRecord> {
         return internalCompletedTrackers
@@ -52,8 +66,15 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     // MARK: - Methods
     func fetchCategories() {
-        categories = trackerCategoryStore.fetchCategoriesWithTrackers()
+        categories = trackerCategoryStore.fetchCategoriesWithAllTrackersAndRecords()
         updateCategories()
+    }
+    
+    func deleteTracker(with id: UUID) {
+        trackerStore.deleteTracker(with: id)
+        fetchCategories()
+        updateCategories()
+        onCategoriesUpdated?()
     }
     
     func updateCompletedTrackers() {
@@ -63,19 +84,25 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func updateDate(_ date: Date) {
-        currentDate = date
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        
+        currentDate = startOfDay
+        applyCurrentFilter()
     }
     
-    func addCompletedTracker(_ tracker: TrackerRecord) {
-        internalCompletedTrackers.insert(tracker)
-        trackerRecordStore.createTrackerRecord(trackerRecord: tracker)
-        onCompletedTrackersUpdated?()
+    func addCompletedTracker(for trackerId: UUID, dateComplete: Date) {
+        // internalCompletedTrackers.insert(tracker)
+        trackerRecordStore.createTrackerRecord(for: trackerId, dateComplete: dateComplete)
+        fetchCategories()
+        updateCategories()
     }
     
-    func removeCompletedTracker(_ tracker: TrackerRecord) {
-        internalCompletedTrackers.remove(tracker)
-        try? trackerRecordStore.delete(trackerRecord: tracker)
-        onCompletedTrackersUpdated?()
+    func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date) {
+        // internalCompletedTrackers.remove(tracker)
+        trackerRecordStore.deleteTrackerRecord(for: trackerId, on: dateComplete)
+        fetchCategories()
+        updateCategories()
     }
     
     func pinTracker(forTrackerId id: UUID) {
@@ -129,6 +156,57 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
         fetchCategories()
         updateCategories()
+    }
+    
+    // MARK: - Methods for Filtering
+    func applyCurrentFilter() {
+        switch currentFilter {
+        case .all:
+            filterAllTrackers()
+        case .today:
+            filterTodayTrackers()
+        case .done:
+            filterDoneTrackers()
+        case .unfinished:
+            filterUnfinishedTrackers()
+        }
+    }
+    
+    func filterAllTrackers() {
+        currentFilter = .all
+        updateCategories()
+    }
+    
+    func filterTodayTrackers() {
+        currentFilter = .today
+        currentDate = Date()
+        updateCategories()
+    }
+    
+    func filterDoneTrackers() {
+        currentFilter = .done
+        showedCategories = categories.map { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                return isTrackerCompleted(trackerId: tracker.id, date: currentDate)
+            }
+            return TrackerCategory(name: category.name, trackers: filteredTrackers)
+        }.filter { $0.trackers.isEmpty }
+        onCategoriesUpdated?()
+    }
+    
+    func filterUnfinishedTrackers() {
+        currentFilter = .unfinished
+        showedCategories = categories.map { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                return !isTrackerCompleted(trackerId: tracker.id, date: currentDate)
+            }
+            return TrackerCategory(name: category.name, trackers: filteredTrackers)
+        }.filter { !$0.trackers.isEmpty }
+        onCategoriesUpdated?()
+    }
+    
+    private func startOfDay(for date: Date) -> Date {
+        return Calendar.current.startOfDay(for: date)
     }
     
     private func getCurrentWeekDay() -> WeekDays? {

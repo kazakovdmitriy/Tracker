@@ -124,44 +124,61 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func fetchedObjects() -> [Tracker] {
-        guard let trackerEntities = fetchedResultsController?.fetchedObjects else {
-            return []
-        }
+//    func fetchedObjects() -> [Tracker] {
+//        guard let trackerEntities = fetchedResultsController?.fetchedObjects else {
+//            return []
+//        }
+//        
+//        return trackerEntities.compactMap { try? tracker(from: $0) }
+//    }
+    
+    func deleteTracker(with id: UUID) {
+        let trackerFetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        trackerFetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
-        return trackerEntities.compactMap { try? tracker(from: $0) }
+        do {
+            let objects = try context.fetch(trackerFetchRequest)
+            
+            for object in objects {
+                context.delete(object)
+            }
+            
+            try context.save()
+        } catch {
+            print("Ошибка при удалении объекта: \(error)")
+        }
     }
     
-    private func tracker(from trackerEntity: TrackerCoreData) throws -> Tracker {
-        guard let id = trackerEntity.id else {
-            throw TrackerStoreError.decodingErrorInvalidId
-        }
-        guard let name = trackerEntity.name else {
-            throw TrackerStoreError.decodingErrorInvalidName
-        }
-        guard let color = trackerEntity.color as? UIColor else {
-            throw TrackerStoreError.decodingErrorInvalidColor
-        }
-        guard let emoji = trackerEntity.emoji else {
-            throw TrackerStoreError.decodingErrorInvalidEmoji
-        }
-        guard let originalCategory = trackerEntity.original_category else {
-            throw TrackerStoreError.decodingErrorInvalidOriginalCategory
-        }
-        guard let schedule = trackerEntity.schedule as? [WeekDays] else {
-            throw TrackerStoreError.decodingErrorInvalidScedule
-        }
-        
-        let isPratice = trackerEntity.isPractice
-        
-        return Tracker(id: id,
-                       name: name,
-                       color: color,
-                       emoji: emoji,
-                       originalCategory: originalCategory,
-                       type: isPratice ? .practice : .irregular,
-                       schedule: schedule)
-    }
+//    private func tracker(from trackerEntity: TrackerCoreData) throws -> Tracker {
+//        guard let id = trackerEntity.id else {
+//            throw TrackerStoreError.decodingErrorInvalidId
+//        }
+//        guard let name = trackerEntity.name else {
+//            throw TrackerStoreError.decodingErrorInvalidName
+//        }
+//        guard let color = trackerEntity.color as? UIColor else {
+//            throw TrackerStoreError.decodingErrorInvalidColor
+//        }
+//        guard let emoji = trackerEntity.emoji else {
+//            throw TrackerStoreError.decodingErrorInvalidEmoji
+//        }
+//        guard let originalCategory = trackerEntity.original_category else {
+//            throw TrackerStoreError.decodingErrorInvalidOriginalCategory
+//        }
+//        guard let schedule = trackerEntity.schedule as? [WeekDays] else {
+//            throw TrackerStoreError.decodingErrorInvalidScedule
+//        }
+//        
+//        let isPratice = trackerEntity.isPractice
+//        
+//        return Tracker(id: id,
+//                       name: name,
+//                       color: color,
+//                       emoji: emoji,
+//                       originalCategory: originalCategory,
+//                       type: isPratice ? .practice : .irregular,
+//                       schedule: schedule)
+//    }
     
     private func saveContext() {
         do {

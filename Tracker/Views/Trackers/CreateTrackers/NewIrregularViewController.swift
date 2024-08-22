@@ -56,6 +56,7 @@ extension NewIrregularViewController {
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
                                      originalCategory: category,
+                                     completedDate: [],
                                      type: .irregular,
                                      schedule: [WeekDays.monday,
                                                 WeekDays.tuesday,

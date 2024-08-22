@@ -1,0 +1,28 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Дмитрий on 21.08.2024.
+  
+*/
+
+// TabBar
+"tab.tracker" = "Трекеры";
+"tab.statistics" = "Статистика";
+
+// Trackers
+"tracker.stub.message" = "Что будем отслеживать";
+"tracker.filter.title" = "Фильтры";
+"tracker.search.placeholder" = "Поиск";
+"tracker.alertMessage" = "Уверены что хотите удалить трекер?";
+"tracker.alertBtnDelete" = "Удалить";
+"tracker.alertBtnCancle" = "Отменить";
+
+// Trackers Card View
+"tracker.card.day" = "день";
+"tracker.card.days" = "дней";
+"tracker.card.twoDays" = "дня";
+"tracker.card.pin" = "Закрепить";
+"tracker.card.unpin" = "Открепить";
+"tracker.card.edit" = "Редактировать";
+"tracker.card.delete" = "Удалить";

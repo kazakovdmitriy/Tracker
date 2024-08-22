@@ -7,12 +7,31 @@
 
 import UIKit
 
+protocol FiltersViewDelegateProtocol: AnyObject {
+    func allTrackers()
+    func todayTrackers()
+    func doneTrackers()
+    func unfinishedTrackers()
+}
+
 final class FiltersViewController: PopUpViewController {
+    
+    weak var delegate: FiltersViewDelegateProtocol?
     
     private let filtres: [String] = ["Все трекеры",
                                      "Трекеры на сегодня",
                                      "Завершенные",
                                      "Не завершенные"]
+    
+    private var selectedIndex: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: UserDefaultsKeys.selectedFilter) 
+        }
+        
+        set(newValue) {
+            UserDefaults.standard.setValue(newValue, forKey: UserDefaultsKeys.selectedFilter)
+        }
+    }
     
     private lazy var tableView: TrackersTableView<CategoryTableViewCell> = TrackersTableView(
         cellType: CategoryTableViewCell.self,
@@ -63,8 +82,19 @@ extension FiltersViewController: UITableViewDelegate {
         return 74
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, 
+                   didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
+        selectedIndex = indexPath.row
+        
+        switch indexPath.row {
+        case 0: delegate?.allTrackers()
+        case 1: delegate?.todayTrackers()
+        case 2: delegate?.doneTrackers()
+        case 3: delegate?.unfinishedTrackers()
+        default: break
+        }
+        
         dismiss(animated: true)
     }
     
@@ -104,7 +134,10 @@ extension FiltersViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configure(with: filtres[indexPath.row])
+        let isSelected = indexPath.row == selectedIndex
+        
+        cell.configure(with: filtres[indexPath.row],
+                       isSelected: isSelected)
     
         return cell
     }

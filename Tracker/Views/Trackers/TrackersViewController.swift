@@ -11,17 +11,18 @@ final class TrackersViewController: BaseController {
     
     // MARK: - Private Properties
     private var viewModel: TrackersViewModelProtocol
+    private var analyticsService = AnalyticsService.shared
     
     private lazy var trackerStubView = StubView(imageName: "empty_trackers_image",
-                                                text: "Что будем отслеживать?")
+                                                text: Strings.TrackersVC.stub)
     
     private lazy var filterButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(Strings.TrackersVC.filterButton, for: .normal)
         
         button.backgroundColor = .ypBlue
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         
         button.layer.cornerRadius = 16
@@ -35,7 +36,7 @@ final class TrackersViewController: BaseController {
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = Strings.TrackersVC.searchPlaceHolder
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         
         // Убираем серые полосы вокруг поиска
@@ -55,11 +56,11 @@ final class TrackersViewController: BaseController {
         
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
-        picker.locale = Locale(identifier: "ru_RU")
         picker.calendar.firstWeekday = 2
         picker.tintColor = .ypBlue
-        picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
-        
+        picker.addTarget(self, 
+                         action: #selector(datePickerValueChanged),
+                         for: .valueChanged)
         return picker
     }()
     
@@ -74,6 +75,18 @@ final class TrackersViewController: BaseController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        analyticsService.openEvent(screen: .Main)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        analyticsService.closeEvent(screen: .Main)
     }
 }
 
@@ -116,6 +129,8 @@ extension TrackersViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAppWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
+        
         configureCollectionView()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -125,6 +140,10 @@ extension TrackersViewController {
         addButton.tintColor = .ypBlack
         
         bindings()
+    }
+    
+    @objc private func handleAppWillTerminate() {
+        analyticsService.closeEvent(screen: .Main)
     }
     
     private func bindings() {
@@ -184,6 +203,9 @@ extension TrackersViewController {
     }
     
     @objc private func addButtonTapped() {
+        
+        analyticsService.clickEvent(screen: .Main, button: .add_track)
+        
         let addVC = ChoiseTypeTrackerViewController()
         addVC.delegate = self
         let navVC = UINavigationController(rootViewController: addVC)
@@ -192,9 +214,38 @@ extension TrackersViewController {
     }
     
     @objc private func filterButtonTapped() {
+        
+        analyticsService.clickEvent(screen: .Main, button: .filter)
+        
         let filtersVC = FiltersViewController()
+        filtersVC.delegate = self
         filtersVC.modalPresentationStyle = .popover
         present(filtersVC, animated: true)
+    }
+}
+
+// MARK: - Alert
+private extension TrackersViewController {
+    func displayDeleteAlert(forTracker id: UUID) {
+        let dialogMessage = UIAlertController(title: "", 
+                                              message: Strings.TrackersVC.alertMessage,
+                                              preferredStyle: .actionSheet)
+        
+        let delete = UIAlertAction(title: Strings.TrackersVC.alertBtnDelete, 
+                                   style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            viewModel.deleteTracker(with: id)
+        }
+        
+        let cancel = UIAlertAction(title: Strings.TrackersVC.alertBtnCancle, 
+                                   style: .cancel) { _ in
+            self.dismiss(animated: true)
+        }
+        
+        dialogMessage.addAction(delete)
+        dialogMessage.addAction(cancel)
+        
+        self.present(dialogMessage, animated: true)
     }
 }
 
@@ -223,8 +274,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         let item = viewModel.showedCategories[indexPath.section].trackers[indexPath.row]
         let category = viewModel.showedCategories[indexPath.section].name
-        let days = countTrackersDays(date: viewModel.currentDate, trackerId: item.id)
-        let isDone = viewModel.isTrackerCompleted(trackerId: item.id, date: viewModel.currentDate)
+        let isDone = item.completedDate.contains(viewModel.currentDate)
         
         let config = TrackerCardConfig(
             id: item.id,
@@ -232,8 +282,9 @@ extension TrackersViewController: UICollectionViewDataSource {
             color: item.color,
             emoji: item.emoji,
             category: category,
-            days: days,
+            days: item.completedDate.count,
             isDone: isDone,
+            isPinned: category == "Закрепленные",
             plusDelegate: self,
             date: viewModel.currentDate
         )
@@ -304,8 +355,16 @@ private extension TrackersViewController {
 // MARK: - TrackerCardViewProtocol
 extension TrackersViewController: TrackerCardViewProtocol {
     func pinCategory(forTracker id: UUID) {
-        print("Закрепили \(id)")
         viewModel.pinTracker(forTrackerId: id)
+    }
+    
+    func editTracker(forTracker id: UUID) {
+        analyticsService.clickEvent(screen: .Main, button: .edit)
+    }
+    
+    func deleteTracker(forTracker id: UUID) {
+        analyticsService.clickEvent(screen: .Main, button: .delete)
+        displayDeleteAlert(forTracker: id)
     }
     
     func didChangeCompletedTrackers(with data: Set<TrackerRecord>) {
@@ -313,13 +372,14 @@ extension TrackersViewController: TrackerCardViewProtocol {
     }
     
     func didTapPlusButton(with id: UUID, isActive: Bool) {
+        
+        analyticsService.clickEvent(screen: .Main, button: .track)
+        
         if viewModel.currentDate <= Date() {
-            let newTrackerRecord = TrackerRecord(id: id, dateComplete: viewModel.currentDate)
-            
             if !isActive {
-                viewModel.removeCompletedTracker(newTrackerRecord)
+                viewModel.removeCompletedTracker(for: id, on: viewModel.currentDate)
             } else {
-                viewModel.addCompletedTracker(newTrackerRecord)
+                viewModel.addCompletedTracker(for: id, dateComplete: viewModel.currentDate)
             }
         }
     }
@@ -345,7 +405,28 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
 }
 
 extension TrackersViewController: CreateBaseControllerDelegate {
-    func didTapCreateTrackerButton(category: String, tracker: Tracker) {
+    func didTapCreateTrackerButton(category: String, 
+                                   tracker: Tracker) {
+        
         viewModel.createTracker(category: category, tracker: tracker)
+    }
+}
+
+extension TrackersViewController: FiltersViewDelegateProtocol {
+    func allTrackers() {
+        viewModel.filterAllTrackers()
+    }
+    
+    func todayTrackers() {
+        datePicker.setDate(Date(), animated: true)
+        viewModel.filterTodayTrackers()
+    }
+    
+    func doneTrackers() {
+        viewModel.filterDoneTrackers()
+    }
+    
+    func unfinishedTrackers() {
+        viewModel.filterUnfinishedTrackers()
     }
 }

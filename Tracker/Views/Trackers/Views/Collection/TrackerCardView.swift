@@ -10,6 +10,8 @@ import UIKit
 protocol TrackerCardViewProtocol: AnyObject {
     func didTapPlusButton(with id: UUID, isActive: Bool)
     func pinCategory(forTracker id: UUID)
+    func editTracker(forTracker id: UUID)
+    func deleteTracker(forTracker id: UUID)
 }
 
 final class TrackerCardView: UICollectionViewCell {
@@ -29,7 +31,8 @@ final class TrackerCardView: UICollectionViewCell {
         delegate = config.plusDelegate
         cardView.configure(title: config.title,
                            bgColor: config.color,
-                           emoji: config.emoji)
+                           emoji: config.emoji,
+                           isPinned: config.isPinned)
         quantityView.configure(buttonBg: config.color,
                                days: config.days,
                                delegate: self,
@@ -77,10 +80,12 @@ extension TrackerCardView: CardViewDelegateProtocol {
     }
     
     func editCardAction() {
-        print("Редактировать")
+        guard let id = id else { return }
+        delegate?.editTracker(forTracker: id)
     }
     
     func deleteCardAction() {
-        print("Удалить")
+        guard let id = id else { return }
+        delegate?.deleteTracker(forTracker: id)
     }
 }
