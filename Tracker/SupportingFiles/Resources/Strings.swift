@@ -29,6 +29,12 @@ enum Strings {
         static let createCategory = "Новая категория"
         static let filter = "Фильтры"
     }
+    enum Stubs {
+        static let emptyTracker = NSLocalizedString("stub.tracker", comment: "Text for empty tracker stub view")
+        static let emptyCategory = NSLocalizedString("stub.category", comment: "Text for empty tracker stub view")
+        static let nothingFind = NSLocalizedString("stub.find", comment: "Text for empty find stub view")
+        static let nothingAnalize = NSLocalizedString("stub.analize", comment: "Text for empty find stub view")
+    }
     enum CreateTrackerVC {
         static let practiceButton = "Привычка"
         static let irregularEventButton = "Нерегулярные событие"
@@ -38,7 +44,6 @@ enum Strings {
         static let second = "Даже если это не литры воды и йога"
     }
     enum TrackersVC {
-        static let stub = NSLocalizedString("tracker.stub.message", comment: "Text for stub view")
         static let filterButton = NSLocalizedString("tracker.filter.title", comment: "Text for filter button")
         static let searchPlaceHolder = NSLocalizedString("tracker.search.placeholder", comment: "Text for search bar placeholder")
         static let alertMessage = NSLocalizedString("tracker.alertMessage", comment: "Text for delete tracker alert message")

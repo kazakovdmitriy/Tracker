@@ -7,6 +7,13 @@
 
 import UIKit
 
+enum StubType {
+    case emptyTracker
+    case nothingFound
+    case nothingToAnalyze
+    case emptyCategory
+}
+
 final class StubView: BaseView {
     
     private var imageName: String
@@ -43,10 +50,21 @@ final class StubView: BaseView {
         return view
     }()
     
-    init(imageName: String, text: String) {
-        self.imageName = imageName
-        self.text = text
-        
+    init(type: StubType) {
+        switch type {
+        case .emptyTracker:
+            text = Strings.Stubs.emptyTracker
+            imageName = "empty_trackers_image"
+        case .emptyCategory:
+            text = Strings.Stubs.emptyCategory
+            imageName = "empty_trackers_image"
+        case .nothingFound:
+            text = Strings.Stubs.nothingFind
+            imageName = "nothing_found"
+        case .nothingToAnalyze:
+            text = Strings.Stubs.nothingAnalize
+            imageName = "empty_statistic_image"
+        }
         super.init()
     }
     

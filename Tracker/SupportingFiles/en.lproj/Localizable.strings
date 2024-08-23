@@ -11,12 +11,17 @@
 "tab.statistics" = "Statistics";
 
 // Trackers
-"tracker.stub.message" = "What are we going to track?";
 "tracker.filter.title" = "Filters";
 "tracker.search.placeholder" = "Search";
 "tracker.alertMessage" = "Do you want to delete the tracker?";
 "tracker.alertBtnDelete" = "Delete";
 "tracker.alertBtnCancle" = "Cancle";
+
+// Stub
+"stub.tracker" = "What are we going to track?";
+"stub.find" = "Nothing was found";
+"stub.category" = "Habits and events can be combined in meaning";
+"stub.analize" = "There is nothing to analyze yet";
 
 // Trackers Card View
 "tracker.card.day" = "day";

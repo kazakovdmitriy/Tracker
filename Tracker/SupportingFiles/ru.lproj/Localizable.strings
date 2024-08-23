@@ -11,12 +11,17 @@
 "tab.statistics" = "Статистика";
 
 // Trackers
-"tracker.stub.message" = "Что будем отслеживать";
 "tracker.filter.title" = "Фильтры";
 "tracker.search.placeholder" = "Поиск";
 "tracker.alertMessage" = "Уверены что хотите удалить трекер?";
 "tracker.alertBtnDelete" = "Удалить";
 "tracker.alertBtnCancle" = "Отменить";
+
+// Stub
+"stub.tracker" = "Что будем отслеживать";
+"stub.category" = "Привычки и события можно объединить по смыслу";
+"stub.find" = "Ничего не найдено";
+"stub.analize" = "Анализировать пока нечего";
 
 // Trackers Card View
 "tracker.card.day" = "день";

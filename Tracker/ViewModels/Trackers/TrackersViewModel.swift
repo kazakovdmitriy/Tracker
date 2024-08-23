@@ -14,16 +14,21 @@ enum TrackerFilter {
     case unfinished
 }
 
+enum HideType {
+    case filterHide
+    case trackerHide
+    case showTracker
+}
+
 protocol TrackersViewModelProtocol {
     var onCategoriesUpdated: (() -> Void)? { get set }
-//    var onCompletedTrackersUpdated: (() -> Void)? { get set }
     
     var categories: [TrackerCategory] { get }
     var showedCategories: [TrackerCategory] { get }
     var currentDate: Date { get }
     
     func fetchCategories()
-//    func updateCompletedTrackers()
+    func getHideType() -> HideType
     func updateDate(_ date: Date)
     func addCompletedTracker(for trackerId: UUID)
     func removeCompletedTracker(for trackerId: UUID)
@@ -41,16 +46,15 @@ protocol TrackersViewModelProtocol {
 final class TrackersViewModel: TrackersViewModelProtocol {
     
     // MARK: - Properties
+    
     var onCategoriesUpdated: (() -> Void)?
-//    var onCompletedTrackersUpdated: (() -> Void)?
-
+    
     private let trackerStore = TrackerStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
     private let trackerCategoryStore = TrackerCategoryStore.shared
     
     private(set) var categories: [TrackerCategory] = []
     private(set) var showedCategories: [TrackerCategory] = []
-    private(set) var filtredCategories: [TrackerCategory] = []
     
     private var currentFilter: TrackerFilter = .all
     
@@ -64,6 +68,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     // MARK: - Methods
+    
     func fetchCategories() {
         categories = trackerCategoryStore.fetchCategoriesWithAllTrackersAndRecords()
         updateCategories()
@@ -75,10 +80,25 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         updateCategories()
     }
     
-//    func updateCompletedTrackers() {
-//        onCompletedTrackersUpdated?()
-//        updateCategories()
-//    }
+    func getHideType() -> HideType {
+        let hasTracker = hasTrackersToday()
+        
+        if hasTracker && showedCategories.isEmpty {
+            return .filterHide
+        } else if showedCategories.isEmpty {
+            return .trackerHide
+        } else {
+            return .showTracker
+        }
+    }
+    
+    private func hasTrackersToday() -> Bool {
+        guard let today = getCurrentWeekDay() else { return false }
+        
+        return categories
+            .flatMap { $0.trackers } // Объединяем трекеры из всех категорий
+            .contains { $0.schedule.contains(today) } // Проверяем, содержит ли хотя бы один трекер текущий день
+    }
     
     func updateDate(_ date: Date) {
         let calendar = Calendar.current
@@ -103,17 +123,20 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool {
-        guard let tracker = categories.flatMap({ $0.trackers }).first(where: { $0.id == trackerId }) else {
-            return false
+        guard let tracker = categories
+            .flatMap({ $0.trackers })
+            .first(where: { $0.id == trackerId }) else {
+                return false
         }
         
         return tracker.completedDate.contains(date)
     }
     
     func getCountOfCompletedTrackers(trackerId: UUID) -> Int {
-        
-        guard let tracker = categories.flatMap({ $0.trackers }).first(where: { $0.id == trackerId }) else {
-            return 0
+        guard let tracker = categories
+            .flatMap({ $0.trackers })
+            .first(where: { $0.id == trackerId }) else {
+                return 0
         }
         
         // Фильтруем записи, связанные с найденным трекером, по условию
@@ -195,10 +218,6 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         case .irregular:
             return tracker.completedDate.isEmpty
         }
-    }
-    
-    private func startOfDay(for date: Date) -> Date {
-        return Calendar.current.startOfDay(for: date)
     }
     
     private func getCurrentWeekDay() -> WeekDays? {

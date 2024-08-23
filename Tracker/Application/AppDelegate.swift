@@ -21,6 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackerCategoryStore.shared.checkAndCreatePinCategory()
         AnalyticsService.activate()
         
+        UserDefaults.standard.set(0, forKey: UserDefaultsKeys.selectedFilter)
+        
         return true
     }
     

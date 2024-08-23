@@ -13,37 +13,28 @@ final class TrackersViewController: BaseController {
     private var viewModel: TrackersViewModelProtocol
     private var analyticsService = AnalyticsService.shared
     
-    private lazy var trackerStubView = StubView(imageName: "empty_trackers_image",
-                                                text: Strings.TrackersVC.stub)
+    private lazy var trackerStubView = StubView(type: .emptyTracker)
+    private lazy var findStubView = StubView(type: .nothingFound)
     
     private lazy var filterButton: UIButton = {
         let button = UIButton()
-        
         button.setTitle(Strings.TrackersVC.filterButton, for: .normal)
-        
         button.backgroundColor = .ypBlue
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        
         button.addTarget(nil, action: #selector(filterButtonTapped), for: .touchUpInside)
-        
         return button
     }()
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        
         searchBar.placeholder = Strings.TrackersVC.searchPlaceHolder
         searchBar.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Убираем серые полосы вокруг поиска
         searchBar.backgroundColor = .clear
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         searchBar.searchTextField.textColor = .ypBlack
-        
         return searchBar
     }()
     
@@ -53,14 +44,11 @@ final class TrackersViewController: BaseController {
     
     private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
-        
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
         picker.calendar.firstWeekday = 2
         picker.tintColor = .ypBlue
-        picker.addTarget(self, 
-                         action: #selector(datePickerValueChanged),
-                         for: .valueChanged)
+        picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         return picker
     }()
     
@@ -77,29 +65,25 @@ final class TrackersViewController: BaseController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle Methods
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         analyticsService.openEvent(screen: .Main)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         analyticsService.closeEvent(screen: .Main)
     }
-}
-
-// MARK: - Setup View
-extension TrackersViewController {
+    
+    // MARK: - Setup View
     override func setupViews() {
         super.setupViews()
-        
         setupNavigationBar()
-        
         view.setupView(searchBar)
         view.setupView(collectionView)
         view.setupView(trackerStubView)
+        view.setupView(findStubView)
         view.setupView(filterButton)
     }
     
@@ -113,6 +97,9 @@ extension TrackersViewController {
             
             trackerStubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             trackerStubView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            findStubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            findStubView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -129,42 +116,43 @@ extension TrackersViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
-        // Отслеживаем событие закрытия приложения для отправки события в аналитику
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleAppWillTerminate),
-                                               name: UIApplication.willTerminateNotification,
-                                               object: nil)
-        
         configureCollectionView()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         view.addGestureRecognizer(tapGesture)
-                
+        
         searchBar.delegate = self
         addButton.tintColor = .ypBlack
         
         bindings()
     }
     
-    @objc private func handleAppWillTerminate() {
-        analyticsService.closeEvent(screen: .Main)
-    }
-    
+    // MARK: - Private Methods
     private func bindings() {
         viewModel.onCategoriesUpdated = { [weak self] in
             self?.updateCollectionView()
         }
-//        viewModel.onCompletedTrackersUpdated = { [weak self] in
-//            self?.updateCollectionView()
-//        }
         viewModel.fetchCategories()
-//        viewModel.updateCompletedTrackers()
     }
     
-    private func changeStateStubView(isHidden: Bool) {
-        trackerStubView.isHidden = isHidden
-        filterButton.isHidden = !isHidden
-        collectionView.isHidden = !isHidden
+    private func changeStateStubView(hideType: HideType) {
+        switch hideType {
+        case .trackerHide:
+            findStubView.isHidden = true
+            trackerStubView.isHidden = false
+            filterButton.isHidden = true
+            collectionView.isHidden = true
+        case .filterHide:
+            findStubView.isHidden = false
+            trackerStubView.isHidden = true
+            filterButton.isHidden = false
+            collectionView.isHidden = true
+        case .showTracker:
+            findStubView.isHidden = true
+            trackerStubView.isHidden = true
+            filterButton.isHidden = false
+            collectionView.isHidden = false
+        }
     }
     
     private func setupNavigationBar() {
@@ -173,7 +161,6 @@ extension TrackersViewController {
         navigationItem.title = Strings.NavBar.trackers
         navigationItem.leftBarButtonItem = addButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        
     }
     
     private func configureCollectionView() {
@@ -195,7 +182,7 @@ extension TrackersViewController {
     
     private func updateCollectionView() {
         collectionView.reloadData()
-        changeStateStubView(isHidden: !viewModel.showedCategories.isEmpty)
+        changeStateStubView(hideType: viewModel.getHideType())
     }
     
     @objc private func hideKeyboard() {
@@ -207,9 +194,7 @@ extension TrackersViewController {
     }
     
     @objc private func addButtonTapped() {
-        
         analyticsService.clickEvent(screen: .Main, button: .add_track)
-        
         let addVC = ChoiseTypeTrackerViewController()
         addVC.delegate = self
         let navVC = UINavigationController(rootViewController: addVC)
@@ -218,9 +203,7 @@ extension TrackersViewController {
     }
     
     @objc private func filterButtonTapped() {
-        
         analyticsService.clickEvent(screen: .Main, button: .filter)
-        
         let filtersVC = FiltersViewController()
         filtersVC.delegate = self
         filtersVC.modalPresentationStyle = .popover
@@ -231,17 +214,17 @@ extension TrackersViewController {
 // MARK: - Alert
 private extension TrackersViewController {
     func displayDeleteAlert(forTracker id: UUID) {
-        let dialogMessage = UIAlertController(title: "", 
+        let dialogMessage = UIAlertController(title: "",
                                               message: Strings.TrackersVC.alertMessage,
                                               preferredStyle: .actionSheet)
         
-        let delete = UIAlertAction(title: Strings.TrackersVC.alertBtnDelete, 
+        let delete = UIAlertAction(title: Strings.TrackersVC.alertBtnDelete,
                                    style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             viewModel.deleteTracker(with: id)
         }
         
-        let cancel = UIAlertAction(title: Strings.TrackersVC.alertBtnCancle, 
+        let cancel = UIAlertAction(title: Strings.TrackersVC.alertBtnCancle,
                                    style: .cancel) { _ in
             self.dismiss(animated: true)
         }
@@ -365,12 +348,7 @@ extension TrackersViewController: TrackerCardViewProtocol {
         displayDeleteAlert(forTracker: id)
     }
     
-//    func didChangeCompletedTrackers(with data: Set<TrackerRecord>) {
-//        viewModel.updateCompletedTrackers()
-//    }
-    
     func didTapPlusButton(with id: UUID, isActive: Bool) {
-        
         analyticsService.clickEvent(screen: .Main, button: .track)
         
         if viewModel.currentDate <= Date() {
@@ -389,7 +367,6 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
         let newPracticeVC = NewPracticeViewController()
         newPracticeVC.modalPresentationStyle = .popover
         newPracticeVC.delegate = self
-        
         present(newPracticeVC, animated: true)
     }
     
@@ -397,19 +374,18 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
         let newIrregularVC = NewIrregularViewController()
         newIrregularVC.modalPresentationStyle = .popover
         newIrregularVC.delegate = self
-        
         present(newIrregularVC, animated: true)
     }
 }
 
+// MARK: - CreateBaseControllerDelegate
 extension TrackersViewController: CreateBaseControllerDelegate {
-    func didTapCreateTrackerButton(category: String, 
-                                   tracker: Tracker) {
-        
+    func didTapCreateTrackerButton(category: String, tracker: Tracker) {
         viewModel.createTracker(category: category, tracker: tracker)
     }
 }
 
+// MARK: - FiltersViewDelegateProtocol
 extension TrackersViewController: FiltersViewDelegateProtocol {
     func allTrackers() {
         viewModel.filterAllTrackers()

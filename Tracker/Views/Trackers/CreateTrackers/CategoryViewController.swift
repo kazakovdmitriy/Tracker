@@ -26,8 +26,7 @@ final class CategoryViewController: PopUpViewController {
     )
     
     private lazy var doneButton = MainButton(title: "Добавить категорию")
-    private lazy var stubView = StubView(imageName: "empty_trackers_image",
-                                         text: "Привычки и события можно объединить по смыслу")
+    private lazy var stubView = StubView(type: .emptyCategory)
     
     // MARK: - Initializers
     init(viewModel: CategoryViewModel) {
