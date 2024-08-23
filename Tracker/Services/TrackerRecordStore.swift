@@ -34,6 +34,19 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         saveContext()
     }
     
+    func countTrackerRecords() -> Int {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
+        let countRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count
+        } catch {
+            print("Failed to count TrackerRecord: \(error)")
+            return 0
+        }
+    }
+    
     func createTrackerRecord(for trackerId: UUID, dateComplete: Date) {
         // Проверяем, существует ли уже запись с такой датой для данного трекера
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()

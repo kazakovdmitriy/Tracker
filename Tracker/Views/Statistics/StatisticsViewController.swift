@@ -9,62 +9,34 @@ import UIKit
 
 final class StatisticsViewController: BaseController {
     
-    private let statisticsEmptyLabel: UILabel = {
-        let label = UILabel()
-        
-        label.text = "Анализировать пока нечего"
-        label.font = Fonts.sfPro(with: 12)
-        label.textColor = .ypBlack
-        label.textAlignment = .center
-        
-        return label
-    }()
+    private let trackerRecordStore = TrackerRecordStore.shared
     
-    private let statisticsEmptyImage: UIImageView = {
-        let image = UIImage(named: "empty_statistic_image")
-        let view = UIImageView(image: image)
-        
-        view.contentMode = .scaleAspectFit
-        
-        return view
-    }()
+    private var statistics: [String: Int] = [:]
+    private var statisticNames: [String] = []
     
-    private let containerView = UIView()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setupViews()
-        constraintViews()
-        configureAppearance()
-    }
+    private lazy var stubView = StubView(type: .nothingToAnalyze)
+    private lazy var tableView = UITableView()
 }
 
 extension StatisticsViewController {
     override func setupViews() {
         super.setupViews()
         
-        containerView.setupView(statisticsEmptyLabel)
-        containerView.setupView(statisticsEmptyImage)
-        
-        view.setupView(containerView)
-        
+        view.setupView(stubView)
+        view.setupView(tableView)
     }
     
     override func constraintViews() {
         super.constraintViews()
         
         NSLayoutConstraint.activate([
-            statisticsEmptyImage.widthAnchor.constraint(equalToConstant: 80),
-            statisticsEmptyImage.heightAnchor.constraint(equalTo: statisticsEmptyImage.widthAnchor),
-            statisticsEmptyImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            statisticsEmptyLabel.topAnchor.constraint(equalTo: statisticsEmptyImage.bottomAnchor, constant: 15),
-            statisticsEmptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            statisticsEmptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 24)
         ])
     }
     
@@ -72,6 +44,10 @@ extension StatisticsViewController {
         super.configureAppearance()
         
         setupNavigationBar()
+        setupTableView()
+        
+        statistics["Трекеров завершено"] = trackerRecordStore.countTrackerRecords()
+        statisticNames = Array(statistics.keys)
     }
 }
 
@@ -81,5 +57,42 @@ private extension StatisticsViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = Strings.NavBar.statistics
+    }
+    
+    func setupTableView() {
+        tableView.register(StatisticsTableCell.self, forCellReuseIdentifier: StatisticsTableCell.reuseIdentifier)
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+}
+
+extension StatisticsViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        statisticNames.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: StatisticsTableCell.reuseIdentifier, for: indexPath
+        ) as? StatisticsTableCell else {
+            return UITableViewCell()
+        }
+        
+        let statisticName = statisticNames[indexPath.row]
+        let statisticCount = statistics[statisticName] ?? 0
+        
+        cell.configure(statisticCount: statisticCount, statisticName: statisticName)
+        
+        return cell
+    }
+    
+    
+}
+
+extension StatisticsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 102
     }
 }
