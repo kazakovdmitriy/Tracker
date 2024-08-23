@@ -129,7 +129,11 @@ extension TrackersViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAppWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
+        // Отслеживаем событие закрытия приложения для отправки события в аналитику
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleAppWillTerminate),
+                                               name: UIApplication.willTerminateNotification,
+                                               object: nil)
         
         configureCollectionView()
         
@@ -150,11 +154,11 @@ extension TrackersViewController {
         viewModel.onCategoriesUpdated = { [weak self] in
             self?.updateCollectionView()
         }
-        viewModel.onCompletedTrackersUpdated = { [weak self] in
-            self?.updateCollectionView()
-        }
+//        viewModel.onCompletedTrackersUpdated = { [weak self] in
+//            self?.updateCollectionView()
+//        }
         viewModel.fetchCategories()
-        viewModel.updateCompletedTrackers()
+//        viewModel.updateCompletedTrackers()
     }
     
     private func changeStateStubView(isHidden: Bool) {
@@ -361,9 +365,9 @@ extension TrackersViewController: TrackerCardViewProtocol {
         displayDeleteAlert(forTracker: id)
     }
     
-    func didChangeCompletedTrackers(with data: Set<TrackerRecord>) {
-        viewModel.updateCompletedTrackers()
-    }
+//    func didChangeCompletedTrackers(with data: Set<TrackerRecord>) {
+//        viewModel.updateCompletedTrackers()
+//    }
     
     func didTapPlusButton(with id: UUID, isActive: Bool) {
         
@@ -371,9 +375,9 @@ extension TrackersViewController: TrackerCardViewProtocol {
         
         if viewModel.currentDate <= Date() {
             if !isActive {
-                viewModel.removeCompletedTracker(for: id, on: viewModel.currentDate)
+                viewModel.removeCompletedTracker(for: id)
             } else {
-                viewModel.addCompletedTracker(for: id, dateComplete: viewModel.currentDate)
+                viewModel.addCompletedTracker(for: id)
             }
         }
     }

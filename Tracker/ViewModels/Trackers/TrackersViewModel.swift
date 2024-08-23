@@ -16,17 +16,17 @@ enum TrackerFilter {
 
 protocol TrackersViewModelProtocol {
     var onCategoriesUpdated: (() -> Void)? { get set }
-    var onCompletedTrackersUpdated: (() -> Void)? { get set }
+//    var onCompletedTrackersUpdated: (() -> Void)? { get set }
     
     var categories: [TrackerCategory] { get }
     var showedCategories: [TrackerCategory] { get }
     var currentDate: Date { get }
     
     func fetchCategories()
-    func updateCompletedTrackers()
+//    func updateCompletedTrackers()
     func updateDate(_ date: Date)
-    func addCompletedTracker(for trackerId: UUID, dateComplete: Date)
-    func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date)
+    func addCompletedTracker(for trackerId: UUID)
+    func removeCompletedTracker(for trackerId: UUID)
     func pinTracker(forTrackerId id: UUID)
     func getCountOfCompletedTrackers(trackerId: UUID) -> Int
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool
@@ -42,7 +42,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     // MARK: - Properties
     var onCategoriesUpdated: (() -> Void)?
-    var onCompletedTrackersUpdated: (() -> Void)?
+//    var onCompletedTrackersUpdated: (() -> Void)?
 
     private let trackerStore = TrackerStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
@@ -50,15 +50,14 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     private(set) var categories: [TrackerCategory] = []
     private(set) var showedCategories: [TrackerCategory] = []
-    private var internalCompletedTrackers: Set<TrackerRecord> = []
+    private(set) var filtredCategories: [TrackerCategory] = []
     
     private var currentFilter: TrackerFilter = .all
     
-    var completedTrackers: Set<TrackerRecord> {
-        return internalCompletedTrackers
-    }
-    
-    private(set) var currentDate: Date = Date() {
+    private(set) var currentDate: Date = {
+        let calendar = Calendar.current
+        return calendar.startOfDay(for: Date())
+    }() {
         didSet {
             updateCategories()
         }
@@ -74,33 +73,28 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         trackerStore.deleteTracker(with: id)
         fetchCategories()
         updateCategories()
-        onCategoriesUpdated?()
     }
     
-    func updateCompletedTrackers() {
-        internalCompletedTrackers = trackerRecordStore.fetchedObjects()
-        onCompletedTrackersUpdated?()
-        updateCategories()
-    }
+//    func updateCompletedTrackers() {
+//        onCompletedTrackersUpdated?()
+//        updateCategories()
+//    }
     
     func updateDate(_ date: Date) {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         
         currentDate = startOfDay
-        applyCurrentFilter()
     }
     
-    func addCompletedTracker(for trackerId: UUID, dateComplete: Date) {
-        trackerRecordStore.createTrackerRecord(for: trackerId, dateComplete: dateComplete)
+    func addCompletedTracker(for trackerId: UUID) {
+        trackerRecordStore.createTrackerRecord(for: trackerId, dateComplete: currentDate)
         fetchCategories()
-        updateCategories()
     }
     
-    func removeCompletedTracker(for trackerId: UUID, on dateComplete: Date) {
-        trackerRecordStore.deleteTrackerRecord(for: trackerId, on: dateComplete)
+    func removeCompletedTracker(for trackerId: UUID) {
+        trackerRecordStore.deleteTrackerRecord(for: trackerId, on: currentDate)
         fetchCategories()
-        updateCategories()
     }
     
     func pinTracker(forTrackerId id: UUID) {
@@ -109,33 +103,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool {
-        let trackerRecord = TrackerRecord(id: trackerId, dateComplete: date)
-        return internalCompletedTrackers.contains(trackerRecord)
-    }
-    
-    func filterTrackersForToday() -> [TrackerCategory] {
-        guard let today = getCurrentWeekDay() else { return [] }
-        
-        var filteredCategories: [TrackerCategory] = []
-        
-        for category in categories {
-            let filteredTrackers = category.trackers.filter { (tracker: Tracker) in
-                switch tracker.type {
-                case .practice:
-                    return tracker.schedule.contains(today)
-                case .irregular:
-                    return (
-                        !internalCompletedTrackers.containtRecord(withId: tracker.id) ||
-                        internalCompletedTrackers.containtRecordForDay(withId: tracker.id, andDate: currentDate)
-                    )
-                }
-            }
-            if !filteredTrackers.isEmpty {
-                filteredCategories.append(TrackerCategory(name: category.name, trackers: filteredTrackers))
-            }
+        guard let tracker = categories.flatMap({ $0.trackers }).first(where: { $0.id == trackerId }) else {
+            return false
         }
         
-        return filteredCategories
+        return tracker.completedDate.contains(date)
     }
     
     func getCountOfCompletedTrackers(trackerId: UUID) -> Int {
@@ -150,24 +122,20 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         return count
     }
     
+    func filterTrackersForToday() -> [TrackerCategory] {
+        guard let today = getCurrentWeekDay() else { return [] }
+        
+        return categories.compactMap { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                return shouldIncludeTracker(tracker, for: today)
+            }
+            return filteredTrackers.isEmpty ? nil : TrackerCategory(name: category.name, trackers: filteredTrackers)
+        }
+    }
+    
     func createTracker(category: String, tracker: Tracker) {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
         fetchCategories()
-        updateCategories()
-    }
-    
-    // MARK: - Methods for Filtering
-    func applyCurrentFilter() {
-        switch currentFilter {
-        case .all:
-            filterAllTrackers()
-        case .today:
-            filterTodayTrackers()
-        case .done:
-            filterDoneTrackers()
-        case .unfinished:
-            filterUnfinishedTrackers()
-        }
     }
     
     func filterAllTrackers() {
@@ -183,24 +151,50 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func filterDoneTrackers() {
         currentFilter = .done
-        showedCategories = categories.map { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                return isTrackerCompleted(trackerId: tracker.id, date: currentDate)
-            }
-            return TrackerCategory(name: category.name, trackers: filteredTrackers)
-        }.filter { $0.trackers.isEmpty }
-        onCategoriesUpdated?()
+        updateCategories()
     }
     
     func filterUnfinishedTrackers() {
         currentFilter = .unfinished
-        showedCategories = categories.map { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                return !isTrackerCompleted(trackerId: tracker.id, date: currentDate)
-            }
-            return TrackerCategory(name: category.name, trackers: filteredTrackers)
-        }.filter { !$0.trackers.isEmpty }
-        onCategoriesUpdated?()
+        updateCategories()
+    }
+    
+    private func shouldIncludeTracker(_ tracker: Tracker, for today: WeekDays) -> Bool {
+        switch currentFilter {
+        case .all, .today:
+            return filterAllOrToday(tracker, for: today)
+        case .done:
+            return filterDone(tracker, for: today)
+        case .unfinished:
+            return filterUnfinished(tracker, for: today)
+        }
+    }
+
+    private func filterAllOrToday(_ tracker: Tracker, for today: WeekDays) -> Bool {
+        switch tracker.type {
+        case .practice:
+            return tracker.schedule.contains(today)
+        case .irregular:
+            return tracker.completedDate.isEmpty || tracker.completedDate.contains(currentDate)
+        }
+    }
+
+    private func filterDone(_ tracker: Tracker, for today: WeekDays) -> Bool {
+        switch tracker.type {
+        case .practice:
+            return tracker.schedule.contains(today) && tracker.completedDate.contains(currentDate)
+        case .irregular:
+            return tracker.completedDate.contains(currentDate)
+        }
+    }
+
+    private func filterUnfinished(_ tracker: Tracker, for today: WeekDays) -> Bool {
+        switch tracker.type {
+        case .practice:
+            return tracker.schedule.contains(today) && !tracker.completedDate.contains(currentDate)
+        case .irregular:
+            return tracker.completedDate.isEmpty
+        }
     }
     
     private func startOfDay(for date: Date) -> Date {

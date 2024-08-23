@@ -35,9 +35,9 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     func createTrackerRecord(for trackerId: UUID, dateComplete: Date) {
-        print("call")
         // Проверяем, существует ли уже запись с такой датой для данного трекера
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@", trackerId as CVarArg, dateComplete as CVarArg)
         
         do {
@@ -56,7 +56,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
             }
             
             let trackerRecordEntity = TrackerRecordCoreData(context: context)
-            trackerRecordEntity.id = trackerId
+            trackerRecordEntity.id = UUID()
             trackerRecordEntity.dateComplete = dateComplete
             
             // Связываем новый TrackerRecord с соответствующим Tracker

@@ -107,7 +107,7 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         
         let trackers: [Tracker] = (trackerCategoryEntity.trackers_rel as? Set<TrackerCoreData>)?.compactMap { trackerEntity in
             return try? trackerWithRecords(from: trackerEntity)
-        } ?? []
+        }.sorted { $0.name < $1.name } ?? []
         
         return TrackerCategory(name: name, trackers: trackers)
     }
