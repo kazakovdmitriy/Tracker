@@ -77,6 +77,18 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         saveContext()
     }
     
+    func countTracker() -> Int {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerCoreData.fetchRequest()
+        
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count
+        } catch {
+            print("Failed to count TrackerRecord: \(error)")
+            return 0
+        }
+    }
+    
     func pinnedTracker(forTrackerId trackerId: UUID) {
         // Поиск трекера по ID
         let trackerFetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
@@ -128,10 +140,15 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         trackerFetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
         do {
-            let objects = try context.fetch(trackerFetchRequest)
+            let trackers = try context.fetch(trackerFetchRequest)
             
-            for object in objects {
-                context.delete(object)
+            for tracker in trackers {
+                if let records = tracker.record_rel?.allObjects as? [TrackerRecordCoreData] {
+                    for record in records {
+                        context.delete(record)
+                    }
+                }
+                context.delete(tracker)
             }
             
             try context.save()

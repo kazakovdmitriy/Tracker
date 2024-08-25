@@ -74,12 +74,6 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         updateCategories()
     }
     
-    func deleteTracker(with id: UUID) {
-        trackerStore.deleteTracker(with: id)
-        fetchCategories()
-        updateCategories()
-    }
-    
     func getHideType() -> HideType {
         let hasTracker = hasTrackersToday()
         
@@ -109,11 +103,13 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func addCompletedTracker(for trackerId: UUID) {
         trackerRecordStore.createTrackerRecord(for: trackerId, dateComplete: currentDate)
+        NotificationCenter.default.post(name: .tapPlusButtonOnTracker, object: nil)
         fetchCategories()
     }
     
     func removeCompletedTracker(for trackerId: UUID) {
         trackerRecordStore.deleteTrackerRecord(for: trackerId, on: currentDate)
+        NotificationCenter.default.post(name: .tapPlusButtonOnTracker, object: nil)
         fetchCategories()
     }
     
@@ -158,6 +154,13 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func createTracker(category: String, tracker: Tracker) {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
+        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
+        fetchCategories()
+    }
+    
+    func deleteTracker(with id: UUID) {
+        trackerStore.deleteTracker(with: id)
+        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
         fetchCategories()
     }
     

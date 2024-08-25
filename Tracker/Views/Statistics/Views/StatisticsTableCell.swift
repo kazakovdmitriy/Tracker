@@ -22,7 +22,7 @@ final class StatisticsTableCell: UITableViewCell {
     private lazy var whiteBackgroundView: UIView = {
         let view = UIView()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.layer.cornerRadius = 16
         
         return view
@@ -32,6 +32,7 @@ final class StatisticsTableCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
+        label.textColor = .ypBlack
         
         return label
     }()
@@ -40,6 +41,7 @@ final class StatisticsTableCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .ypBlack
         
         return label
     }()
@@ -62,13 +64,15 @@ final class StatisticsTableCell: UITableViewCell {
                                                  UIColor.ypBlue.cgColor], width: 2)
     }
     
-    func configure(statisticCount: Int, statisticName: String) {
+    func configure(statisticCount: Int, statisticName: StatisticsName) {
         statistic.text = "\(statisticCount)"
-        self.statisticName.text = statisticName
+        
+        switch statisticName {
+        case .trackersCount: self.statisticName.text = getTrackerString(for: statisticCount)
+        }
     }
     
     private func setupViews() {
-        // Настройка контейнерного вида
         
         contentView.setupView(containerView)
         
@@ -96,5 +100,23 @@ final class StatisticsTableCell: UITableViewCell {
             statisticName.leadingAnchor.constraint(equalTo: statistic.leadingAnchor),
             statisticName.bottomAnchor.constraint(equalTo: whiteBackgroundView.bottomAnchor, constant: -12)
         ])
+    }
+    
+    func getTrackerString(for number: Int) -> String {
+        let remainder10 = number % 10
+        let remainder100 = number % 100
+        
+        if remainder100 >= 11 && remainder100 <= 14 {
+            return "Трекеров завершено"
+        } else {
+            switch remainder10 {
+            case 1:
+                return "Трекер завершен"
+            case 2, 3, 4:
+                return "Трекера завершено"
+            default:
+                return "Трекеров завершено"
+            }
+        }
     }
 }

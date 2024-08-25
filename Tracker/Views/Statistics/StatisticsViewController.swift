@@ -9,13 +9,21 @@ import UIKit
 
 final class StatisticsViewController: BaseController {
     
-    private let trackerRecordStore = TrackerRecordStore.shared
-    
-    private var statistics: [String: Int] = [:]
-    private var statisticNames: [String] = []
+    private var viewModel: StatisticsViewModelProtocol
     
     private lazy var stubView = StubView(type: .nothingToAnalyze)
     private lazy var tableView = UITableView()
+    
+    init(viewModel: StatisticsViewModelProtocol = StatisticsViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        
+        viewModel.fetchTrackers()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 extension StatisticsViewController {
@@ -43,33 +51,49 @@ extension StatisticsViewController {
     override func configureAppearance() {
         super.configureAppearance()
         
+        setupBindings()
         setupNavigationBar()
         setupTableView()
         
-        statistics["Трекеров завершено"] = trackerRecordStore.countTrackerRecords()
-        statisticNames = Array(statistics.keys)
+        showStub(isHide: viewModel.trackersCount == 0)
     }
 }
 
 private extension StatisticsViewController {
     func setupNavigationBar() {
-        // Устанавливаем крупный заголовок
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = Strings.NavBar.statistics
     }
     
     func setupTableView() {
-        tableView.register(StatisticsTableCell.self, forCellReuseIdentifier: StatisticsTableCell.reuseIdentifier)
+        tableView.register(StatisticsTableCell.self, 
+                           forCellReuseIdentifier: StatisticsTableCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.backgroundColor = .clear
+    }
+    
+    func showStub(isHide: Bool) {
+        tableView.isHidden = isHide
+        stubView.isHidden = !isHide
+    }
+    
+    func setupBindings() {
+        viewModel.onStatisticsUpdate = { [weak self] in
+            self?.tableView.reloadData()
+        }
+        
+        viewModel.onTrackerUpdate = { [weak self] isEmpty in
+            self?.showStub(isHide: isEmpty)
+        }
     }
 }
 
 extension StatisticsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        statisticNames.count
+        viewModel.statistics.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,15 +103,14 @@ extension StatisticsViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let statisticName = statisticNames[indexPath.row]
-        let statisticCount = statistics[statisticName] ?? 0
+        let statisticsName = Array(viewModel.statistics.keys)
+        let statisticValue = viewModel.statistics[statisticsName[indexPath.row]] ?? 0
         
-        cell.configure(statisticCount: statisticCount, statisticName: statisticName)
+        
+        cell.configure(statisticCount: statisticValue, statisticName: statisticsName[indexPath.row])
         
         return cell
     }
-    
-    
 }
 
 extension StatisticsViewController: UITableViewDelegate {

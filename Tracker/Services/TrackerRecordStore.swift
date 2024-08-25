@@ -36,7 +36,6 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     
     func countTrackerRecords() -> Int {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
-        let countRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
         do {
             let count = try context.count(for: fetchRequest)
