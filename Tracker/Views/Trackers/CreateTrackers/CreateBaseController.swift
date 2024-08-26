@@ -171,6 +171,22 @@ class CreateBaseController: PopUpViewController {
         selectEmojiAndColor(for: tracker.emoji, and: tracker.color)
     }
     
+    func updateCreateButtonState() {
+        let isNameFilled = !(nameTrackerInputField.text?.isEmpty ?? true)
+        let isEmojiSelected = selectedIndexPathSection1 != nil
+        let isColorSelected = selectedIndexPathSection2 != nil
+        let isCategorySelected = tableViewDelegate?.choiseCategory != nil
+        let isScheduleSelected = !(tableViewDelegate?.weekDaysSchedule.isEmpty ?? false) || tableCategory.count == 1
+        
+        let shouldActivate = isNameFilled && isEmojiSelected && isColorSelected && isCategorySelected && isScheduleSelected
+        
+        if shouldActivate {
+            createButton.activateButton()
+        } else {
+            createButton.deactivateButton()
+        }
+    }
+    
     private func updateTableViewHeight() {
         let numberOfRows = tableViewDelegate?.data.count ?? 0
         
@@ -291,6 +307,7 @@ extension CreateBaseController {
         scrollView.contentSize = scrollStackViewContainer.bounds.size
         
         reloadTableData()
+        updateCreateButtonState()
     }
     
     func addActionToButton(create: Selector, cancle: Selector) {
@@ -356,11 +373,7 @@ extension CreateBaseController: UITextFieldDelegate {
                    replacementString string: String) -> Bool {
         let userEnteredString = textField.text
         let newString = (userEnteredString! as NSString).replacingCharacters(in: range, with: string) as NSString
-        if  newString != "" {
-            createButton.activateButton()
-        } else {
-            createButton.deactivateButton()
-        }
+        updateCreateButtonState()
         return true
     }
 }
@@ -399,6 +412,8 @@ extension CreateBaseController: UICollectionViewDelegate {
         default:
             break
         }
+        
+        updateCreateButtonState()
     }
 }
 
@@ -496,14 +511,12 @@ extension CreateBaseController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: 52, height: 52)
     }
     
-    // Минимальное межстрочное расстояние
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    // Минимальное межколоночное расстояние
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

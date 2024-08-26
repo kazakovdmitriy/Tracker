@@ -95,11 +95,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     private func hasTrackersToday() -> Bool {
-        guard let today = getCurrentWeekDay() else { return false }
+        guard let today = WeekDays.getCurrentWeekDay(for: currentDate) else { return false }
         
         return categories
-            .flatMap { $0.trackers } // Объединяем трекеры из всех категорий
-            .contains { $0.schedule.contains(today) } // Проверяем, содержит ли хотя бы один трекер текущий день
+            .flatMap { $0.trackers }
+            .contains { $0.schedule.contains(today) }
     }
     
     func updateDate(_ date: Date) {
@@ -143,14 +143,13 @@ final class TrackersViewModel: TrackersViewModelProtocol {
                 return 0
         }
         
-        // Фильтруем записи, связанные с найденным трекером, по условию
         let count = tracker.completedDate.filter { $0 <= currentDate }.count
         
         return count
     }
     
     func filterTrackersForToday() -> [TrackerCategory] {
-        guard let today = getCurrentWeekDay() else { return [] }
+        guard let today = WeekDays.getCurrentWeekDay(for: currentDate) else { return [] }
         
         return categories.compactMap { category in
             let filteredTrackers = category.trackers.filter { tracker in
@@ -162,19 +161,16 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func createTracker(category: String, tracker: Tracker) {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
-        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
         fetchCategories()
     }
     
     func updateTracker(category: String, tracker: Tracker) {
         trackerStore.updateTracker(updatedTracker: tracker)
-        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
         fetchCategories()
     }
     
     func deleteTracker(with id: UUID) {
         trackerStore.deleteTracker(with: id)
-        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
         fetchCategories()
     }
     
@@ -234,21 +230,6 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             return tracker.schedule.contains(today) && !tracker.completedDate.contains(currentDate)
         case .irregular:
             return tracker.completedDate.isEmpty
-        }
-    }
-    
-    private func getCurrentWeekDay() -> WeekDays? {
-        let weekDay = Calendar.current.component(.weekday, from: currentDate)
-        
-        switch weekDay {
-        case 1: return .sunday
-        case 2: return .monday
-        case 3: return .tuesday
-        case 4: return .wednesday
-        case 5: return .thursday
-        case 6: return .friday
-        case 7: return .saturday
-        default: return nil
         }
     }
     

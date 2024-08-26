@@ -43,23 +43,17 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     func loadCategoryNames() -> [String] {
-        // Создаем запрос для сущности TrackerCategoryCoreData
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
-        // Настройка сортировки по имени категории
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "name != %@", "Закрепленные")
         
         do {
-            // Выполняем запрос
             let categories = try context.fetch(fetchRequest)
-            
-            // Преобразуем результаты в массив строк
             let categoryNames = categories.compactMap { $0.name }
             
             return categoryNames
         } catch {
-            // Обработка ошибок
             print("Failed to fetch category names: \(error)")
             return []
         }
@@ -134,18 +128,16 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         
         let isPractice = trackerEntity.isPractice
         
-        // Получаем уникальные даты для записей
         let recordDates: Set<Date> = Set((trackerEntity.record_rel as? Set<TrackerRecordCoreData>)?.compactMap { recordEntity in
             return try? recordDate(from: recordEntity)
         } ?? [])
         
-        // Создаем объект Tracker с загруженными уникальными датами
         return Tracker(id: id,
                        name: name,
                        color: color,
                        emoji: emoji,
                        originalCategory: originalCategory,
-                       completedDate: recordDates,  // Используем Set<Date> для хранения уникальных дат
+                       completedDate: recordDates,
                        type: isPractice ? .practice : .irregular,
                        schedule: schedule)
     }
@@ -155,7 +147,6 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
             throw TrackerRecordStoreError.decodingErrorInvalidDateComplete
         }
         
-        // Обрезаем время до начала дня
         let calendar = Calendar.current
         return calendar.startOfDay(for: dateComplete)
     }

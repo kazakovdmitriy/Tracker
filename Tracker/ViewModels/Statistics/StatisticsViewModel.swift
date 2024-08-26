@@ -13,7 +13,7 @@ enum StatisticsName: String {
 
 protocol StatisticsViewModelProtocol: AnyObject {
     var statistics: [StatisticsName: Int] { get }
-    var trackersCount: Int { get }
+    var trackersRecordCount: Int { get }
     
     var onStatisticsUpdate: (() -> Void)? { get set }
     var onTrackerUpdate: ((Bool) -> Void)? { get set }
@@ -34,23 +34,21 @@ final class StatisticsViewModel: StatisticsViewModelProtocol {
         }
     }
     
-    private(set) var trackersCount: Int = 0 {
+    private(set) var trackersRecordCount: Int = 0 {
         didSet {
             fetchStatistics()
-            onTrackerUpdate?(0 == trackersCount)
+            onTrackerUpdate?(0 == trackersRecordCount)
         }
     }
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleNotificationRecord(_:)), name: .tapPlusButtonOnTracker, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNotificationTracker(_:)), name: .didChangeTrackers, object: nil)
         
         fetchStatistics()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .tapPlusButtonOnTracker, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .didChangeTrackers, object: nil)
     }
     
     private func fetchStatistics() {
@@ -58,14 +56,11 @@ final class StatisticsViewModel: StatisticsViewModelProtocol {
     }
     
     func fetchTrackers() {
-        trackersCount = trackerStore.countTracker()
+        trackersRecordCount = trackerRecordStore.countTrackerRecords()
     }
     
     @objc private func handleNotificationRecord(_ notification: Notification) {
         fetchStatistics()
-    }
-    
-    @objc private func handleNotificationTracker(_ notification: Notification) {
         fetchTrackers()
     }
 }

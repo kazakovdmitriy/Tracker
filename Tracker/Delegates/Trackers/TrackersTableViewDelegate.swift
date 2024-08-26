@@ -10,8 +10,16 @@ import UIKit
 final class TrackersTableViewDelegate: NSObject {
     weak var view: CreateBaseController?
     var data: [String] = []
-    var trackersCategory: [String] = []
-    var weekDaysSchedule: [WeekDays] = []
+    var trackersCategory: [String] = [] {
+        didSet {
+            view?.updateCreateButtonState()
+        }
+    }
+    var weekDaysSchedule: [WeekDays] = [] {
+        didSet {
+            view?.updateCreateButtonState()
+        }
+    }
     var choiseCategory: String?
 }
 

@@ -55,7 +55,7 @@ extension StatisticsViewController {
         setupNavigationBar()
         setupTableView()
         
-        showStub(isHide: viewModel.trackersCount == 0)
+        showStub(isHide: viewModel.trackersRecordCount == 0)
     }
 }
 
