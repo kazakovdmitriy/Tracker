@@ -392,8 +392,13 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
 
 // MARK: - CreateBaseControllerDelegate
 extension TrackersViewController: CreateBaseControllerDelegate {
-    func didTapCreateTrackerButton(category: String, tracker: Tracker) {
-        viewModel.createTracker(category: category, tracker: tracker)
+    func didTapCreateTrackerButton(category: String, tracker: Tracker, type: CreateBaseType) {
+        switch type {
+        case .create:
+            viewModel.createTracker(category: category, tracker: tracker)
+        case .edit:
+            viewModel.updateTracker(category: category, tracker: tracker)
+        }
     }
 }
 

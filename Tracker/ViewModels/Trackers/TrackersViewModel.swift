@@ -37,6 +37,7 @@ protocol TrackersViewModelProtocol {
     func getCountOfCompletedTrackers(trackerId: UUID) -> Int
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool
     func createTracker(category: String, tracker: Tracker)
+    func updateTracker(category: String, tracker: Tracker)
     func deleteTracker(with id: UUID)
     func filterAllTrackers()
     func filterTodayTrackers()
@@ -161,6 +162,12 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func createTracker(category: String, tracker: Tracker) {
         trackerStore.createTracker(tracker: tracker, toCategory: category)
+        NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
+        fetchCategories()
+    }
+    
+    func updateTracker(category: String, tracker: Tracker) {
+        trackerStore.updateTracker(updatedTracker: tracker)
         NotificationCenter.default.post(name: .didChangeTrackers, object: nil)
         fetchCategories()
     }

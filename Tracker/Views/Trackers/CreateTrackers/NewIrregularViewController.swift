@@ -13,13 +13,17 @@ final class NewIrregularViewController: CreateBaseController {
     weak var delegate: CreateBaseControllerDelegate?
     
     // MARK: - Private Properties
+    private let type: CreateBaseType
     private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
     init(trackerType: TrackerType) {
+        
+        self.type = .create
+        
         super.init(title: Strings.NavTitle.newIrregular,
                    trackerType: trackerType,
-                   createType: .create
+                   createType: self.type
         )
     }
     
@@ -67,7 +71,7 @@ extension NewIrregularViewController {
                                                 WeekDays.saturday,
                                                 WeekDays.sunday])
             
-            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
+            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker, type: type)
         } else {
             print("[NewIrregularViewController]: Не выбрана категория")
         }

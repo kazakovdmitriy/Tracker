@@ -135,6 +135,50 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+    func updateTracker(updatedTracker: Tracker) {
+        let trackerFetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        trackerFetchRequest.predicate = NSPredicate(format: "id == %@", updatedTracker.id as CVarArg)
+
+        do {
+            let fetchedTrackers = try context.fetch(trackerFetchRequest)
+            guard let trackerEntity = fetchedTrackers.first else {
+                print("Tracker not found with ID: \(updatedTracker.id)")
+                return
+            }
+
+            // Обновляем поля трекера
+            trackerEntity.name = updatedTracker.name
+            trackerEntity.emoji = updatedTracker.emoji
+            trackerEntity.original_category = updatedTracker.originalCategory
+            trackerEntity.color = updatedTracker.color
+            trackerEntity.isPractice = updatedTracker.type == .practice
+            trackerEntity.schedule = updatedTracker.schedule as NSObject
+
+            let categoryFetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+            categoryFetchRequest.predicate = NSPredicate(format: "name == %@", updatedTracker.originalCategory)
+
+            let fetchedCategories = try context.fetch(categoryFetchRequest)
+            guard let newCategoryEntity = fetchedCategories.first else {
+                print("Category not found with name: \(updatedTracker.originalCategory)")
+                return
+            }
+
+            // Удаляем трекер из старой категории
+            if let oldCategoryEntity = trackerEntity.category_rel {
+                oldCategoryEntity.removeFromTrackers_rel(trackerEntity)
+            }
+
+            // Добавляем трекер в новую категорию
+            newCategoryEntity.addToTrackers_rel(trackerEntity)
+
+            // Сохраняем изменения в контексте
+            saveContext()
+
+        } catch {
+            print("Failed to update tracker: \(error)")
+        }
+    }
+    
     func deleteTracker(with id: UUID) {
         let trackerFetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         trackerFetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

@@ -14,15 +14,17 @@ final class EditTrackersViewController: CreateBaseController {
     var tracker: Tracker
     
     // MARK: - Private Properties
+    private let type: CreateBaseType
     private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
     init(tracker: Tracker) {
         
         self.tracker = tracker
+        self.type = .edit
         super.init(title: Strings.NavTitle.editTrackers,
                    trackerType: tracker.type,
-                   createType: .edit
+                   createType: self.type
         )
     }
     
@@ -66,10 +68,10 @@ extension EditTrackersViewController {
                                      emoji: trackerData.emoji,
                                      originalCategory: category,
                                      completedDate: tracker.completedDate,
-                                     type: .practice,
+                                     type: tracker.type,
                                      schedule: schedule)
             
-            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
+            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker, type: type)
         } else {
             print("[EditTrackersViewController]: Не выбрана категория")
         }

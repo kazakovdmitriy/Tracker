@@ -19,7 +19,7 @@ enum CreateBaseType {
 }
 
 protocol CreateBaseControllerDelegate: AnyObject {
-    func didTapCreateTrackerButton(category: String, tracker: Tracker)
+    func didTapCreateTrackerButton(category: String, tracker: Tracker, type: CreateBaseType)
 }
 
 class CreateBaseController: PopUpViewController {

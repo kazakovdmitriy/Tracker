@@ -14,13 +14,17 @@ final class NewPracticeViewController: CreateBaseController {
     var selectedWeekDays: [WeekDays] = []
     
     // MARK: - Private Properties
+    private let type: CreateBaseType
     private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
     init(trackerType: TrackerType) {
+        
+        self.type = .create
+        
         super.init(title: Strings.NavTitle.newPractice,
                    trackerType: trackerType,
-                   createType: .create
+                   createType: self.type
         )
     }
     
@@ -61,7 +65,7 @@ extension NewPracticeViewController {
                                      type: .practice,
                                      schedule: schedule)
             
-            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
+            delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker, type: type)
         } else {
             print("[NewPracticeViewController]: Не выбрана категория")
         }
