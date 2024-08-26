@@ -29,6 +29,7 @@ protocol TrackersViewModelProtocol {
     
     func fetchCategories()
     func getHideType() -> HideType
+    func getTracker(by id: UUID) -> Tracker?
     func updateDate(_ date: Date)
     func addCompletedTracker(for trackerId: UUID)
     func removeCompletedTracker(for trackerId: UUID)
@@ -84,6 +85,12 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         } else {
             return .showTracker
         }
+    }
+    
+    func getTracker(by id: UUID) -> Tracker? {
+        return categories
+            .flatMap { $0.trackers }
+            .first { $0.id == id }
     }
     
     private func hasTrackersToday() -> Bool {

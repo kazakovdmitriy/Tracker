@@ -1,25 +1,28 @@
 //
-//  NewIrregularViewController.swift
+//  EditTrackersViewController.swift
 //  Tracker
 //
-//  Created by Дмитрий on 30.06.2024.
+//  Created by Дмитрий on 26.08.2024.
 //
 
 import UIKit
 
-final class NewIrregularViewController: CreateBaseController {
-    
+final class EditTrackersViewController: CreateBaseController {
     // MARK: - Public Properties
     weak var delegate: CreateBaseControllerDelegate?
+    var selectedWeekDays: [WeekDays] = []
+    var tracker: Tracker
     
     // MARK: - Private Properties
     private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
-    init(trackerType: TrackerType) {
-        super.init(title: Strings.NavTitle.newIrregular,
-                   trackerType: trackerType,
-                   createType: .create
+    init(tracker: Tracker) {
+        
+        self.tracker = tracker
+        super.init(title: Strings.NavTitle.editTrackers,
+                   trackerType: tracker.type,
+                   createType: .edit
         )
     }
     
@@ -28,55 +31,61 @@ final class NewIrregularViewController: CreateBaseController {
     }
 }
 
-extension NewIrregularViewController {
+extension EditTrackersViewController {
     override func configureAppearance() {
         tableDelegate.view = self
-        
         tableViewDelegate = tableDelegate
         
         super.configureAppearance()
         
-        addActionToButton(create: #selector(createButtonTapped),
+        tableDelegate.choiseCategory = tracker.originalCategory
+        tableDelegate.weekDaysSchedule = tracker.schedule
+        
+        addActionToButton(create: #selector(editButtonTapped),
                           cancle: #selector(cancleButtonTapped))
         
         reloadTable()
+        
+        configure(tracker: tracker)
     }
     
     @objc private func cancleButtonTapped() {
         dismiss(animated: true)
     }
     
-    @objc private func createButtonTapped() {
+    @objc private func editButtonTapped() {
         
         if let category = tableDelegate.choiseCategory {
+            let schedule = tableDelegate.weekDaysSchedule
             
             guard let trackerData = getData() else { return }
             
-            let newTracker = Tracker(id: UUID(),
+            let newTracker = Tracker(id: tracker.id,
                                      name: trackerData.name,
                                      color: trackerData.color,
                                      emoji: trackerData.emoji,
                                      originalCategory: category,
-                                     completedDate: [],
-                                     type: .irregular,
-                                     schedule: [WeekDays.monday,
-                                                WeekDays.tuesday,
-                                                WeekDays.wednesday,
-                                                WeekDays.thursday,
-                                                WeekDays.friday,
-                                                WeekDays.saturday,
-                                                WeekDays.sunday])
+                                     completedDate: tracker.completedDate,
+                                     type: .practice,
+                                     schedule: schedule)
             
             delegate?.didTapCreateTrackerButton(category: category, tracker: newTracker)
         } else {
-            print("[NewIrregularViewController]: Не выбрана категория")
+            print("[EditTrackersViewController]: Не выбрана категория")
         }
         
         dismiss(animated: true)
     }
 }
 
-extension NewIrregularViewController: CategoryViewControllerDelegate {
+extension EditTrackersViewController: ScheduleViewControllerDelegate {
+    func doneButtonTapped(weakDays weekDays: [WeekDays]) {
+        tableDelegate.weekDaysSchedule = weekDays
+        reloadTable()
+    }
+}
+
+extension EditTrackersViewController: CategoryViewControllerDelegate {
     func doneButtonTapped(selectedCategory: String) {
         tableDelegate.choiseCategory = selectedCategory
         reloadTable()

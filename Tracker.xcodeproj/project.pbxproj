@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		68020C8B2C3DF3EC006B355D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 68020C8A2C3DF3EC006B355D /* .gitignore */; };
+		680F652F2C7C8EFA000830C9 /* EditTrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680F652E2C7C8EFA000830C9 /* EditTrackersViewController.swift */; };
 		68110A0D2C7BAEF2000506B4 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68110A0C2C7BAEF2000506B4 /* StatisticsViewModel.swift */; };
 		68110A0F2C7BB3A8000506B4 /* Notification + ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68110A0E2C7BB3A8000506B4 /* Notification + ext.swift */; };
 		68110A172C7BC7FE000506B4 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68110A162C7BC7FE000506B4 /* TrackerTests.swift */; };
@@ -93,6 +94,7 @@
 /* Begin PBXFileReference section */
 		164F511A7209575A68E81BAC /* Pods_Tracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		68020C8A2C3DF3EC006B355D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		680F652E2C7C8EFA000830C9 /* EditTrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTrackersViewController.swift; sourceTree = "<group>"; };
 		68110A0C2C7BAEF2000506B4 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
 		68110A0E2C7BB3A8000506B4 /* Notification + ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification + ext.swift"; sourceTree = "<group>"; };
 		68110A142C7BC7FE000506B4 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,6 +199,24 @@
 				164F511A7209575A68E81BAC /* Pods_Tracker.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		680F652C2C7C8D98000830C9 /* CategorySchedule */ = {
+			isa = PBXGroup;
+			children = (
+				68641F9C2C31FE0E002D3505 /* ScheduleViewController.swift */,
+				68419D732C34B59700731D33 /* CategoryViewController.swift */,
+				684D44212C6C05CE005FD8D6 /* CreateNewCategoryViewController.swift */,
+			);
+			path = CategorySchedule;
+			sourceTree = "<group>";
+		};
+		680F652D2C7C8E95000830C9 /* EditTrackers */ = {
+			isa = PBXGroup;
+			children = (
+				680F652E2C7C8EFA000830C9 /* EditTrackersViewController.swift */,
+			);
+			path = EditTrackers;
 			sourceTree = "<group>";
 		};
 		68110A0B2C7BAECC000506B4 /* Statistics */ = {
@@ -311,8 +331,11 @@
 		6837ED542C246F5D00B66453 /* Trackers */ = {
 			isa = PBXGroup;
 			children = (
+				680F652C2C7C8D98000830C9 /* CategorySchedule */,
 				68FBA1652C432EBA00173177 /* CreateTrackers */,
+				680F652D2C7C8E95000830C9 /* EditTrackers */,
 				6837ED572C246FF000B66453 /* Views */,
+				689375D22C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift */,
 				6837ED552C246F7F00B66453 /* TrackersViewController.swift */,
 			);
 			path = Trackers;
@@ -321,6 +344,8 @@
 		6837ED572C246FF000B66453 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				68FBA1662C4333A300173177 /* Cells */,
+				68B9E8C72C2F67FF006FFF48 /* Table */,
 				68613C0A2C317590003177B4 /* Collection */,
 			);
 			path = Views;
@@ -512,15 +537,9 @@
 		68FBA1652C432EBA00173177 /* CreateTrackers */ = {
 			isa = PBXGroup;
 			children = (
-				68B9E8C72C2F67FF006FFF48 /* Table */,
-				68FBA1662C4333A300173177 /* Cells */,
-				689375D22C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift */,
 				68613C042C316A4C003177B4 /* CreateBaseController.swift */,
 				68E2E6D62C2F24CB00F2A65A /* NewPracticeViewController.swift */,
 				68613C062C316D16003177B4 /* NewIrregularViewController.swift */,
-				68641F9C2C31FE0E002D3505 /* ScheduleViewController.swift */,
-				68419D732C34B59700731D33 /* CategoryViewController.swift */,
-				684D44212C6C05CE005FD8D6 /* CreateNewCategoryViewController.swift */,
 			);
 			path = CreateTrackers;
 			sourceTree = "<group>";
@@ -767,6 +786,7 @@
 				686F51622C29978B0020B804 /* CardView.swift in Sources */,
 				68110A0D2C7BAEF2000506B4 /* StatisticsViewModel.swift in Sources */,
 				68A87C232C24AAF400263A5E /* UISearchBar + ext.swift in Sources */,
+				680F652F2C7C8EFA000830C9 /* EditTrackersViewController.swift in Sources */,
 				689375D32C2E1943004B67E3 /* ChoiseTypeTrackerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

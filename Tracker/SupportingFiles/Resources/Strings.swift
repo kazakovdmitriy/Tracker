@@ -22,6 +22,7 @@ enum Strings {
     }
     enum NavTitle {
         static let createTrackers = "Создание трекера"
+        static let editTrackers = "Редактирование привычки"
         static let newPractice = "Новая привычка"
         static let newIrregular = "Новое нерегулярное событие"
         static let schedule = "Расписание"

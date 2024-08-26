@@ -45,6 +45,10 @@ final class MainButton: BaseView {
         button.addTarget(nil, action: action, for: .touchUpInside)
     }
     
+    func configureTitle(newTitle: String) {
+        button.setTitle(newTitle, for: .normal)
+    }
+    
     func deactivateButton() {
         button.backgroundColor = .ypGray
         button.isUserInteractionEnabled = false

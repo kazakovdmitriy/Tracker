@@ -17,9 +17,10 @@ final class NewPracticeViewController: CreateBaseController {
     private let tableDelegate = TrackersTableViewDelegate()
     
     // MARK: - Initializers
-    init() {
+    init(trackerType: TrackerType) {
         super.init(title: Strings.NavTitle.newPractice,
-                   tableCategory: ["Категория", "Расписание"]
+                   trackerType: trackerType,
+                   createType: .create
         )
     }
     
@@ -32,7 +33,6 @@ final class NewPracticeViewController: CreateBaseController {
 extension NewPracticeViewController {
     override func configureAppearance() {
         tableDelegate.view = self
-        
         tableViewDelegate = tableDelegate
         
         super.configureAppearance()

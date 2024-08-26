@@ -13,6 +13,11 @@ struct TrackerData {
     let color: UIColor
 }
 
+enum CreateBaseType {
+    case create
+    case edit
+}
+
 protocol CreateBaseControllerDelegate: AnyObject {
     func didTapCreateTrackerButton(category: String, tracker: Tracker)
 }
@@ -20,6 +25,8 @@ protocol CreateBaseControllerDelegate: AnyObject {
 class CreateBaseController: PopUpViewController {
     
     weak var tableViewDelegate: TrackersTableViewDelegate?
+    
+    private let creationType: CreateBaseType
     
     private let emojiList: [String] = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -52,6 +59,16 @@ class CreateBaseController: PopUpViewController {
         view.spacing = 24
         
         return view
+    }()
+    
+    private lazy var dayCountLabel: UILabel = {
+        let label = UILabel()
+        
+        label.textColor = .ypBlack
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        
+        return label
     }()
     
     private lazy var nameTrackerInputField: UITextField = {
@@ -107,10 +124,16 @@ class CreateBaseController: PopUpViewController {
     }()
     
     init(title: String,
-         tableCategory: [String]
+         trackerType: TrackerType,
+         createType: CreateBaseType
     ) {
         
-        self.tableCategory = tableCategory
+        switch trackerType {
+        case .practice: tableCategory = ["Категория", "Расписание"]
+        case .irregular: tableCategory = ["Категория"]
+        }
+        
+        self.creationType = createType
         
         super.init(title: title)
     }
@@ -137,6 +160,17 @@ class CreateBaseController: PopUpViewController {
         trackersTableView.reloadData()
     }
     
+    func configure(tracker: Tracker) {
+        dayCountLabel.text = getDayString(for: tracker.completedDate.count)
+        
+        nameTrackerInputField.text = tracker.name
+        createButton.activateButton()
+        
+        emojiColorCollectionView.reloadData()
+        
+        selectEmojiAndColor(for: tracker.emoji, and: tracker.color)
+    }
+    
     private func updateTableViewHeight() {
         let numberOfRows = tableViewDelegate?.data.count ?? 0
         
@@ -144,6 +178,24 @@ class CreateBaseController: PopUpViewController {
         tableViewHeightConstraint?.constant = height
         
         view.layoutIfNeeded()
+    }
+    
+    private func selectEmojiAndColor(for emoji: String, and color: UIColor) {
+        if let emojiIndex = emojiList.firstIndex(of: emoji),
+           emojiIndex < emojiList.count {
+            let indexPath = IndexPath(row: emojiIndex, section: 0)
+            selectedIndexPathSection1 = indexPath
+            emojiColorCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+            emojiColorCollectionView.reloadItems(at: [indexPath])
+        }
+
+        if let colorIndex = colorList.firstIndex(of: color),
+           colorIndex < colorList.count {
+            let indexPath = IndexPath(row: colorIndex, section: 1)
+            selectedIndexPathSection2 = indexPath
+            emojiColorCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+            emojiColorCollectionView.reloadItems(at: [indexPath])
+        }
     }
 }
 
@@ -154,7 +206,8 @@ extension CreateBaseController {
         view.setupView(scrollView)
         scrollView.setupView(scrollStackViewContainer)
         
-        [nameTrackerInputField,
+        [dayCountLabel,
+         nameTrackerInputField,
          trackersTableView,
          emojiColorCollectionView,
          stackButtonView].forEach {
@@ -184,9 +237,14 @@ extension CreateBaseController {
             scrollStackViewContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             scrollStackViewContainer.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32),
             
+            dayCountLabel.topAnchor.constraint(equalTo: scrollStackViewContainer.topAnchor),
+            dayCountLabel.heightAnchor.constraint(equalToConstant: 38),
+            dayCountLabel.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
+            dayCountLabel.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
+            
             nameTrackerInputField.heightAnchor.constraint(equalToConstant: 75),
             nameTrackerInputField.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
-            nameTrackerInputField.topAnchor.constraint(equalTo: scrollStackViewContainer.topAnchor),
+            nameTrackerInputField.topAnchor.constraint(equalTo: dayCountLabel.bottomAnchor, constant: 40),
             
             trackersTableView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             trackersTableView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
@@ -203,6 +261,15 @@ extension CreateBaseController {
     
     override func configureAppearance() {
         super.configureAppearance()
+        
+        switch creationType {
+        case .create: 
+            dayCountLabel.isHidden = true
+            createButton.configureTitle(newTitle: "Создать")
+        case .edit:
+            dayCountLabel.isHidden = false
+            createButton.configureTitle(newTitle: "Сохранить")
+        }
         
         trackersTableView.delegate = tableViewDelegate
         tableViewDelegate?.data = tableCategory
@@ -257,6 +324,24 @@ extension CreateBaseController {
         emojiColorCollectionView.register(TrackerSectionHeader.self,
                                           forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                           withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
+    }
+    
+    private func getDayString(for number: Int) -> String {
+        let remainder10 = number % 10
+        let remainder100 = number % 100
+        
+        if remainder100 >= 11 && remainder100 <= 14 {
+            return "\(number) \(Strings.TrackersCardView.days)"
+        } else {
+            switch remainder10 {
+            case 1:
+                return "\(number) \(Strings.TrackersCardView.day)"
+            case 2, 3, 4:
+                return "\(number) \(Strings.TrackersCardView.twoDays)"
+            default:
+                return "\(number) \(Strings.TrackersCardView.days)"
+            }
+        }
     }
 }
 

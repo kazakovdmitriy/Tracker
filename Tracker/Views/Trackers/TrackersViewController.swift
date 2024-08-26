@@ -211,7 +211,7 @@ final class TrackersViewController: BaseController {
     }
 }
 
-// MARK: - Alert
+// MARK: - ContextMenuDelegateFunc
 private extension TrackersViewController {
     func displayDeleteAlert(forTracker id: UUID) {
         let dialogMessage = UIAlertController(title: "",
@@ -233,6 +233,17 @@ private extension TrackersViewController {
         dialogMessage.addAction(cancel)
         
         self.present(dialogMessage, animated: true)
+    }
+    
+    func editTrackerTapped(forTracker id: UUID) {
+        
+        guard let tracker = viewModel.getTracker(by: id) else { return }
+        
+        let editVC = EditTrackersViewController(tracker: tracker)
+        editVC.modalPresentationStyle = .popover
+        editVC.delegate = self
+        
+        present(editVC, animated: true)
     }
 }
 
@@ -341,6 +352,7 @@ extension TrackersViewController: TrackerCardViewProtocol {
     
     func editTracker(forTracker id: UUID) {
         analyticsService.clickEvent(screen: .Main, button: .edit)
+        editTrackerTapped(forTracker: id)
     }
     
     func deleteTracker(forTracker id: UUID) {
@@ -364,14 +376,14 @@ extension TrackersViewController: TrackerCardViewProtocol {
 // MARK: - CreateTrackerViewControllerDelegate
 extension TrackersViewController: CreateTrackerViewControllerDelegate {
     func selectedPracticeVC() {
-        let newPracticeVC = NewPracticeViewController()
+        let newPracticeVC = NewPracticeViewController(trackerType: .practice)
         newPracticeVC.modalPresentationStyle = .popover
         newPracticeVC.delegate = self
         present(newPracticeVC, animated: true)
     }
     
     func selectedIrregularVC() {
-        let newIrregularVC = NewIrregularViewController()
+        let newIrregularVC = NewIrregularViewController(trackerType: .irregular)
         newIrregularVC.modalPresentationStyle = .popover
         newIrregularVC.delegate = self
         present(newIrregularVC, animated: true)
