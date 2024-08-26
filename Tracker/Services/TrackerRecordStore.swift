@@ -13,24 +13,31 @@ enum TrackerRecordStoreError: Error {
     case fetchError
 }
 
+
 final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
+    
+    // MARK: - Public Properties
     
     static let shared = TrackerRecordStore()
     
+    // MARK: - Private Properties
+    
     private let context: NSManagedObjectContext = CoreDataService.shared.context
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
+    
+    // MARK: - Initializers
     
     private override init() {
         super.init()
         initializeFetchedResultsController()
     }
     
+    // MARK: - Public Methods
+    
     func createTrackerRecord(trackerRecord: TrackerRecord) {
         let trackerRecordEntity = TrackerRecordCoreData(context: context)
-        
         trackerRecordEntity.id = trackerRecord.id
         trackerRecordEntity.dateComplete = trackerRecord.dateComplete
-        
         saveContext()
     }
     
@@ -47,7 +54,6 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     func createTrackerRecord(for trackerId: UUID, dateComplete: Date) {
-        // Проверяем, существует ли уже запись с такой датой для данного трекера
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "id == %@ AND dateComplete == %@", trackerId as CVarArg, dateComplete as CVarArg)
@@ -55,13 +61,11 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         do {
             let existingRecords = try context.fetch(fetchRequest)
             
-            // Если такая запись уже существует, ничего не делаем
             if !existingRecords.isEmpty {
                 print("TrackerRecord with date \(dateComplete) for tracker \(trackerId) already exists.")
                 return
             }
             
-            // Если запись не найдена, создаем новую
             guard let tracker = fetchTrackerById(trackerId: trackerId) else {
                 print("Tracker with ID \(trackerId) not found.")
                 return
@@ -71,7 +75,6 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
             trackerRecordEntity.id = UUID()
             trackerRecordEntity.dateComplete = dateComplete
             
-            // Связываем новый TrackerRecord с соответствующим Tracker
             tracker.addToRecord_rel(trackerRecordEntity)
             
             saveContext()
@@ -86,7 +89,6 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: dateComplete)
         
-        // Создаем диапазон дат для поиска записей, которые попадают в этот день
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
             print("Failed to calculate end of day.")
             return
@@ -95,9 +97,9 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
         
         fetchRequest.predicate = NSPredicate(format: "tracker_rel.id == %@ AND dateComplete >= %@ AND dateComplete < %@",
-                                                 trackerId as CVarArg,
-                                                 startOfDay as CVarArg,
-                                                 endOfDay as CVarArg)
+                                             trackerId as CVarArg,
+                                             startOfDay as CVarArg,
+                                             endOfDay as CVarArg)
         fetchRequest.fetchLimit = 1
         
         do {
@@ -122,6 +124,8 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         
         return Set(trackerEntities.compactMap { try? trackerRecord(from: $0) })
     }
+    
+    // MARK: - Private Methods
     
     private func fetchTrackerById(trackerId: UUID) -> TrackerCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
