@@ -100,9 +100,6 @@ extension CreateNewCategoryViewController {
     
     @objc private func didTapDoneButton() {
         guard let newCategoryInput = nameCategoryInputField.text else { return }
-        let newTrackerCategory = TrackerCategory(name: newCategoryInput,
-                                                 trackers: [])
-        trackerCategoryStore.createTrackerRecord(trackerCategory: newTrackerCategory)
         delegate?.didCreateNewCategory(newCategory: newCategoryInput)
         
         dismiss(animated: true)

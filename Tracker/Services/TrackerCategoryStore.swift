@@ -42,53 +42,71 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func fetchCategoriesWithTrackers() -> [TrackerCategory] {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        
-        do {
-            let trackerCategoryEntities = try context.fetch(fetchRequest)
-            return try trackerCategoryEntities.map { try trackerCategoryWithTrackers(from: $0) }
-        } catch {
-            print("Failed to fetch categories with trackers: \(error)")
-            return []
-        }
-    }
-    
     func loadCategoryNames() -> [String] {
-        // Создаем запрос для сущности TrackerCategoryCoreData
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
-        // Настройка сортировки по имени категории
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "name != %@", "Закрепленные")
         
         do {
-            // Выполняем запрос
             let categories = try context.fetch(fetchRequest)
-            
-            // Преобразуем результаты в массив строк
             let categoryNames = categories.compactMap { $0.name }
             
             return categoryNames
-            
         } catch {
-            // Обработка ошибок
             print("Failed to fetch category names: \(error)")
             return []
         }
     }
     
-    private func trackerCategoryWithTrackers(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> TrackerCategory {
+    func checkAndCreatePinCategory() {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        
+        let categoryName = "Закрепленные"
+        
+        fetchRequest.predicate = NSPredicate(format: "name == %@", categoryName)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            if results.isEmpty {
+                let newRecord = TrackerCategoryCoreData(context: context)
+                newRecord.id = UUID()
+                newRecord.name = categoryName
+                
+                saveContext()
+            }
+        } catch {
+            print("Error fetching data: \(error)")
+        }
+    }
+    
+    func fetchCategoriesWithAllTrackersAndRecords() -> [TrackerCategory] {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        
+        do {
+            let trackerCategoryEntities = try context.fetch(fetchRequest)
+            return try trackerCategoryEntities.map { try trackerCategoryWithAllTrackersAndRecords(from: $0) }
+        } catch {
+            print("Failed to fetch categories with all trackers and records: \(error)")
+            return []
+        }
+    }
+
+    private func trackerCategoryWithAllTrackersAndRecords(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let name = trackerCategoryEntity.name else {
             throw TrackerRecordStoreError.decodingErrorInvalidId
         }
         
-        let trackers: [Tracker] = (trackerCategoryEntity.trackers_rel as? Set<TrackerCoreData>)?.compactMap { try? tracker(from: $0) } ?? []
+        let trackers: [Tracker] = (trackerCategoryEntity.trackers_rel as? Set<TrackerCoreData>)?.compactMap { trackerEntity in
+            return try? trackerWithRecords(from: trackerEntity)
+        }.sorted { $0.name < $1.name } ?? []
         
         return TrackerCategory(name: name, trackers: trackers)
     }
-    
-    private func tracker(from trackerEntity: TrackerCoreData) throws -> Tracker {
+
+    private func trackerWithRecords(from trackerEntity: TrackerCoreData) throws -> Tracker {
         guard let id = trackerEntity.id else {
             throw TrackerStoreError.decodingErrorInvalidId
         }
@@ -101,18 +119,36 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         guard let emoji = trackerEntity.emoji else {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
+        guard let originalCategory = trackerEntity.original_category else {
+            throw TrackerStoreError.decodingErrorInvalidOriginalCategory
+        }
         guard let schedule = trackerEntity.schedule as? [WeekDays] else {
             throw TrackerStoreError.decodingErrorInvalidScedule
         }
         
         let isPractice = trackerEntity.isPractice
         
+        let recordDates: Set<Date> = Set((trackerEntity.record_rel as? Set<TrackerRecordCoreData>)?.compactMap { recordEntity in
+            return try? recordDate(from: recordEntity)
+        } ?? [])
+        
         return Tracker(id: id,
                        name: name,
                        color: color,
                        emoji: emoji,
+                       originalCategory: originalCategory,
+                       completedDate: recordDates,
                        type: isPractice ? .practice : .irregular,
                        schedule: schedule)
+    }
+
+    private func recordDate(from trackerRecordEntity: TrackerRecordCoreData) throws -> Date {
+        guard let dateComplete = trackerRecordEntity.dateComplete else {
+            throw TrackerRecordStoreError.decodingErrorInvalidDateComplete
+        }
+        
+        let calendar = Calendar.current
+        return calendar.startOfDay(for: dateComplete)
     }
     
     private func saveContext() {
@@ -121,22 +157,6 @@ final class TrackerCategoryStore: NSObject, NSFetchedResultsControllerDelegate {
         } catch {
             print("Failed to save context: \(error)")
         }
-    }
-    
-    private func trackerCategoryAsObject(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let name = trackerCategoryEntity.name else {
-            throw TrackerRecordStoreError.decodingErrorInvalidId
-        }
-        
-        return TrackerCategory(name: name, trackers: [])
-    }
-    
-    private func trackerCategoryAsString(from trackerCategoryEntity: TrackerCategoryCoreData) throws -> String {
-        guard let name = trackerCategoryEntity.name else {
-            throw TrackerRecordStoreError.decodingErrorInvalidId
-        }
-        
-        return name
     }
     
     private func initializeFetchedResultsController() {

@@ -26,7 +26,7 @@ final class CategoryViewController: PopUpViewController {
     )
     
     private lazy var doneButton = MainButton(title: "Добавить категорию")
-    private lazy var stubView = StubView()
+    private lazy var stubView = StubView(type: .emptyCategory)
     
     // MARK: - Initializers
     init(viewModel: CategoryViewModel) {
@@ -94,10 +94,6 @@ extension CategoryViewController {
         
         viewModel.onShowStubView = { [weak self] isEmpty in
             self?.showTable(isHidden: !isEmpty)
-            if isEmpty {
-                let emptyImage = UIImage(named: "empty_trackers_image") ?? UIImage()
-                self?.stubView.configure(with: "Привычки и события можно объединить по смыслу", and: emptyImage)
-            }
         }
     }
     

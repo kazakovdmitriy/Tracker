@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         DaysValueTransformer.register()
+        TrackerCategoryStore.shared.checkAndCreatePinCategory()
+        AnalyticsService.activate()
+        
+        UserDefaults.standard.set(0, forKey: UserDefaultsKeys.selectedFilter)
         
         return true
     }
@@ -27,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      configurationForConnecting connectingSceneSession: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        return UISceneConfiguration(name: "Default Configuration", 
+                                    sessionRole: connectingSceneSession.role)
     }
 }

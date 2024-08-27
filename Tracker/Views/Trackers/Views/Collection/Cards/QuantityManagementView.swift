@@ -72,15 +72,15 @@ final class QuantityManagementView: BaseView {
         let remainder100 = number % 100
         
         if remainder100 >= 11 && remainder100 <= 14 {
-            return "\(number) дней"
+            return "\(number) \(Strings.TrackersCardView.days)"
         } else {
             switch remainder10 {
             case 1:
-                return "\(number) день"
+                return "\(number) \(Strings.TrackersCardView.day)"
             case 2, 3, 4:
-                return "\(number) дня"
+                return "\(number) \(Strings.TrackersCardView.twoDays)"
             default:
-                return "\(number) дней"
+                return "\(number) \(Strings.TrackersCardView.days)"
             }
         }
     }

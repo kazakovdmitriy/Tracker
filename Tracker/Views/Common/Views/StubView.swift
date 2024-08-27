@@ -7,7 +7,18 @@
 
 import UIKit
 
+enum StubType {
+    case emptyTracker
+    case nothingFound
+    case nothingToAnalyze
+    case emptyCategory
+}
+
 final class StubView: BaseView {
+    
+    private var imageName: String
+    private var text: String
+    
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -19,6 +30,7 @@ final class StubView: BaseView {
     private lazy var stubEmptyLabel: UILabel = {
         let label = UILabel()
         
+        label.text = text
         label.font = Fonts.sfPro(with: 12)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -30,11 +42,35 @@ final class StubView: BaseView {
     
     private lazy var stubEmptyImage: UIImageView = {
         let view = UIImageView()
+        let image = UIImage(named: imageName) ?? UIImage()
         
+        view.image = image
         view.contentMode = .scaleAspectFit
         
         return view
     }()
+    
+    init(type: StubType) {
+        switch type {
+        case .emptyTracker:
+            text = Strings.Stubs.emptyTracker
+            imageName = "empty_trackers_image"
+        case .emptyCategory:
+            text = Strings.Stubs.emptyCategory
+            imageName = "empty_trackers_image"
+        case .nothingFound:
+            text = Strings.Stubs.nothingFind
+            imageName = "nothing_found"
+        case .nothingToAnalyze:
+            text = Strings.Stubs.nothingAnalize
+            imageName = "empty_statistic_image"
+        }
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func configure(with title: String, and image: UIImage) {
         stubEmptyLabel.text = title

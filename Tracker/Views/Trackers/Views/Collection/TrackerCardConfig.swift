@@ -12,8 +12,10 @@ struct TrackerCardConfig {
     let title: String
     let color: UIColor
     let emoji: String
+    let category: String
     let days: Int
     let isDone: Bool
+    let isPinned: Bool
     let plusDelegate: TrackerCardViewProtocol
     let date: Date
 }

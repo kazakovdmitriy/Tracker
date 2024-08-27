@@ -9,4 +9,5 @@ import Foundation
 
 enum UserDefaultsKeys {
     static let onboardingFlag = "isOnboardingHidden"
+    static let selectedFilter = "selectedFilterIndex"
 }

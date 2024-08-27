@@ -13,13 +13,20 @@ struct TrackerData {
     let color: UIColor
 }
 
+enum CreateBaseType {
+    case create
+    case edit
+}
+
 protocol CreateBaseControllerDelegate: AnyObject {
-    func didTapCreateTrackerButton(category: String, tracker: Tracker)
+    func didTapCreateTrackerButton(category: String, tracker: Tracker, type: CreateBaseType)
 }
 
 class CreateBaseController: PopUpViewController {
     
     weak var tableViewDelegate: TrackersTableViewDelegate?
+    
+    private let creationType: CreateBaseType
     
     private let emojiList: [String] = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -52,6 +59,16 @@ class CreateBaseController: PopUpViewController {
         view.spacing = 24
         
         return view
+    }()
+    
+    private lazy var dayCountLabel: UILabel = {
+        let label = UILabel()
+        
+        label.textColor = .ypBlack
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        
+        return label
     }()
     
     private lazy var nameTrackerInputField: UITextField = {
@@ -107,10 +124,16 @@ class CreateBaseController: PopUpViewController {
     }()
     
     init(title: String,
-         tableCategory: [String]
+         trackerType: TrackerType,
+         createType: CreateBaseType
     ) {
         
-        self.tableCategory = tableCategory
+        switch trackerType {
+        case .practice: tableCategory = ["Категория", "Расписание"]
+        case .irregular: tableCategory = ["Категория"]
+        }
+        
+        self.creationType = createType
         
         super.init(title: title)
     }
@@ -137,6 +160,33 @@ class CreateBaseController: PopUpViewController {
         trackersTableView.reloadData()
     }
     
+    func configure(tracker: Tracker) {
+        dayCountLabel.text = getDayString(for: tracker.completedDate.count)
+        
+        nameTrackerInputField.text = tracker.name
+        createButton.activateButton()
+        
+        emojiColorCollectionView.reloadData()
+        
+        selectEmojiAndColor(for: tracker.emoji, and: tracker.color)
+    }
+    
+    func updateCreateButtonState() {
+        let isNameFilled = !(nameTrackerInputField.text?.isEmpty ?? true)
+        let isEmojiSelected = selectedIndexPathSection1 != nil
+        let isColorSelected = selectedIndexPathSection2 != nil
+        let isCategorySelected = tableViewDelegate?.choiseCategory != nil
+        let isScheduleSelected = !(tableViewDelegate?.weekDaysSchedule.isEmpty ?? false) || tableCategory.count == 1
+        
+        let shouldActivate = isNameFilled && isEmojiSelected && isColorSelected && isCategorySelected && isScheduleSelected
+        
+        if shouldActivate {
+            createButton.activateButton()
+        } else {
+            createButton.deactivateButton()
+        }
+    }
+    
     private func updateTableViewHeight() {
         let numberOfRows = tableViewDelegate?.data.count ?? 0
         
@@ -144,6 +194,24 @@ class CreateBaseController: PopUpViewController {
         tableViewHeightConstraint?.constant = height
         
         view.layoutIfNeeded()
+    }
+    
+    private func selectEmojiAndColor(for emoji: String, and color: UIColor) {
+        if let emojiIndex = emojiList.firstIndex(of: emoji),
+           emojiIndex < emojiList.count {
+            let indexPath = IndexPath(row: emojiIndex, section: 0)
+            selectedIndexPathSection1 = indexPath
+            emojiColorCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+            emojiColorCollectionView.reloadItems(at: [indexPath])
+        }
+
+        if let colorIndex = colorList.firstIndex(of: color),
+           colorIndex < colorList.count {
+            let indexPath = IndexPath(row: colorIndex, section: 1)
+            selectedIndexPathSection2 = indexPath
+            emojiColorCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+            emojiColorCollectionView.reloadItems(at: [indexPath])
+        }
     }
 }
 
@@ -154,7 +222,8 @@ extension CreateBaseController {
         view.setupView(scrollView)
         scrollView.setupView(scrollStackViewContainer)
         
-        [nameTrackerInputField,
+        [dayCountLabel,
+         nameTrackerInputField,
          trackersTableView,
          emojiColorCollectionView,
          stackButtonView].forEach {
@@ -184,9 +253,14 @@ extension CreateBaseController {
             scrollStackViewContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             scrollStackViewContainer.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -32),
             
+            dayCountLabel.topAnchor.constraint(equalTo: scrollStackViewContainer.topAnchor),
+            dayCountLabel.heightAnchor.constraint(equalToConstant: 38),
+            dayCountLabel.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
+            dayCountLabel.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
+            
             nameTrackerInputField.heightAnchor.constraint(equalToConstant: 75),
             nameTrackerInputField.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
-            nameTrackerInputField.topAnchor.constraint(equalTo: scrollStackViewContainer.topAnchor),
+            nameTrackerInputField.topAnchor.constraint(equalTo: dayCountLabel.bottomAnchor, constant: 40),
             
             trackersTableView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             trackersTableView.trailingAnchor.constraint(equalTo: scrollStackViewContainer.trailingAnchor),
@@ -203,6 +277,15 @@ extension CreateBaseController {
     
     override func configureAppearance() {
         super.configureAppearance()
+        
+        switch creationType {
+        case .create: 
+            dayCountLabel.isHidden = true
+            createButton.configureTitle(newTitle: "Создать")
+        case .edit:
+            dayCountLabel.isHidden = false
+            createButton.configureTitle(newTitle: "Сохранить")
+        }
         
         trackersTableView.delegate = tableViewDelegate
         tableViewDelegate?.data = tableCategory
@@ -224,6 +307,7 @@ extension CreateBaseController {
         scrollView.contentSize = scrollStackViewContainer.bounds.size
         
         reloadTableData()
+        updateCreateButtonState()
     }
     
     func addActionToButton(create: Selector, cancle: Selector) {
@@ -258,24 +342,40 @@ extension CreateBaseController {
                                           forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                           withReuseIdentifier: TrackerSectionHeader.reuseIdentifier)
     }
+    
+    private func getDayString(for number: Int) -> String {
+        let remainder10 = number % 10
+        let remainder100 = number % 100
+        
+        if remainder100 >= 11 && remainder100 <= 14 {
+            return "\(number) \(Strings.TrackersCardView.days)"
+        } else {
+            switch remainder10 {
+            case 1:
+                return "\(number) \(Strings.TrackersCardView.day)"
+            case 2, 3, 4:
+                return "\(number) \(Strings.TrackersCardView.twoDays)"
+            default:
+                return "\(number) \(Strings.TrackersCardView.days)"
+            }
+        }
+    }
 }
 
 extension CreateBaseController: UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        createButton.deactivateButton()
+        updateCreateButtonState()
         return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateCreateButtonState()
     }
     
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        let userEnteredString = textField.text
-        let newString = (userEnteredString! as NSString).replacingCharacters(in: range, with: string) as NSString
-        if  newString != "" {
-            createButton.activateButton()
-        } else {
-            createButton.deactivateButton()
-        }
+        updateCreateButtonState()
         return true
     }
 }
@@ -314,6 +414,8 @@ extension CreateBaseController: UICollectionViewDelegate {
         default:
             break
         }
+        
+        updateCreateButtonState()
     }
 }
 
@@ -411,14 +513,12 @@ extension CreateBaseController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: 52, height: 52)
     }
     
-    // Минимальное межстрочное расстояние
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    // Минимальное межколоночное расстояние
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

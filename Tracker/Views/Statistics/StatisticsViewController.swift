@@ -9,34 +9,20 @@ import UIKit
 
 final class StatisticsViewController: BaseController {
     
-    private let statisticsEmptyLabel: UILabel = {
-        let label = UILabel()
-        
-        label.text = "Анализировать пока нечего"
-        label.font = Fonts.sfPro(with: 12)
-        label.textColor = .ypBlack
-        label.textAlignment = .center
-        
-        return label
-    }()
+    private var viewModel: StatisticsViewModelProtocol
     
-    private let statisticsEmptyImage: UIImageView = {
-        let image = UIImage(named: "empty_statistic_image")
-        let view = UIImageView(image: image)
-        
-        view.contentMode = .scaleAspectFit
-        
-        return view
-    }()
+    private lazy var stubView = StubView(type: .nothingToAnalyze)
+    private lazy var tableView = UITableView()
     
-    private let containerView = UIView()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(viewModel: StatisticsViewModelProtocol = StatisticsViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
-        setupViews()
-        constraintViews()
-        configureAppearance()
+        viewModel.fetchTrackers()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -44,42 +30,92 @@ extension StatisticsViewController {
     override func setupViews() {
         super.setupViews()
         
-        containerView.setupView(statisticsEmptyLabel)
-        containerView.setupView(statisticsEmptyImage)
-        
-        view.setupView(containerView)
-        
+        view.setupView(stubView)
+        view.setupView(tableView)
     }
     
     override func constraintViews() {
         super.constraintViews()
         
         NSLayoutConstraint.activate([
-            statisticsEmptyImage.widthAnchor.constraint(equalToConstant: 80),
-            statisticsEmptyImage.heightAnchor.constraint(equalTo: statisticsEmptyImage.widthAnchor),
-            statisticsEmptyImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            statisticsEmptyLabel.topAnchor.constraint(equalTo: statisticsEmptyImage.bottomAnchor, constant: 15),
-            statisticsEmptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            statisticsEmptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 24)
         ])
     }
     
     override func configureAppearance() {
         super.configureAppearance()
         
+        setupBindings()
         setupNavigationBar()
+        setupTableView()
+        
+        showStub(isHide: viewModel.trackersRecordCount == 0)
     }
 }
 
 private extension StatisticsViewController {
     func setupNavigationBar() {
-        // Устанавливаем крупный заголовок
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = Strings.NavBar.statistics
+    }
+    
+    func setupTableView() {
+        tableView.register(StatisticsTableCell.self, 
+                           forCellReuseIdentifier: StatisticsTableCell.reuseIdentifier)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.backgroundColor = .clear
+    }
+    
+    func showStub(isHide: Bool) {
+        tableView.isHidden = isHide
+        stubView.isHidden = !isHide
+    }
+    
+    func setupBindings() {
+        viewModel.onStatisticsUpdate = { [weak self] in
+            self?.tableView.reloadData()
+        }
+        
+        viewModel.onTrackerUpdate = { [weak self] isEmpty in
+            self?.showStub(isHide: isEmpty)
+        }
+    }
+}
+
+extension StatisticsViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.statistics.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: StatisticsTableCell.reuseIdentifier, for: indexPath
+        ) as? StatisticsTableCell else {
+            return UITableViewCell()
+        }
+        
+        let statisticsName = Array(viewModel.statistics.keys)
+        let statisticValue = viewModel.statistics[statisticsName[indexPath.row]] ?? 0
+        
+        
+        cell.configure(statisticCount: statisticValue, statisticName: statisticsName[indexPath.row])
+        
+        return cell
+    }
+}
+
+extension StatisticsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 102
     }
 }

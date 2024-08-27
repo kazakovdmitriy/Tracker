@@ -11,11 +11,14 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isPractice" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <attribute name="original_category" attributeType="String"/>
         <attribute name="schedule" attributeType="Transformable" valueTransformerName="DaysValueTransformer"/>
         <relationship name="category_rel" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers_rel" inverseEntity="TrackerCategoryCoreData"/>
+        <relationship name="record_rel" toMany="YES" deletionRule="Nullify" destinationEntity="TrackerRecordCoreData" inverseName="tracker_rel" inverseEntity="TrackerRecordCoreData"/>
     </entity>
     <entity name="TrackerRecordCoreData" representedClassName="TrackerRecordCoreData" syncable="YES" codeGenerationType="class">
         <attribute name="dateComplete" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="tracker_rel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCoreData" inverseName="record_rel" inverseEntity="TrackerCoreData"/>
     </entity>
 </model>

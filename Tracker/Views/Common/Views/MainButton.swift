@@ -29,7 +29,7 @@ final class MainButton: BaseView {
     init(title: String) {
         self.title = title
         
-        super.init(frame: .zero)
+        super.init()
     }
     
     required init?(coder: NSCoder) {
@@ -43,6 +43,10 @@ final class MainButton: BaseView {
         }
         
         button.addTarget(nil, action: action, for: .touchUpInside)
+    }
+    
+    func configureTitle(newTitle: String) {
+        button.setTitle(newTitle, for: .normal)
     }
     
     func deactivateButton() {
